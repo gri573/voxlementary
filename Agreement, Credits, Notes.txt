@@ -19,7 +19,7 @@ Credits:
  fayer3            - End portal/gateway shader
  Jessie            - Dithering
  Builderb0y        - Vanilla Star Dedection
- gri573            - SSPT
+ gri573            - Voxelisation, flood fill lighting
  
 Dimensions:
  -1       NETHER    - Nether
