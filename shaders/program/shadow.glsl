@@ -20,7 +20,7 @@ uniform sampler2D shadowcolor1;
 const float shadowDistanceRenderMul = 1.0;
 
 //Other Random Things//
-vec2 offsets[4] = vec2[4](
+vec2[4] offsets = vec2[4](
 	vec2(-1, -1),
 	vec2(-1, 1),
 	vec2(1, -1),
@@ -127,7 +127,7 @@ void main() {
 	position += cameraPosition - floor(previousCameraPosition);
 	position += at_midBlock / 64;
 	//if (at_midBlock == vec3(0)) position = vec3(1000.5);
-	vec3 posNorm[2] = getVoxelPos(position);
+	vec3[2] posNorm = getVoxelPos(position);
 	position = posNorm[0];
 	if (mat < 79 || mat > 81) {
 		position.xz += (at_midBlock.xy * glnormal.z + at_midBlock.zx * glnormal.y + at_midBlock.yz * glnormal.x)/64.0;

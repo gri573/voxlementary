@@ -1,4 +1,4 @@
-vec3 crossModel[2](vec3 pos, vec3 dir){
+vec3[2] crossModel(vec3 pos, vec3 dir){
 	float offset0 = (pos.x - pos.z) / (dir.z - dir.x);
 	float offset1 = (1 - pos.x - pos.z) / (dir.x + dir.z);
 

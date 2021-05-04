@@ -1,6 +1,5 @@
-vec3 aabb[2](vec3 pos, vec3 dir, int ID) {
-
-	vec3 mincoord[30] = vec3[30](
+vec3[2] aabb(vec3 pos, vec3 dir, int ID) {
+	vec3[30] mincoord = vec3[30](
 		vec3(0.0),//bottom slab
 		vec3(0.0, 0.5, 0.0),//top slab
 		vec3(0.0),//bottom trapdoor
@@ -32,7 +31,7 @@ vec3 aabb[2](vec3 pos, vec3 dir, int ID) {
 		vec3(0.0),
 		vec3(0.0)
 	);
-	vec3 maxcoord[30] = vec3[30](
+	vec3[30] maxcoord = vec3[30](
 		vec3(1.0, 0.5, 1.0),//bottom slab
 		vec3(1.0),//top slab
 		vec3(1.0, 0.1875, 1.0),//bottom trapdoor

@@ -24,7 +24,7 @@ vec4 GetShadow(vec3 pos, vec3 dir){
 		pos = voxelData[0];
 		int ID = int(floor(voxelData[3].z * 255 + 0.5));
 		float isAABB = float(ID >= 5 && ID < 57);
-		vec3 posNorm[2] = vec3[2](0.0);
+		vec3[2] posNorm = vec3[2](0.0);
 		if (ID >= 57 && ID <= 62) skip = 1;
 		if (ID == 4){
 			/*vec3 localPos = fract(pos + epsilon);

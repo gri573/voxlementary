@@ -21,7 +21,7 @@ vec3 voxelTrace[5](vec3 startPos, vec3 vect0, float mode, float end) {
 		pos.xyz = startPos + pos.w * vect0 * presentPerfect;
 		//if(abs(dot(fract(pos.xyz), facing0) - 0.5) > 0.499) {
 			vec3 facing = facing0;
-			vec3 posNorm[2] = getVoxelPos(floor(pos.xyz + sign(vect0) * facing * 0.1 * presentPerfect) + vec3(0.5));
+			vec3[2] posNorm = getVoxelPos(floor(pos.xyz + sign(vect0) * facing * 0.1 * presentPerfect) + vec3(0.5));
 			vec2 texCoord = posNorm[0].xz /shadowMapResolution + vec2(0.5);
 			vec4 vxData0 = texture2D(shadowcolor0, texCoord) * posNorm[1].x;
 

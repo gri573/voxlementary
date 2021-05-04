@@ -1,4 +1,4 @@
-vec3 getVoxelPos[2](vec3 pos){
+vec3[2] getVoxelPos(vec3 pos){
 float vxDist = shadowMapResolution * 0.0625 / VXHEIGHT;
 float discarder = 1.0;
 if (abs(pos.x) > vxDist || abs(pos.z) > vxDist || abs(pos.y) > VXHEIGHT * VXHEIGHT * 32) discarder = 0.0;
