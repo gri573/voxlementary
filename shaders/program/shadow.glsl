@@ -33,7 +33,11 @@ void main() {
 	if (mat < -0.9) discard;
 	vec4 light = texture2D(shadowcolor1, screentexcoord);
 	vec3 lightmult = vec3(1.0);
-	if (abs(mat - 120) < 0.1 || abs(mat - 3) < 0.1) lightmult = texture2D(texture, texcoord).rgb * glcolor.rgb;
+	if (abs(mat - 120) < 0.1 || abs(mat - 3) < 0.1) {
+		lightmult = texture2D(texture, texcoord).rgb * glcolor.rgb;
+	} else {
+		lightmult = vec3(0.5 * texcoord - 0.5 * vec2(texSize), texSize);
+	}
 	float mat1 = mat + 26;
 	vec4 color = vec4(lightmult, mat1 / 255.0);
 	/*DRAWBUFFERS:01*/

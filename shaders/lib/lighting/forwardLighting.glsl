@@ -43,6 +43,7 @@ void GetLighting(inout vec3 albedo, inout float shadow, inout float fakeShadow, 
                  float parallaxShadow, float emissive, float subsurface, float mat, float leaves, float scattering, float materialAO) {
 	vec3 voxelSpacePos = worldPos + fract(cameraPosition);
 	vec3 worldNormal = mat3(gbufferModelViewInverse) * normal;
+	vec3 worldSunVec = mat3(gbufferModelViewInverse) *sunVec;
 	vec3 fullShadow = vec3(0.0);
 	vec4 shadowcol = vec4(0.0);
 	if (shadow == 1.0) fullShadow = vec3(1.0);
@@ -86,17 +87,8 @@ void GetLighting(inout vec3 albedo, inout float shadow, inout float fakeShadow, 
 					float bias = (distortBias * biasFactor + dotWorldPos * 0.000005 + 0.05) / shadowMapResolution;
 					float offset = 1.0 / shadowMapResolution;
 
-					if (subsurface > 0.001) {
-						bias = 0.0002;
-						offset = 0.002;
-					} else if (scattering > 0.001) {
-						bias = 0.0002;
-						offset += 0.004 * scattering;
-					}
-					if (isEyeInWater == 1) offset *= 5.0;
-
-					shadowPos.z -= bias;
-					shadowcol = GetShadow(voxelSpacePos, normalize((vec4(sunVec, 1.0) * gbufferModelViewInverse).xyz));
+					worldSunVec *= 2 * float(worldSunVec.y > 0.0) - 1;
+					shadowcol = GetShadow(voxelSpacePos + 0.01 * normalize(worldSunVec), worldSunVec);
 					shadow = float(max(shadowcol.r, max(shadowcol.g, shadowcol.b)) > 0.51);
 					
 					#if defined WATER_CAUSTICS && defined OVERWORLD && !defined GBUFFERS_WATER && defined PROJECTED_CAUSTICS
@@ -121,10 +113,10 @@ void GetLighting(inout vec3 albedo, inout float shadow, inout float fakeShadow, 
 				} else {
 					//albedo.rgb *= 0.0;
 				}
-				float shadowLength2 = shadowLength;
-				float shadowSmooth = 16.0;
-				if (shadowLength2 < shadowSmooth) {
-					float shadowLengthDecider = max(shadowLength2 / shadowSmooth, 0.0);
+				float shadowLength2 =max(abs(voxelSpacePos.x), abs(voxelSpacePos.z));
+				float shadowSmooth = 8.0;
+				if (shadowLength2 > 0.0625 / VXHEIGHT * shadowMapResolution && abs(voxelSpacePos.y) > 32 * pow2(VXHEIGHT)) {
+					float shadowLengthDecider = max(shadowLength2 / shadowSmooth - float(abs(voxelSpacePos.y) > 32 * pow2(VXHEIGHT)), 0.0);
 					float skyLightShadow = GetFakeShadow(lightmap.y);
 					shadow = mix(skyLightShadow, shadow, shadowLengthDecider);
 					subsurface *= mix(subsurface * 0.5, subsurface, shadowLengthDecider);

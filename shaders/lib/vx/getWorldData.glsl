@@ -47,13 +47,11 @@ vec4 getWorldData(vec3 pos, vec3 dir){
 		}
 		if(length(voxelData[2]) < 0.9) voxelData[2] = fract(pos);
 		vec2 midtexcoord = voxelData[1].xy;
-		vec2 texcoord = (midtexcoord + voxelData[1].z * (vec2(1.0)
-		 + voxelData[2].x * (vec2(1, -2) * fract(pos.zy) + vec2(sign(dir.x) * 0.5) - 0.5 * vec2(1, -2))
-		 + voxelData[2].y * (vec2(1, -2) * fract(pos.xz) + vec2(sign(dir.y) * 0.5) - 0.5 * vec2(1, -2))
-		 + voxelData[2].z * (vec2(1, -2) * fract(pos.xy) + vec2(sign(dir.z) * 0.5) - 0.5 * vec2(1, -2))
-		 )) * 2 - vec2(1.0);
-		vec4 rayColor0 = texture2D(texture, texcoord);
-		
+		vec4 rayColor0 = vec4(1.0);
+		if (ID == 120 || ID == 3){
+			rayColor0 = vec4(voxelData[1], 0.5);
+		}
+
 		rayColor0 *= 1 - skip;
 		rayColor0.rgb *= voxelData[4];
 		rayColor.rgb += rayColor0.rgb * (1.0 -  rayColor.a) * rayColor0.a;

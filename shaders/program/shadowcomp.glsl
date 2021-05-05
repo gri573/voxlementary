@@ -143,7 +143,8 @@ void main(){
 					col5.rgb * max(1 - 5 * (maxAlpha - col5.a), 0.0) + 
 					col6.rgb * 4 * col6.a, 1.0);
 	col.rgb /= max(max(0.0001, col.r), max(col.g, col.b));
-	col.rgb *= maxAlpha * (0.5 * colMult + vec3(0.5));
+	col.rgb *= maxAlpha;
+	if (ID > 119.5)	col.rgb *= (0.5 * colMult + vec3(0.5));
 	//col = texture2D(shadowcolor1, oldtexcoord2);
 	col.a = 1.0 - 0.25 * float(ID == 1) - 0.5 * float(ID == 5) - 0.7 * float(ID == 6);
 	/*DRAWBUFFERS:01*/
