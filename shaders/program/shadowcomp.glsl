@@ -10,6 +10,8 @@ uniform vec3 previousCameraPosition;
 uniform sampler2D shadowcolor0, shadowcolor1;
 
 //Other random things
+
+void main(){
 vec3[50] lightcols = vec3[50](
 	vec3(TORCH_COL_R, TORCH_COL_G, TORCH_COL_B),//torch
 	vec3(REDSTONE_TORCH_COL_R, REDSTONE_TORCH_COL_G, REDSTONE_TORCH_COL_B),//redstone_torch
@@ -84,7 +86,6 @@ vec3[50] lightcols = vec3[50](
 	vec3(0)
 );
 
-void main(){
 	vec2 oldtexcoord2 = oldtexcoord;
 	float wrapping = float(oldtexcoord.x > 1 - 0.125 / VXHEIGHT && dpos.y > 0.5) - float(oldtexcoord.x < 0.125 / VXHEIGHT && dpos.y < -0.5);//float(oldtexcoord.x + 0.125 / VXHEIGHT * dpos.y > 1.0) - float(oldtexcoord.x + 0.125 / VXHEIGHT * dpos.y < 0.0);
 	oldtexcoord2 += vec2(0.125 / VXHEIGHT * dpos.y - wrapping, 0.125 / VXHEIGHT * wrapping);
