@@ -118,7 +118,8 @@ void GetLighting(inout vec3 albedo, inout float shadow, inout float fakeShadow, 
 				if (shadowLength2 > 0.0625 / VXHEIGHT * shadowMapResolution && abs(voxelSpacePos.y) > 32 * pow2(VXHEIGHT)) {
 					float shadowLengthDecider = max(shadowLength2 / shadowSmooth - float(abs(voxelSpacePos.y) > 32 * pow2(VXHEIGHT)), 0.0);
 					float skyLightShadow = GetFakeShadow(lightmap.y);
-					shadow = mix(skyLightShadow, shadow, shadowLengthDecider);
+					shadow = skyLightShadow;// mix(skyLightShadow, shadow, shadowLengthDecider);
+					shadowcol = vec4(shadow);
 					subsurface *= mix(subsurface * 0.5, subsurface, shadowLengthDecider);
 					fakeShadow = mix(1.0, fakeShadow, shadowLengthDecider);
 					fakeShadow = 1.0 - fakeShadow;
@@ -275,9 +276,9 @@ void GetLighting(inout vec3 albedo, inout float shadow, inout float fakeShadow, 
 	vec3 blockLighting = vec3(0);
 	#if defined OVERWORLD || defined NETHER || defined END
 	if (abs(voxelSpacePos.x) < 0.065 * shadowMapResolution / VXHEIGHT - 10 && abs(voxelSpacePos.z) < 0.065 * shadowMapResolution / VXHEIGHT - 10 && voxelSpacePos.y < 32 * pow2(VXHEIGHT)) {
-		vec3[2] voxelPos0 = getVoxelPos(vec3(voxelSpacePos.x, floor(voxelSpacePos.y + 0.01) - 0.49, voxelSpacePos.z) + 0.5 * worldNormal);
+		vec3[2] voxelPos0 = getVoxelPos(vec3(voxelSpacePos.x, floor(voxelSpacePos.y + 0.01) - 0.01, voxelSpacePos.z) + 0.5 * worldNormal);
 		vec3 blockLightCol0 = texture2D(shadowcolor1, voxelPos0[0].xz / shadowMapResolution + vec2(0.5)).rgb;// * float(abs(voxelPos0[0].x / shadowMapResolution) < 0.5 && abs(voxelPos0[0].z / shadowMapResolution) < 0.5);
-		vec3[2] voxelPos1 = getVoxelPos(vec3(voxelSpacePos.x, floor(voxelSpacePos.y + 0.01) + 0.51, voxelSpacePos.z) + 0.5 * worldNormal);
+		vec3[2] voxelPos1 = getVoxelPos(vec3(voxelSpacePos.x, floor(voxelSpacePos.y + 0.01) + 0.99, voxelSpacePos.z) + 0.5 * worldNormal);
 		vec3 blockLightCol1 = texture2D(shadowcolor1, voxelPos1[0].xz / shadowMapResolution + vec2(0.5)).rgb;// * float(abs(voxelPos1[0].x / shadowMapResolution) < 0.5 && abs(voxelPos1[0].z / shadowMapResolution) < 0.5);
 		blockLighting = mix(blockLightCol0, blockLightCol1, fract(voxelSpacePos.y + 0.01));
 		blockLighting = pow(blockLighting, vec3(1.5));

@@ -9,10 +9,8 @@ uniform vec3 cameraPosition;
 uniform vec3 previousCameraPosition;
 uniform sampler2D shadowcolor0, shadowcolor1;
 
-//Other random things
-
 void main(){
-vec3[50] lightcols = vec3[50](
+const vec3[50] lightcols = vec3[50](
 	vec3(TORCH_COL_R, TORCH_COL_G, TORCH_COL_B),//torch
 	vec3(REDSTONE_TORCH_COL_R, REDSTONE_TORCH_COL_G, REDSTONE_TORCH_COL_B),//redstone_torch
 	vec3(SOUL_TORCH_COL_R, SOUL_TORCH_COL_G, SOUL_TORCH_COL_B),//soul_torch
@@ -88,7 +86,10 @@ vec3[50] lightcols = vec3[50](
 
 	vec2 oldtexcoord2 = oldtexcoord;
 	float wrapping = float(oldtexcoord.x > 1 - 0.125 / VXHEIGHT && dpos.y > 0.5) - float(oldtexcoord.x < 0.125 / VXHEIGHT && dpos.y < -0.5);//float(oldtexcoord.x + 0.125 / VXHEIGHT * dpos.y > 1.0) - float(oldtexcoord.x + 0.125 / VXHEIGHT * dpos.y < 0.0);
-	oldtexcoord2 += vec2(0.125 / VXHEIGHT * dpos.y - wrapping, 0.125 / VXHEIGHT * wrapping);
+	//oldtexcoord2 += vec2(0.125 / VXHEIGHT * dpos.y - wrapping, 0.125 / VXHEIGHT * wrapping);
+	oldtexcoord2 += vec2(0.125 / VXHEIGHT * dpos.y, 0);
+	wrapping = float(oldtexcoord2.x > 1.0) - float(oldtexcoord2.x < 0.0);
+	oldtexcoord2 += vec2(-wrapping, 0.125 / VXHEIGHT * wrapping);
 	vec4 blockData = texture2D(shadowcolor0, oldtexcoord2);
 	float ID = floor(blockData.a * 255.0 - 25.5);
 	float isLight = float(ID > 49.5 && ID < 119.5);
@@ -111,12 +112,20 @@ vec3[50] lightcols = vec3[50](
 	vec4 col6 = vec4(0);
 	if (isLight > 0.5) col6.rgb = lightcols[int(ID - 49.5)] / 255.0;
 
-	col0.a = max(max(col0.r, max(col0.g, col0.b)) * float(abs(col0.a - 0.75) > 0.1), 0.0001);
-	col1.a = max(max(col1.r, max(col1.g, col1.b)) * float(abs(col1.a - 0.75) > 0.1 && abs(col1.a - 0.3) > 0.1), 0.0001);
-	col2.a = max(max(col2.r, max(col2.g, col2.b)) * float(abs(col2.a - 0.75) > 0.1), 0.0001);
-	col3.a = max(max(col3.r, max(col3.g, col3.b)) * float(abs(col3.a - 0.75) > 0.1), 0.0001);
-	col4.a = max(max(col4.r, max(col4.g, col4.b)) * float(abs(col4.a - 0.75) > 0.1 && abs(col4.a - 0.5) > 0.1), 0.0001);
-	col5.a = max(max(col5.r, max(col5.g, col5.b)) * float(abs(col5.a - 0.75) > 0.1), 0.0001);
+	col0.rgb *= float(abs(col0.a - 0.75) > 0.1);
+	col1.rgb *= float(abs(col1.a - 0.75) > 0.1);
+	col2.rgb *= float(abs(col2.a - 0.75) > 0.1 && abs(ID - 5.5) > 1.0 && abs(col1.a - 0.5) > 0.1);
+	col3.rgb *= float(abs(col3.a - 0.75) > 0.1);
+	col4.rgb *= float(abs(col4.a - 0.75) > 0.1);
+	col5.rgb *= float(abs(col5.a - 0.75) > 0.1 && abs(ID - 5.5) > 1.0 && abs(col4.a - 0.25) > 0.1);
+	col6.rgb *= float(abs(col6.a - 0.75) > 0.1);
+
+	col0.a = max(max(col0.r, max(col0.g, col0.b)), 0.0001);
+	col1.a = max(max(col1.r, max(col1.g, col1.b)), 0.0001);
+	col2.a = max(max(col2.r, max(col2.g, col2.b)), 0.0001);
+	col3.a = max(max(col3.r, max(col3.g, col3.b)), 0.0001);
+	col4.a = max(max(col4.r, max(col4.g, col4.b)), 0.0001);
+	col5.a = max(max(col5.r, max(col5.g, col5.b)), 0.0001);
 	col6.a = max(max(col6.r, max(col6.g, col6.b)), 0.0001);
 
 	col0.rgb /= col0.a;
@@ -147,7 +156,7 @@ vec3[50] lightcols = vec3[50](
 	col.rgb *= maxAlpha;
 	if (ID > 119.5)	col.rgb *= (0.5 * colMult + vec3(0.5));
 	//col = texture2D(shadowcolor1, oldtexcoord2);
-	col.a = 1.0 - 0.25 * float(ID == 1) - 0.5 * float(ID == 5) - 0.7 * float(ID == 6);
+	col.a = 1.0 - 0.25 * float(ID == 1) - 0.5 * float(ID == 5) - 0.75 * float(ID == 6);
 	/*DRAWBUFFERS:01*/
 	gl_FragData[0] = blockData;
 	gl_FragData[1] = col;
@@ -164,8 +173,7 @@ void main(){
 	gl_Position = ftransform();
 	float vxDist = 0.125 * shadowMapResolution / VXHEIGHT;
 	dpos = floor(cameraPosition) - floor(previousCameraPosition);
-	oldtexcoord = gl_Position.xy + 2 * dpos.xz / shadowMapResolution;
-	float tempX = oldtexcoord.x;
+	oldtexcoord = gl_Position.xy + 2 * dpos.xz / float(shadowMapResolution);
 	oldtexcoord = oldtexcoord * 0.5 + vec2(0.5);
 	texcoord = gl_Position.xy * 0.5 + vec2(0.5);
 }
