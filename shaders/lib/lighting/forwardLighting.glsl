@@ -56,76 +56,50 @@ void GetLighting(inout vec3 albedo, inout float shadow, inout float fakeShadow, 
 
     #if defined OVERWORLD || defined END || defined SEVEN
 		#ifdef SHADOWS
-			if ((NdotL > 0.0 || subsurface + scattering > 0.001)) {
-				float shadowLengthX = length(worldPos.xy);
-				float shadowLengthZ = length(worldPos.yz);
-				float shadowLength = shadowDistance - max(shadowLengthX, shadowLengthZ) - shadowDistance / 12.0;
-
-				#if (defined OVERWORLD || defined SEVEN) && defined LIGHT_LEAK_FIX
-					if (isEyeInWater == 0) shadowLength *= float(lightmap.y > 0.001);
+			if ((NdotL > 0.0 || subsurface + scattering > 0.001) && max(abs(voxelSpacePos.x), abs(voxelSpacePos.z)) + 3.21 < 0.625 * shadowMapResolution / VXHEIGHT && abs(voxelSpacePos.y) + 3.21 < 32 * pow2(VXHEIGHT)) {
+				vec3 shadowPos = ToShadow(worldPos);
+				float distb = sqrt(shadowPos.x * shadowPos.x + shadowPos.y * shadowPos.y);
+				float distortFactor = distb * shadowMapBias + (1.0 - shadowMapBias);
+				shadowPos = DistortShadow(shadowPos, distortFactor);
+				#ifdef NORMAL_MAPPING
+					float NdotLm = clamp(dot(normal, lightVec) * 1.01 - 0.01, 0.0, 1.0) * 0.99 + 0.01;
+					NdotL = min(NdotL, NdotLm);
+				#else
+					float NdotLm = NdotL * 0.99 + 0.01;
 				#endif
-
-				if (shadowLength > 0.000001) {
-					vec3 shadowPos = ToShadow(worldPos);
-					float distb = sqrt(shadowPos.x * shadowPos.x + shadowPos.y * shadowPos.y);
-					float distortFactor = distb * shadowMapBias + (1.0 - shadowMapBias);
-					shadowPos = DistortShadow(shadowPos, distortFactor);
-
-					#ifdef NORMAL_MAPPING
-						float NdotLm = clamp(dot(normal, lightVec) * 1.01 - 0.01, 0.0, 1.0) * 0.99 + 0.01;
-						NdotL = min(NdotL, NdotLm);
-					#else
-						float NdotLm = NdotL * 0.99 + 0.01;
-					#endif
-
-					float dotWorldPos = dot(worldPos.xyz, worldPos.xyz);
-					
-					float biasFactor = sqrt(1.0 - NdotLm * NdotLm) / NdotLm;
-					float distortBias = distortFactor * shadowDistance / 256.0;
-					distortBias *= 8.0 * distortBias;
-					
-					float bias = (distortBias * biasFactor + dotWorldPos * 0.000005 + 0.05) / shadowMapResolution;
-					float offset = 1.0 / shadowMapResolution;
-
-					worldSunVec *= 2 * float(worldSunVec.y > 0.0) - 1;
-					shadowcol = GetShadow(voxelSpacePos + 0.01 * normalize(worldSunVec), worldSunVec);
-					shadow = float(max(shadowcol.r, max(shadowcol.g, shadowcol.b)) > 0.51);
-					
-					#if defined WATER_CAUSTICS && defined OVERWORLD && !defined GBUFFERS_WATER && defined PROJECTED_CAUSTICS
-						if (isEyeInWater == 0) {
-							if (shadow < 0.999) {
-								water = texture2D(shadowcolor0, shadowPos.st).r
-									* shadow2D(shadowtex1, vec3(shadowPos.st, shadowPos.z)).x;
-								#ifdef SHADOW_FILTER
-									shadowPos.z -= bias * shadowMapResolution / 2048.0;
-									for(int i = 0; i < 8; i++) {
-										vec2 shadowOffset = 0.002 * shadowoffsets[i];
-										water += texture2D(shadowcolor0, shadowOffset + shadowPos.st).r
-											* shadow2D(shadowtex1, vec3(shadowOffset + shadowPos.st, shadowPos.z)).x;
-									}
-									water *= 0.1;
-									water *= water;
-								#endif
-								water *= NdotL;
-							}
+				float dotWorldPos = dot(worldPos.xyz, worldPos.xyz);
+				float biasFactor = sqrt(1.0 - NdotLm * NdotLm) / NdotLm;
+				float distortBias = distortFactor * shadowDistance / 256.0;
+				distortBias *= 8.0 * distortBias;
+				
+				float bias = (distortBias * biasFactor + dotWorldPos * 0.000005 + 0.05) / shadowMapResolution;
+				float offset = 1.0 / shadowMapResolution;
+				worldSunVec *= 2 * float(worldSunVec.y > 0.0) - 1;
+				shadowcol = GetShadow(voxelSpacePos + 0.01 * normalize(worldSunVec), worldSunVec);
+				shadowcol.rgb += float(length(shadowcol.rgb) < 0.01) * vec3(pow2(clamp(1 - 0.3 * shadowcol.a / (subsurface + scattering + 0.001), 0, 1)));
+				shadow = float(max(shadowcol.r, max(shadowcol.g, shadowcol.b)) > 0.51);
+				#if defined WATER_CAUSTICS && defined OVERWORLD && !defined GBUFFERS_WATER && defined PROJECTED_CAUSTICS
+					if (isEyeInWater == 0) {
+						if (shadow < 0.999) {
+							water = texture2D(shadowcolor0, shadowPos.st).r
+								* shadow2D(shadowtex1, vec3(shadowPos.st, shadowPos.z)).x;
+							#ifdef SHADOW_FILTER
+								shadowPos.z -= bias * shadowMapResolution / 2048.0;
+								for(int i = 0; i < 8; i++) {
+									vec2 shadowOffset = 0.002 * shadowoffsets[i];
+									water += texture2D(shadowcolor0, shadowOffset + shadowPos.st).r
+										* shadow2D(shadowtex1, vec3(shadowOffset + shadowPos.st, shadowPos.z)).x;
+								}
+								water *= 0.1;
+								water *= water;
+							#endif
+							water *= NdotL;
 						}
-					#endif
-				} else {
-					//albedo.rgb *= 0.0;
-				}
-				float shadowLength2 =max(abs(voxelSpacePos.x), abs(voxelSpacePos.z));
-				float shadowSmooth = 8.0;
-				if (shadowLength2 > 0.0625 / VXHEIGHT * shadowMapResolution && abs(voxelSpacePos.y) > 32 * pow2(VXHEIGHT)) {
-					float shadowLengthDecider = max(shadowLength2 / shadowSmooth - float(abs(voxelSpacePos.y) > 32 * pow2(VXHEIGHT)), 0.0);
-					float skyLightShadow = GetFakeShadow(lightmap.y);
-					shadow = skyLightShadow;// mix(skyLightShadow, shadow, shadowLengthDecider);
-					shadowcol = vec4(shadow);
-					subsurface *= mix(subsurface * 0.5, subsurface, shadowLengthDecider);
-					fakeShadow = mix(1.0, fakeShadow, shadowLengthDecider);
-					fakeShadow = 1.0 - fakeShadow;
-					fakeShadow *= fakeShadow;
-					fakeShadow = 1.0 - fakeShadow;
-				}
+					}
+				#endif
+			} else {
+				shadow = GetFakeShadow(lightmap.y);
+				shadowcol = vec4(shadow);
 			}
 		#else
 			shadow = GetFakeShadow(lightmap.y);
@@ -275,16 +249,16 @@ void GetLighting(inout vec3 albedo, inout float shadow, inout float fakeShadow, 
 
 	vec3 blockLighting = vec3(0);
 	#if defined OVERWORLD || defined NETHER || defined END
-	if (abs(voxelSpacePos.x) < 0.065 * shadowMapResolution / VXHEIGHT - 10 && abs(voxelSpacePos.z) < 0.065 * shadowMapResolution / VXHEIGHT - 10 && voxelSpacePos.y < 32 * pow2(VXHEIGHT)) {
-		vec3[2] voxelPos0 = getVoxelPos(vec3(voxelSpacePos.x, floor(voxelSpacePos.y + 0.01) - 0.01, voxelSpacePos.z) + 0.5 * worldNormal);
+	if (abs(voxelSpacePos.x) < 0.0625 * shadowMapResolution / VXHEIGHT - 10 && abs(voxelSpacePos.z) < 0.0625 * shadowMapResolution / VXHEIGHT - 10 && voxelSpacePos.y < 32 * pow2(VXHEIGHT)) {
+		vec3[2] voxelPos0 = getVoxelPos(vec3(voxelSpacePos.x, floor(voxelSpacePos.y + 0.51) - 0.01, voxelSpacePos.z) + 1.0 * worldNormal);
 		vec3 blockLightCol0 = texture2D(shadowcolor1, voxelPos0[0].xz / shadowMapResolution + vec2(0.5)).rgb;// * float(abs(voxelPos0[0].x / shadowMapResolution) < 0.5 && abs(voxelPos0[0].z / shadowMapResolution) < 0.5);
-		vec3[2] voxelPos1 = getVoxelPos(vec3(voxelSpacePos.x, floor(voxelSpacePos.y + 0.01) + 0.99, voxelSpacePos.z) + 0.5 * worldNormal);
+		vec3[2] voxelPos1 = getVoxelPos(vec3(voxelSpacePos.x, floor(voxelSpacePos.y + 0.51) + 0.99, voxelSpacePos.z) + 1.0 * worldNormal);
 		vec3 blockLightCol1 = texture2D(shadowcolor1, voxelPos1[0].xz / shadowMapResolution + vec2(0.5)).rgb;// * float(abs(voxelPos1[0].x / shadowMapResolution) < 0.5 && abs(voxelPos1[0].z / shadowMapResolution) < 0.5);
-		blockLighting = mix(blockLightCol0, blockLightCol1, fract(voxelSpacePos.y + 0.01));
+		blockLighting = mix(blockLightCol0, blockLightCol1, fract(voxelSpacePos.y + 0.51));
 		blockLighting = pow(blockLighting, vec3(1.5));
 	}else{
 	#endif
-		blockLighting = blocklightCol * newLightmap * newLightmap;
+		blockLighting = vec3(0.86, 0.69, 0.55) * newLightmap * newLightmap;
 	#if defined OVERWORLD || defined NETHER || defined END
 	}
 	#endif

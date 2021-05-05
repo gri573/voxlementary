@@ -2,6 +2,8 @@
 Complementary shaders by EminGT, based on BSL shaders by Capt Tatsu, with SSPT added by gri573
 
 
+Shadow quality needs to be set to 1x for this shaderpack to work.
+
 This project is not finished because it has some known issues:
  - Lighting may flicker when moving vertically
  - Light leaking may occur

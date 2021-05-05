@@ -61,6 +61,7 @@ vec4 GetShadow(vec3 pos, vec3 dir){
 		rayColor0.rgb *= vec3(1.0) - float(ID == 3) * vec3(1 - WATER_COL_R, 1 - WATER_COL_G, 1 - WATER_COL_B)/255.0;
 		rayColor0.rgb = (1 - abs(2 * rayColor0.a - 1)) * rayColor0.rgb + max(1 - 2 * rayColor0.a, 0.0) * vec3(1.0);
 		rayColor.rgb *= rayColor0.rgb;
+		rayColor.a = offset;
 		mode = (1 - float(ID == 4) - isAABB) * float(voxelData[3].z * 256 > 0.5);
 		if(offset < 0.0 || voxelData[3].x < 0.5 || length(rayColor.rgb) < 0.01) rayEnd = true;
 		oldmidtexcoord = midtexcoord;
