@@ -13,6 +13,7 @@ varying float texSize;
 #ifdef FSH
 //Uniforms//
 uniform ivec2 atlasSize;
+uniform sampler2D texture;
 uniform sampler2D lightmap;
 uniform sampler2D shadowcolor1;
 
@@ -31,8 +32,10 @@ vec2[4] offsets = vec2[4](
 void main() {
 	if (mat < -0.9) discard;
 	vec4 light = texture2D(shadowcolor1, screentexcoord);
+	vec3 lightmult = vec3(1.0);
+	if (abs(mat - 120) < 0.1 || abs(mat - 3) < 0.1) lightmult = texture2D(texture, texcoord).rgb * glcolor.rgb;
 	float mat1 = mat + 26;
-	vec4 color = vec4(0.5 * texcoord - vec2(0.5 * texSize), texSize, mat1 / 255.0);
+	vec4 color = vec4(lightmult, mat1 / 255.0);
 	/*DRAWBUFFERS:01*/
 	gl_FragData[0] = color;
 	gl_FragData[1] = light;
@@ -113,6 +116,8 @@ void main() {
 		91 * float(abs(mc_Entity.x - 7777) < 0.1) + //emerald block
 		92 * float(abs(mc_Entity.x - 7776) < 0.1) + //redstone block
 		93 * float(abs(mc_Entity.x - 7775) < 0.1) + //lapis block
+
+		120 * float(abs(mc_Entity.x - 79) < 0.1) + //stained glass
 		0
 		, 1);
 	entityMat = 0;

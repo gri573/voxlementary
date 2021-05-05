@@ -90,8 +90,9 @@ void main(){
 	oldtexcoord2 += vec2(0.125 / VXHEIGHT * dpos.y - wrapping, 0.125 / VXHEIGHT * wrapping);
 	vec4 blockData = texture2D(shadowcolor0, oldtexcoord2);
 	float ID = floor(blockData.a * 255.0 - 25.5);
-	float isLight = float(ID > 49.5);
-
+	float isLight = float(ID > 49.5 && ID < 119.5);
+	vec3 colMult = texture2D(shadowcolor0, oldtexcoord2).rgb;
+	colMult /= max(colMult.r, max(colMult.g, colMult.b));
 	wrapping = float(oldtexcoord2.x + 0.125 / VXHEIGHT > 1.0) - float(oldtexcoord.x - 0.125 / VXHEIGHT < 0.0);
 	vec2 pos0 = oldtexcoord2 - vec2(1.0 / shadowMapResolution, 0);
 	vec2 pos1 = oldtexcoord2 - vec2(0, 1.0 / shadowMapResolution);
@@ -108,9 +109,9 @@ void main(){
 	vec4 col5 = texture2D(shadowcolor1, pos5) * float(abs(pos5.x - 0.5) < 0.5 && abs(pos5.y - 0.5) < 0.5);
 	vec4 col6 = vec4(0);
 	if (isLight > 0.5) col6.rgb = lightcols[int(ID - 49.5)] / 255.0;
-	
+
 	col0.a = max(max(col0.r, max(col0.g, col0.b)) * float(abs(col0.a - 0.75) > 0.1), 0.0001);
-	col1.a = max(max(col1.r, max(col1.g, col1.b)) * float(abs(col1.a - 0.75) > 0.1 && abs(col1.a - 0.25) > 0.1), 0.0001);
+	col1.a = max(max(col1.r, max(col1.g, col1.b)) * float(abs(col1.a - 0.75) > 0.1 && abs(col1.a - 0.3) > 0.1), 0.0001);
 	col2.a = max(max(col2.r, max(col2.g, col2.b)) * float(abs(col2.a - 0.75) > 0.1), 0.0001);
 	col3.a = max(max(col3.r, max(col3.g, col3.b)) * float(abs(col3.a - 0.75) > 0.1), 0.0001);
 	col4.a = max(max(col4.r, max(col4.g, col4.b)) * float(abs(col4.a - 0.75) > 0.1 && abs(col4.a - 0.5) > 0.1), 0.0001);
@@ -142,9 +143,9 @@ void main(){
 					col5.rgb * max(1 - 5 * (maxAlpha - col5.a), 0.0) + 
 					col6.rgb * 4 * col6.a, 1.0);
 	col.rgb /= max(max(0.0001, col.r), max(col.g, col.b));
-	col.rgb *= maxAlpha;
+	col.rgb *= maxAlpha * (0.5 * colMult + vec3(0.5));
 	//col = texture2D(shadowcolor1, oldtexcoord2);
-	col.a = 1.0 - 0.25 * float(ID == 1) - 0.5 * float(ID == 5) - 0.75 * float(ID == 6);
+	col.a = 1.0 - 0.25 * float(ID == 1) - 0.5 * float(ID == 5) - 0.7 * float(ID == 6);
 	/*DRAWBUFFERS:01*/
 	gl_FragData[0] = blockData;
 	gl_FragData[1] = col;
