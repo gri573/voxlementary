@@ -1,8 +1,8 @@
-# Complementary_SSPT
-Complementary shaders by EminGT, based on BSL shaders by Capt Tatsu, with SSPT added by gri573
+# Voxlementary
+Complementary shaders by EminGT, based on BSL shaders by Capt Tatsu, with coloured voxel flood fill lighting added by gri573
 
 
-Shadow quality needs to be set to 1x for this shaderpack to work.
+Shadow quality needs to be set to 1x for this shaderpack to work, Optifine G8 previews or later are required.
 
 This project is not finished because it has some known issues:
  - Lighting may flicker when moving vertically
