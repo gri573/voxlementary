@@ -75,7 +75,8 @@ void GetLighting(inout vec3 albedo, inout float shadow, inout float fakeShadow, 
 				float bias = (distortBias * biasFactor + dotWorldPos * 0.000005 + 0.05) / shadowMapResolution;
 				float offset = 1.0 / shadowMapResolution;*/
 				worldSunVec *= 2 * float(worldSunVec.y > 0.0) - 1;
-				shadowcol = GetShadow(voxelSpacePos + 0.01 * normalize(worldSunVec), worldSunVec);
+				if(abs(worldSunVec.x) < 0.00001 || abs(worldSunVec.y) < 0.00001 || abs(worldSunVec.z) < 0.00001) worldSunVec += vec3(0.0001);
+				shadowcol = GetShadow(voxelSpacePos + 0.001 * normalize(worldSunVec), worldSunVec);
 				shadowcol.rgb += float(length(shadowcol.rgb) < 0.01) * vec3(pow2(clamp(1 - 0.3 * shadowcol.a / (subsurface + scattering + 0.001), 0, 1)));
 				shadow = float(max(shadowcol.r, max(shadowcol.g, shadowcol.b)) > 0.51);
 /*				#if defined WATER_CAUSTICS && defined OVERWORLD && !defined GBUFFERS_WATER && defined PROJECTED_CAUSTICS

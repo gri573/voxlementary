@@ -3,7 +3,7 @@
 #include "/lib/vx/voxelTrace.glsl"
 #include "/lib/vx/aabb.glsl"
 #include "/lib/vx/crossmodels.glsl"
-const int raySteps = 8;
+const int raySteps = 15;
 vec4 GetShadow(vec3 pos, vec3 dir){
 	float vxDist = 0.0625 * shadowMapResolution / VXHEIGHT;
 	vec3 pos0 = pos + 0.01 * dir;
@@ -51,14 +51,16 @@ vec4 GetShadow(vec3 pos, vec3 dir){
 		if (ID == 120 || ID == 3 || ID == 64){
 			rayColor0 = vec4(voxelData[1], 0.5);
 		}
-
+		if(ID == 121) {
+			rayColor0.a = float(float(abs(fract(pos.x) - 0.5) > 0.4375) + float(abs(fract(pos.y) - 0.5) > 0.4375) + float(abs(fract(pos.z) - 0.5) > 0.4375) > 1.5);
+		}
+		float isnLast = float(l + 1 < raySteps);
 		offset = (pos0.x - pos.x) / dir.x + 0.00001;
 		pos += (45 * float(posNorm[0] != vec3(0)) + 5) * epsilon - posNorm[0];
-
-		rayColor0.a = mix(rayColor0.a, 1.0, float(l + 1 == raySteps || isAABB > 0.5));
+		rayColor0.a = mix(rayColor0.a, 1.0, float(isnLast < 0.5 || isAABB > 0.5));
 		rayColor0.a = mix(rayColor0.a, 0.0, float(offset < 0.0));
 		rayColor0.a = rayColor0.a * rayColor0.a * 0.5 + rayColor0.a * 0.5;
-		rayColor0 *= 1 - skip;
+		rayColor0 *= 1 - skip * isnLast;
 		rayColor0.rgb *= vec3(1.0) - float(ID == 3) * vec3(1 - WATER_COL_R, 1 - WATER_COL_G, 1 - WATER_COL_B)/255.0;
 		rayColor0.rgb = (1 - abs(2 * rayColor0.a - 1)) * rayColor0.rgb + max(1 - 2 * rayColor0.a, 0.0) * vec3(1.0);
 		rayColor.rgb *= rayColor0.rgb;
