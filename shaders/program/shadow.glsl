@@ -8,7 +8,7 @@ varying vec4 glcolor;
 varying vec3 glnormal;
 varying float entityMat;
 varying float mat;
-varying float texSize;
+varying float height;
 
 #ifdef FSH
 //Uniforms//
@@ -36,7 +36,7 @@ void main() {
 	if (abs(mat - 120) < 0.1 || abs(mat - 3) < 0.1) {
 		lightmult = texture2D(texture, texcoord).rgb * glcolor.rgb;
 	} else {
-		lightmult = vec3(0.5 * texcoord - 0.5 * vec2(texSize), texSize);
+		lightmult = vec3(0.5 * texcoord, height);
 	}
 	float mat1 = mat + 26;
 	vec4 color = vec4(lightmult, mat1 / 255.0);
@@ -66,19 +66,16 @@ void main() {
 		2 * float(abs(mc_Entity.x - 55) < 0.1 || abs(mc_Entity.x - 300) < 0.1 || abs(mc_Entity.x - 63) < 0.1 || abs(mc_Entity.x - 12000) < 0.1 || abs(mc_Entity.x - 59) < 0.1) + //discard
 		3 * float(abs(mc_Entity.x - 8) < 0.1) + //water
 		4 * float(abs(mc_Entity.x - 31) < 0.1 || abs(mc_Entity.x - 6) < 0.1 || abs(mc_Entity.x - 175) < 0.1 || abs(mc_Entity.x - 176) < 0.1 || abs(mc_Entity.x - 83) < 0.1) + //cross model blocks
-		5 * float(abs(mc_Entity.x - 12001) < 0.1) + //bottom slabs
+		5 * float(abs(mc_Entity.x - 12001) < 0.1 || abs(mc_Entity.x - 9879) < 0.1 || abs(mc_Entity.x - 12003) < 0.1 || abs(mc_Entity.x - 9877) < 0.1 || abs(mc_Entity.x - 8667) < 0.1 || abs(mc_Entity.x - 9876) < 0.1 || abs(mc_Entity.x - 866) < 0.1 || abs(mc_Entity.x - 9878) < 0.1 || abs(mc_Entity.x - 9880) < 0.1 || abs(mc_Entity.x - 9881) < 0.1 || abs(mc_Entity.x - 9882) < 0.1 || abs(mc_Entity.x - 12018) < 0.1 || abs(mc_Entity.x - 12012) < 0.1) + //block bottom stuff
 		6 * float(abs(mc_Entity.x - 12002) < 0.1) + //top slabs
-		7 * float(abs(mc_Entity.x - 12003) < 0.1) + //trapdoors
-		8 * float(abs(mc_Entity.x - 12004) < 0.1) + //more trapdoors
-		9 * float(abs(mc_Entity.x - 12005) < 0.1) + //even more trapdoors
+		8 * float(abs(mc_Entity.x - 12004) < 0.1) + //top trapdoors
+		9 * float(abs(mc_Entity.x - 12005) < 0.1) + //more trapdoors
 		10 * float(abs(mc_Entity.x - 12006) < 0.1) + //MOAR trapdoors
 		11 * float(abs(mc_Entity.x - 12007) < 0.1) + //EVEN MOAR trapdoors
 		12 * float(abs(mc_Entity.x - 12008) < 0.1) + //THE MOST trapdoors
 		13 * float(abs(mc_Entity.x - 12009) < 0.1) + //fences
 		14 * float(abs(mc_Entity.x - 12010) < 0.1) + //walls
-		15 * float(abs(mc_Entity.x - 919) < 0.1) + //rails
 		17 * float(abs(mc_Entity.x - 12011) < 0.1) + //pressure plates
-		21 * float(abs(mc_Entity.x - 12012) < 0.1) + //path blocks, farmland
 		22 * float(abs(mc_Entity.x - 12013) < 0.1) + //bumbo cactoni
 		50 * float(abs(mc_Entity.x - 95) < 0.1) + //torch
 		51 * float(abs(mc_Entity.x - 951) < 0.1) + //redstone torch
@@ -88,7 +85,7 @@ void main() {
 		55 * float(abs(mc_Entity.x - 94) < 0.1) + //campfire
 		56 * float(abs(mc_Entity.x - 941) < 0.1) + //soul campfire
 		60 * float(abs(mc_Entity.x - 91) < 0.1) + //glowstone
-		61 * float(abs(mc_Entity.x - 10) < 0.1) + // lava
+		61 * float(abs(mc_Entity.x - 10) < 0.1) + //lava
 		62 * float(abs(mc_Entity.x - 1010) < 0.1) + //fire
 		63 * float(abs(mc_Entity.x - 80) < 0.1) + //nether portal
 		64 * float(abs(mc_Entity.x - 210) < 0.1) + //soul fire
@@ -124,9 +121,22 @@ void main() {
 
 		120 * float(abs(mc_Entity.x - 79) < 0.1 || abs(mc_Entity.x - 12017) < 0.1) + //stained glass, honey, slime
 		0;
+	height = 
+		0.0625 * float(abs(mc_Entity.x - 866) < 0.1) + //carpet
+		0.125 * float(abs(mc_Entity.x - 9876) < 0.1 || abs(mc_Entity.x - 8667) < 0.1) + //repeater etc
+		0.1875 * float(abs(mc_Entity.x - 12003) < 0.1) + //bottom trapdoors
+		0.25 * float(abs(mc_Entity.x - 9877) < 0.1) + //two snow layers
+		0.375 * float(abs(mc_Entity.x - 9878) < 0.1) + //three snow layers
+		0.4375 * float(abs(mc_Entity.x - 94) < 0.1 || abs(mc_Entity.x - 949) < 0.1 || abs(mc_Entity.x - 941) < 0.1 || abs(mc_Entity.x - 9419) < 0.1) + //campfires
+		0.5 * float(abs(mc_Entity.x - 12001) < 0.1 || abs(mc_Entity.x - 9879) < 0.1) + //half
+		0.5625 * float(abs(mc_Entity.x - 12018) < 0.1) + //stonecutter
+		0.625 * float(abs(mc_Entity.x - 9880) < 0.1) + //five snow layers
+		0.75 * float(abs(mc_Entity.x - 12019) < 0.1 || abs(mc_Entity.x - 9881) < 0.1) + //enchanting table and six snow layers
+		0.875 * float(abs(mc_Entity.x - 9882) < 0.1) + //seven snow layers
+		0.9375 * float(abs(mc_Entity.x - 12012) < 0.1) + //grass path, farmland
+	0;
 	entityMat = 0;
 	texcoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
-	texSize = abs(mc_midTexCoord.x - texcoord.x);
 	texcoord = mc_midTexCoord;
 	lmcoord  = (gl_TextureMatrix[1] * gl_MultiTexCoord1).xy;
 	glcolor = gl_Color;

@@ -27,12 +27,13 @@ vec4 GetShadow(vec3 pos, vec3 dir){
 		vec3[2] posNorm = vec3[2](0.0);
 		if (ID >= 57 && ID <= 62 || ID == 4) skip = 1;
 		if (isAABB > 0.5) {
+			float height = voxelData[1].z;
 			if (ID >= 50 && ID < 53) ID = 18;
 			if (ID >= 53 && ID < 55) ID = 19;
 			if (ID >= 55 && ID < 57) ID = 5;
 			ID -= 5;
 			vec3 localPos = fract(pos + epsilon);
-			posNorm = aabb(localPos, dir, ID);
+			posNorm = aabb(localPos, dir, ID, height);
 			if (posNorm[1].x < 900){
 				posNorm[0] -= localPos - epsilon;
 				pos += posNorm[0];

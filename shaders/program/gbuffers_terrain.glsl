@@ -880,7 +880,7 @@ void main(){
 	#endif
 
 	#if defined ADVANCED_MATERIALS && defined REFLECTION_RAIN
-		if (mc_Entity.x == 9875) // No Rain Reflections
+		if (mc_Entity.x > 9874.5 && mc_Entity.x < 9882.5) // No Rain Reflections
 			mat = 5.0;
 	#endif
 

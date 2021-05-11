@@ -1,5 +1,5 @@
-vec3[2] aabb(vec3 pos, vec3 dir, int ID) {
-	vec3[30] mincoord = vec3[30](
+vec3[2] aabb(vec3 pos, vec3 dir, int ID, float height) {
+	vec3[30] mincoords = vec3[30](
 		vec3(0.0),//bottom slab
 		vec3(0.0, 0.5, 0.0),//top slab
 		vec3(0.0),//bottom trapdoor
@@ -31,7 +31,7 @@ vec3[2] aabb(vec3 pos, vec3 dir, int ID) {
 		vec3(0.0),
 		vec3(0.0)
 	);
-	vec3[30] maxcoord = vec3[30](
+	vec3[30] maxcoords = vec3[30](
 		vec3(1.0, 0.5, 1.0),//bottom slab
 		vec3(1.0),//top slab
 		vec3(1.0, 0.1875, 1.0),//bottom trapdoor
@@ -67,13 +67,16 @@ vec3[2] aabb(vec3 pos, vec3 dir, int ID) {
 	float offset = 1000000.0;
 	vec3 newPos = vec3(0);
 	vec3 normal = vec3(0);
+	vec3 mincoord = mincoords[ID];
+	vec3 maxcoord = maxcoords[ID];
+	if (abs(float(ID)) < 0.5) maxcoord = vec3(1.0, height, 1.0);
 	for(int i = 0; i < 6; i++) {
 		vec3 facing = vec3(float(i == 3), float(i == 4), float(i == 5)) - vec3(float(i == 0), float(i == 1), float(i == 2));
-		vec3 face = mincoord[ID] * float(i < 3) + maxcoord[ID] * float(i > 2);
+		vec3 face = mincoord * float(i < 3) + maxcoord * float(i > 2);
 		float newOffset = dot(sign(face - pos) * sign(dir), abs(facing)) * length((pos - face) * facing) / length(dir * facing);
-		float isInBounds = float(((pos.x + dir.x * newOffset > mincoord[ID].x && pos.x + dir.x * newOffset < maxcoord[ID].x) || abs(facing.x) > 0.5) &&
-								((pos.y + dir.y * newOffset > mincoord[ID].y && pos.y + dir.y * newOffset < maxcoord[ID].y) || abs(facing.y) > 0.5) &&
-								((pos.z + dir.z * newOffset > mincoord[ID].z && pos.z + dir.z * newOffset < maxcoord[ID].z) || abs(facing.z) > 0.5) && length(face * facing) < 1.01);
+		float isInBounds = float(((pos.x + dir.x * newOffset > mincoord.x && pos.x + dir.x * newOffset < maxcoord.x) || abs(facing.x) > 0.5) &&
+								((pos.y + dir.y * newOffset > mincoord.y && pos.y + dir.y * newOffset < maxcoord.y) || abs(facing.y) > 0.5) &&
+								((pos.z + dir.z * newOffset > mincoord.z && pos.z + dir.z * newOffset < maxcoord.z) || abs(facing.z) > 0.5) && length(face * facing) < 1.01);
 		if (isInBounds > 0.5 && newOffset < offset) {
 			offset = newOffset;
 			newPos = pos + dir * offset;
