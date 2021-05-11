@@ -44,6 +44,7 @@ const int gaux4Format = R8; 				//
 const int shadowcolor0Format = RGBA16;		//shadow colour
 */
 
+const vec4 shadowcolor0ClearColor = vec4(0);
 const bool shadowcolor1Clear = false;
 
 const bool shadowHardwareFiltering = true;
