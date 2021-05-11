@@ -36,7 +36,7 @@ vec3 voxelTrace[5](vec3 startPos, vec3 vect0, float mode, float end) {
 				vxData0 = texture2D(shadowcolor0, texCoord) * posNorm[1].x;
 				isFound = 1.0;
 				normal = -facing * sign(vect0);
-				vxData = vec4(vxData0.rgb, vxData0.a - 26/255.0);
+				vxData = vec4(vxData0.rgb, max(vxData0.a - 26/255.0, 0.0));
 				break;
 			}
 		//}

@@ -25,7 +25,7 @@ vec4 GetShadow(vec3 pos, vec3 dir){
 		int ID = int(floor(voxelData[3].z * 255 + 0.5));
 		float isAABB = float(ID >= 5 && ID < 57);
 		vec3[2] posNorm = vec3[2](0.0);
-		if (ID >= 57 && ID <= 62 || ID == 4) skip = 1;
+		if (ID >= 57 && ID <= 62 || ID == 4 || ID == 229) skip = 1;
 		if (isAABB > 0.5) {
 			float height = voxelData[1].z;
 			if (ID >= 50 && ID < 53) ID = 18;
@@ -47,7 +47,7 @@ vec4 GetShadow(vec3 pos, vec3 dir){
 
 		if(length(voxelData[2]) < 0.9) voxelData[2] = vec3(1, 0, 0);
 		vec2 midtexcoord = voxelData[1].xy;
-		vec4 rayColor0 = vec4(float(ID == 1 || (ID >= 60 && ID != 65 && ID != 72 &&(ID < 79 || ID > 82) && ID < 180)));
+		vec4 rayColor0 = vec4(float(ID == 1 || (ID >= 60 && ID != 65 && ID != 72 &&(ID < 79 || ID > 82))));
 		if (ID == 120 || ID == 3 || ID == 64){
 			rayColor0 = vec4(voxelData[1], 0.5);
 		}

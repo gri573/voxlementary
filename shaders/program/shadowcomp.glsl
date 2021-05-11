@@ -9,6 +9,10 @@ uniform vec3 cameraPosition;
 uniform vec3 previousCameraPosition;
 uniform sampler2D shadowcolor0, shadowcolor1;
 
+//Optifine Constants//
+const vec4 shadowcolor0ClearColor = vec4(0);//voxel data stuffs
+const bool shadowcolor1Clear = false;		//flood fill
+
 void main(){
 const vec3[50] lightcols = vec3[50](
 	vec3(TORCH_COL_R, TORCH_COL_G, TORCH_COL_B),//torch

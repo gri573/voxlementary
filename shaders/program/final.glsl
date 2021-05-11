@@ -14,7 +14,7 @@ varying vec2 texCoord;
 //Uniforms//
 uniform sampler2D colortex1;
 uniform sampler2D depthtex0;
-uniform sampler2D shadowcolor1;
+uniform sampler2D shadowcolor0;
 uniform float viewWidth, viewHeight;
 uniform float near, far;
 
@@ -41,11 +41,7 @@ const int gaux1Format = RG8; 				//half-res ao & water mask
 const int gaux2Format = RGB8;			    //reflection
 const int gaux3Format = RGB16; 				//normals & material format
 const int gaux4Format = R8; 				//
-const int shadowcolor0Format = RGBA16;		//shadow colour
 */
-
-const vec4 shadowcolor0ClearColor = vec4(0);
-const bool shadowcolor1Clear = false;
 
 const bool shadowHardwareFiltering = true;
 const float shadowDistanceRenderMul = 1.0;
@@ -124,7 +120,7 @@ void main() {
 		color.rgb = mix(grayStart, color.rgb, animation);
 	#endif
 	
-	//gl_FragColor = texture2D(shadowcolor1, texCoord);
+	//gl_FragColor = vec4(texture2D(shadowcolor0, texCoord).rgb, 1.0);
 	gl_FragColor = vec4(color, 1.0);
 }
 

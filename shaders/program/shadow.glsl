@@ -62,7 +62,7 @@ uniform mat4 shadowProjection, shadowProjectionInverse;
 //Program//
 void main() {
 	mat =
-		float(/*abs(mc_Entity.x - 18) < 0.1 || */abs(mc_Entity.x - 3737) < 0.1 || abs(mc_Entity.x - 9875) < 0.1 || abs(mc_Entity.x - 98) < 0.1 || abs(mc_Entity.x - 8666) < 0.1 || abs(mc_Entity.x - 11999) < 0.1) + //full blocks
+		float(abs(mc_Entity.x - 18) < 0.1 || abs(mc_Entity.x - 3737) < 0.1 || abs(mc_Entity.x - 9875) < 0.1 || abs(mc_Entity.x - 98) < 0.1 || abs(mc_Entity.x - 8666) < 0.1 || abs(mc_Entity.x - 11999) < 0.1) + //full blocks
 		2 * float(abs(mc_Entity.x - 55) < 0.1 || abs(mc_Entity.x - 300) < 0.1 || abs(mc_Entity.x - 63) < 0.1 || abs(mc_Entity.x - 12000) < 0.1 || abs(mc_Entity.x - 59) < 0.1) + //discard
 		3 * float(abs(mc_Entity.x - 8) < 0.1) + //water
 		4 * float(abs(mc_Entity.x - 31) < 0.1 || abs(mc_Entity.x - 6) < 0.1 || abs(mc_Entity.x - 175) < 0.1 || abs(mc_Entity.x - 176) < 0.1 || abs(mc_Entity.x - 83) < 0.1) + //cross model blocks
@@ -119,7 +119,8 @@ void main() {
 		92 * float(abs(mc_Entity.x - 7776) < 0.1) + //redstone block
 		93 * float(abs(mc_Entity.x - 7775) < 0.1) + //lapis block
 
-		120 * float(abs(mc_Entity.x - 79) < 0.1 || abs(mc_Entity.x - 12017) < 0.1) + //stained glass, honey, slime
+		120 * float(abs(mc_Entity.x - 79) < 0.1 || abs(mc_Entity.x - 12017) < 0.1 || abs(mc_Entity.x - 7979) < 0.1) + //stained glass, honey, slime
+		121 * float(abs(mc_Entity.x - 992) < 0.1) + //clear glass
 		0;
 	height = 
 		0.0625 * float(abs(mc_Entity.x - 866) < 0.1) + //carpet
