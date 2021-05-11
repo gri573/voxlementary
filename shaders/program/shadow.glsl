@@ -30,7 +30,7 @@ vec2[4] offsets = vec2[4](
 
 //Program//
 void main() {
-	if (mat < -0.9) discard;
+	if (mat < 0.1) discard;
 	vec4 light = texture2D(shadowcolor1, screentexcoord);
 	vec3 lightmult = vec3(1.0);
 	if (abs(mat - 120) < 0.1 || abs(mat - 3) < 0.1) {
@@ -61,7 +61,8 @@ uniform mat4 shadowProjection, shadowProjectionInverse;
 
 //Program//
 void main() {
-	mat = max(
+	mat =
+		float(/*abs(mc_Entity.x - 18) < 0.1 || */abs(mc_Entity.x - 3737) < 0.1 || abs(mc_Entity.x - 9875) < 0.1 || abs(mc_Entity.x - 98) < 0.1 || abs(mc_Entity.x - 8666) < 0.1 || abs(mc_Entity.x - 11999) < 0.1) + //full blocks
 		2 * float(abs(mc_Entity.x - 55) < 0.1 || abs(mc_Entity.x - 300) < 0.1 || abs(mc_Entity.x - 63) < 0.1 || abs(mc_Entity.x - 12000) < 0.1 || abs(mc_Entity.x - 59) < 0.1) + //discard
 		3 * float(abs(mc_Entity.x - 8) < 0.1) + //water
 		4 * float(abs(mc_Entity.x - 31) < 0.1 || abs(mc_Entity.x - 6) < 0.1 || abs(mc_Entity.x - 175) < 0.1 || abs(mc_Entity.x - 176) < 0.1 || abs(mc_Entity.x - 83) < 0.1) + //cross model blocks
@@ -121,9 +122,8 @@ void main() {
 		92 * float(abs(mc_Entity.x - 7776) < 0.1) + //redstone block
 		93 * float(abs(mc_Entity.x - 7775) < 0.1) + //lapis block
 
-		120 * float(abs(mc_Entity.x - 79) < 0.1) + //stained glass
-		0
-		, 1);
+		120 * float(abs(mc_Entity.x - 79) < 0.1 || abs(mc_Entity.x - 12017) < 0.1) + //stained glass, honey, slime
+		0;
 	entityMat = 0;
 	texcoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
 	texSize = abs(mc_midTexCoord.x - texcoord.x);

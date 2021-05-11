@@ -830,7 +830,7 @@ void main(){
 		    lmCoord.x = min(lmCoord.x, 0.885);
 		if (mc_Entity.x == 96 || mc_Entity.x == 961 || mc_Entity.x == 962 || mc_Entity.x == 963) // Sea Pickle
 			lmCoord.x = min(lmCoord.x, 0.885);
-		if (mc_Entity.x == 866) // Carpets, Wools
+		if (mc_Entity.x == 866 || mc_Entity.x == 8666) // Carpets, Wools
 			color.a *= (1.0 - pow(lmCoord.x, 6.0) * 0.5);
 		if (mc_Entity.x == 871) // Respawn Anchor Charges=1
 			lmCoord.x = 0.8;

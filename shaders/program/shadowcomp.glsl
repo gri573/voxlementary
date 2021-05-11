@@ -85,10 +85,10 @@ const vec3[50] lightcols = vec3[50](
 );
 
 	vec2 oldtexcoord2 = oldtexcoord;
-	float wrapping = float(oldtexcoord.x > 1 - 0.125 / VXHEIGHT && dpos.y > 0.5) - float(oldtexcoord.x < 0.125 / VXHEIGHT && dpos.y < -0.5);//float(oldtexcoord.x + 0.125 / VXHEIGHT * dpos.y > 1.0) - float(oldtexcoord.x + 0.125 / VXHEIGHT * dpos.y < 0.0);
+	//float wrapping = float(oldtexcoord.x > 1 - 0.125 / VXHEIGHT && dpos.y > 0.5) - float(oldtexcoord.x < 0.125 / VXHEIGHT && dpos.y < -0.5);//float(oldtexcoord.x + 0.125 / VXHEIGHT * dpos.y > 1.0) - float(oldtexcoord.x + 0.125 / VXHEIGHT * dpos.y < 0.0);
 	//oldtexcoord2 += vec2(0.125 / VXHEIGHT * dpos.y - wrapping, 0.125 / VXHEIGHT * wrapping);
 	oldtexcoord2 += vec2(0.125 / VXHEIGHT * dpos.y, 0);
-	wrapping = float(oldtexcoord2.x > 1.0) - float(oldtexcoord2.x < 0.0);
+	float wrapping = float(oldtexcoord2.x > 1.0) - float(oldtexcoord2.x < 0.0);
 	oldtexcoord2 += vec2(-wrapping, 0.125 / VXHEIGHT * wrapping);
 	vec4 blockData = texture2D(shadowcolor0, oldtexcoord2);
 	float ID = floor(blockData.a * 255.0 - 25.5);
@@ -109,8 +109,7 @@ const vec3[50] lightcols = vec3[50](
 	vec4 col3 = texture2D(shadowcolor1, pos3) * float(abs(pos3.x - 0.5) < 0.5 && abs(pos3.y - 0.5) < 0.5);
 	vec4 col4 = texture2D(shadowcolor1, pos4) * float(abs(pos4.x - 0.5) < 0.5 && abs(pos4.y - 0.5) < 0.5);
 	vec4 col5 = texture2D(shadowcolor1, pos5) * float(abs(pos5.x - 0.5) < 0.5 && abs(pos5.y - 0.5) < 0.5);
-	vec4 col6 = vec4(0);
-	if (isLight > 0.5) col6.rgb = lightcols[int(ID - 49.5)] / 255.0;
+	vec4 col6 = vec4(float(isLight) * lightcols[int(ID - 49.5)] / 255.0, 1.0);
 
 	col0.rgb *= float(abs(col0.a - 0.75) > 0.1);
 	col1.rgb *= float(abs(col1.a - 0.75) > 0.1);
