@@ -534,7 +534,7 @@ option.CG_TI=Tint Strength Value
 option.CG_TM=Tint Mix Value
 
 option.shadowMapResolution=Shadowmap Resolution
-option.shadowMapResolution.comment=Adjusts shadowmap size. §e[*]§r Higher resolution gives sharper shadows, but reduces performance.
+option.shadowMapResolution.comment=Adjusts shadowmap size. §e[*]§r Higher resolution increases the distance to which coloured lights are rendered, but reduces performance.
 value.shadowMapResolution.256=Potato (256)
 value.shadowMapResolution.1024=Low (1024)
 value.shadowMapResolution.2048=Medium (2048)
@@ -555,7 +555,7 @@ value.shadowDistance.768.0=48 Chunks
 value.shadowDistance.1024.0=64 Chunks
 
 option.SHADOWS=Real-Time Shadows
-option.SHADOWS.comment=Enables shadows that are getting generated using a shadow map. §e[*]§r Disabling shadows will reduce the quality of many things.
+option.SHADOWS.comment=Enables ray traced real-time shadows. $cThis MASSIVELY reduces performance.
 
 option.SHADOW_FILTER=Shadow Filtering
 option.SHADOW_FILTER.comment=Enables shadow filtering. §a[+]§r This effect benefits from TAA.
