@@ -48,8 +48,8 @@ vec4 GetShadow(vec3 pos, vec3 dir){
 		if(length(voxelData[2]) < 0.9) voxelData[2] = vec3(1, 0, 0);
 		vec2 midtexcoord = voxelData[1].xy;
 		vec4 rayColor0 = vec4(float(ID == 1 || (ID >= 60 && ID != 65 && ID != 72 &&(ID < 79 || ID > 82))));
-		if (ID == 120 || ID == 3 || ID == 64){
-			rayColor0 = vec4(voxelData[1], 0.5);
+		if (ID == 120 || ID == 3){
+			rayColor0 = vec4(voxelData[1], 0.5 + 0.25 * float(ID == 3));
 		}
 		if(ID == 121) {
 			rayColor0.a = float(float(abs(fract(pos.x) - 0.5) > 0.4375) + float(abs(fract(pos.y) - 0.5) > 0.4375) + float(abs(fract(pos.z) - 0.5) > 0.4375) > 1.5);

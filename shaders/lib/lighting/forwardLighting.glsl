@@ -55,7 +55,7 @@ void GetLighting(inout vec3 albedo, inout float shadow, inout float fakeShadow, 
 	#endif
 
     #if defined OVERWORLD || defined END || defined SEVEN
-		#ifdef SHADOWS
+		#if defined SHADOWS && (defined GBUFFERS_TERRAIN || defined GBUFFERS_WATER)
 			if ((NdotL > 0.0 || subsurface + scattering > 0.001) && max(abs(voxelSpacePos.x), abs(voxelSpacePos.z)) + 1.21 < 0.0625 * shadowMapResolution / VXHEIGHT && abs(voxelSpacePos.y) + 1.21 < 32 * pow2(VXHEIGHT)) {
 				vec3 shadowPos = ToShadow(worldPos);
 				float distb = sqrt(shadowPos.x * shadowPos.x + shadowPos.y * shadowPos.y);
