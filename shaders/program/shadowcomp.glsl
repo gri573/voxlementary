@@ -157,7 +157,7 @@ const vec3[50] lightcols = vec3[50](
 					col6.rgb * 4 * col6.a, 1.0);
 	col.rgb /= max(max(0.0001, col.r), max(col.g, col.b));
 	col.rgb *= maxAlpha;
-	if (ID > 119.5)	col.rgb *= (0.5 * colMult + vec3(0.5));
+	if (abs(ID - 120) < 0.5 || abs(ID - 3) < 0.5) col.rgb *= (TRANSLUCENT_BLOCKLIGHT_TINT * colMult + vec3(1 - TRANSLUCENT_BLOCKLIGHT_TINT));
 	//col = texture2D(shadowcolor1, oldtexcoord2);
 	col.a = 1.0 - 0.25 * float(ID == 1) - 0.5 * float(ID == 5) - 0.75 * float(ID == 6);
 	/*DRAWBUFFERS:01*/
