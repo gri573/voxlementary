@@ -553,7 +553,8 @@ void main() {
 		float walpha0 = wdata0[0].a + wdata0[1].a + wdata0[2].a + wdata0[3].a;
 		vec4 environment = vec4(0);
 		vec3 envcoords = floor(vec3((texCoord.x - 0.5) * viewWidth * 1.0 / INTERACTIVE_WATER_RES, 32 * VXHEIGHT * VXHEIGHT, (texCoord.y - 0.5) * viewHeight * 1.0 / INTERACTIVE_WATER_RES) + vec3(0.5)) + vec3(0.5);
-		while (length(environment) < 0.1 && envcoords.y > -32 * VXHEIGHT * VXHEIGHT && max(abs(envcoords.x), abs(envcoords.z)) < 0.0625 * shadowMapResolution / VXHEIGHT - 1.0){
+		float inRange = max(abs(envcoords.x), abs(envcoords.z)) / (0.0625 * shadowMapResolution / VXHEIGHT - 1.0);
+		while (length(environment) < 0.1 && envcoords.y > -32 * VXHEIGHT * VXHEIGHT && inRange < 1.0){
 			vec2 vxPos = getVoxelPos(envcoords)[0].xz;
 			vec4 vxData = texture2D(shadowcolor0, vxPos / shadowMapResolution + vec2(0.5));
 			envcoords.y -= 1;
@@ -561,16 +562,17 @@ void main() {
 			wdata.b = envcoords.y;
 		}
 		vec2 playerdist = (texCoord - vec2(0.5)) * vec2(viewWidth, viewHeight) / INTERACTIVE_WATER_RES + vec2(0.5) - fract(cameraPosition.xz);
-		if(abs(envcoords.y + 1) < 1.2 && length(playerdist) < 1.0){
-			wdata.r += cameraPosition.y - previousCameraPosition.y - dot(playerdist, cameraPosition.xz - previousCameraPosition.xz);
+		if(abs(envcoords.y + 1) < 1.2 && length(playerdist) < 0.4){
+			wdata.r += 2 * (cameraPosition.y - previousCameraPosition.y - 2 * dot(playerdist, cameraPosition.xz - previousCameraPosition.xz));
 		}
 		float wavgr = wdata0[0].r * wdata0[0].a + wdata0[1].r * wdata0[1].a + wdata0[2].r * wdata0[2].a + wdata0[3].r * wdata0[3].a;
 		wdata.g -= 0.1 * exp(0.05 * INTERACTIVE_WATER_RES) * (walpha0 * wdata.r - wavgr);
 		wdata.r += wdata.g;
 		if(wdata.a < 0.1 && length(environment) > 0.1) wdata.r = wavgr /(walpha0 + 0.0001);
-		wdata.rg *= vec2(0.997);
+		wdata.rg *= vec2(1.0) / (vec2(1.0) + 0.01 * wdata.rg * wdata.rg * wdata.rg *wdata.rg);
 		wdata.a = float(length(environment.rgb) > 0.1);
-		wdata.rg = mix(wdata.rg, vec2(0), pow(max(abs(texCoord.x - 0.5), abs(texCoord.y - 0.5)) * 2, 80));
+		wdata.r += (fract(0.2 * frameTimeCounter + dot(waterCoord.xy * vec2(viewWidth, viewHeight) / INTERACTIVE_WATER_RES, vec2(0.573, 0.2257))) + fract(0.4 * frameTimeCounter + dot(waterCoord.xy * vec2(viewWidth, viewHeight) / INTERACTIVE_WATER_RES, vec2(0.216, 0.173))) - 1) * pow(inRange, 6);
+		wdata.rg = mix(wdata.rg, vec2(0), pow(min(inRange, 1.0), 6));
 	#endif
 
 	/*DRAWBUFFERS:05*/
