@@ -13,8 +13,9 @@ varying vec2 texCoord;
 
 //Uniforms//
 uniform sampler2D colortex1;
+uniform sampler2D colortex8;
 uniform sampler2D depthtex0;
-uniform sampler2D shadowcolor0;
+//uniform sampler2D shadowcolor0;
 uniform float viewWidth, viewHeight;
 uniform float near, far;
 
@@ -120,7 +121,8 @@ void main() {
 		color.rgb = mix(grayStart, color.rgb, animation);
 	#endif
 	
-	//gl_FragColor = vec4(texture2D(shadowcolor0, texCoord).rgb, 1.0);
+	vec4 wdata = texture2D(colortex8, texCoord);
+	//gl_FragColor = vec4(mix(wdata.rgb * 0.5 + 0.5, color, 1 - wdata.a), 1.0);
 	gl_FragColor = vec4(color, 1.0);
 }
 
