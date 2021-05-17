@@ -136,7 +136,8 @@ float GetWaterHeightMap(vec3 worldPos, vec3 nViewPos){
 	worldPos *= 1.065;
 	vec2 waterTexCoord = (worldPos.xz + fract(cameraPosition.xz) - vec2(0.5)) * INTERACTIVE_WATER_RES / vec2(viewWidth, viewHeight) + vec2(0.5);
 	noise = waterBump * 0.5 * texture2D(colortex8,waterTexCoord).r;
-	noise *= 1 - min(pow(2.01 * max(abs(waterTexCoord.x - 0.5), abs(waterTexCoord.y - 0.5)), 10), 1.0);
+	float noiseMult = 1 - min(pow(max(2.01 * max(abs(waterTexCoord.x - 0.5), abs(waterTexCoord.y - 0.5)), max(abs(worldPos.x), abs(worldPos.z)) / (0.125  * shadowMapResolution * VXHEIGHT)), 10), 1.0);
+	noise *= noiseMult;
 	#else
     float mult = clamp(-dot(normalize(normal), nViewPos) * 8.0, 0.0, 1.0) / 
                  sqrt(sqrt(max(dist, 4.0)));
