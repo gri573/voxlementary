@@ -4,9 +4,7 @@ Complementary shaders by EminGT, based on BSL shaders by Capt Tatsu, with colour
 
 Shadow quality needs to be set to 1x for this shaderpack to work, Optifine G8 previews or later are required.
 
-This project is not finished because it has some known issues:
- - Lighting may flicker when moving vertically
- - Light leaking may occur
+This project is not finished: light leaking may occur.
 
 
 Credits:
