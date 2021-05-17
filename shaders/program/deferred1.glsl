@@ -575,8 +575,8 @@ void main() {
 		vec2 playerWaterCoord0 = (texCoord - vec2(0.5)) * vec2(viewWidth, viewHeight) / (1.0 * INTERACTIVE_WATER_RES) + 4 * vec2(frameTimeCounter, 0.573 * frameTimeCounter);
 		vec2 playerWaterCoord1 = (texCoord - vec2(0.5)) * vec2(viewWidth, viewHeight) / (1.0 * INTERACTIVE_WATER_RES) + 4 * vec2(1.6 * frameTimeCounter, -0.273 * frameTimeCounter);
 		vec2 playerWaterCoord2 = (texCoord - vec2(0.5)) * vec2(viewWidth, viewHeight) / (1.0 * INTERACTIVE_WATER_RES) + 4 * vec2(0.8 * frameTimeCounter, -0.473 * frameTimeCounter);
-		float stimulantWave = 20 * (sin(dot(playerWaterCoord0 + floor(cameraPosition.xz), vec2(0.573, 0.2257))) + 0.5 * sin(dot(playerWaterCoord1 + floor(cameraPosition.xz), vec2(0.216, -0.173))) + 0.5 * fract(dot(playerWaterCoord2 + floor(cameraPosition.xz), vec2(0.7312, 0.143))) - 0.25);
-		wdata.r = mix(wdata.r, stimulantWave, pow(min(inRange, 1.0), 100));
+		float stimulantWave = 30 * WATER_BUMP * (sin(dot(playerWaterCoord0 + floor(cameraPosition.xz), vec2(0.573, 0.2257))) + 0.5 * sin(dot(playerWaterCoord1 + floor(cameraPosition.xz), vec2(0.216, -0.173))) + 0.5 * fract(dot(playerWaterCoord2 + floor(cameraPosition.xz), vec2(0.7312, 0.143))) - 0.25);
+		wdata.r = mix(wdata.r, stimulantWave, pow(min(inRange, 1.0), 70));
 	#endif
 
 	/*DRAWBUFFERS:05*/
