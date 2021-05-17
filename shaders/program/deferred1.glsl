@@ -54,9 +54,8 @@ uniform int moonPhase;
 uniform sampler2D colortex3;
 #endif
 
-#if (defined ADVANCED_MATERIALS && defined REFLECTION_SPECULAR) || defined SEVEN || (defined END && END_SKY > 0) || (defined NETHER && defined NETHER_SMOKE)
 uniform vec3 cameraPosition, previousCameraPosition;
-
+#if (defined ADVANCED_MATERIALS && defined REFLECTION_SPECULAR) || defined SEVEN || (defined END && END_SKY > 0) || (defined NETHER && defined NETHER_SMOKE)
 uniform sampler2D colortex6;
 uniform sampler2D colortex1;
 uniform sampler2D noisetex;
