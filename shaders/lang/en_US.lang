@@ -6,11 +6,12 @@ profile.VANILLA=§eBedrock RTX-ish
 profile.MEDIUM=§aMedium (Default)
 profile.COMPATIBILITYMODE=§dCompatibility Mode
 profile.HIGH=§bHigh
-profile.comment=§4Potato:§r No shadows, no light shafts, no specular ref. §eBedrock RTX-ish:§r A mix of vanilla, Bedrock RTX, and Complementary; performance is about same as Medium. §aMedium (Default):§r Good performance with good visuals. §dCompatibility Mode:§r Changes so many things (not just normal settings) for mod compatibility, faster than medium. §bHigh:§r More effects and better quality.
+profile.WYNNCRAFT=§2WynnCraft Compatible
+profile.comment=§4Potato:§r No shadows, no light shafts, no specular ref. §eBedrock RTX-ish:§r A mix of vanilla, Bedrock RTX, and Complementary; performance is about same as Medium. §aMedium (Default):§r Good performance with good visuals. §dCompatibility Mode:§r Changes so many things (not just normal settings) for mod compatibility, faster than medium. §bHigh:§r More effects and better quality. §2Wynncraft: medium adjusted for optimal behaviour on the WynnCraft MMORPG.
 
 #Screens
-screen.ABOUT=Complementary Shaders By EminGT
-screen.ABOUT.comment=Heavily based on "BSL Shaders". Thanks so much to Capt Tatsu for letting me publish this BSL edit, and also proposing the idea of me doing so.
+screen.ABOUT=Voxlementary Shaders by gri573
+screen.ABOUT.comment=Almost completely based on "Complementary Shaders". Thanks so much to EminGT for letting me publish this Complementaray edit.
 
 screen.WORLD=World
 
@@ -49,7 +50,7 @@ screen.LIGHT_E=Sun Light - Evening
 screen.AMBIENT_E=Ambience - Evening
 screen.LIGHT_N=Moon Light - Night
 screen.AMBIENT_N=Ambience - Night
-screen.BLOCKLIGHT_COLOR=Blocklight Color
+screen.BLOCKLIGHT_COLOR=Blocklight Colours
 screen.SKY_COLOR=Overworld Sky Color
 screen.WATER_COLOR=Water Color
 screen.UNDERWATER_COLOR=Underwater Color
@@ -82,8 +83,41 @@ screen.AURORA_CONFIG=Aurora Borealis Settings
 
 screen.NEBULA_CONFIG=Ender Nebula Settings
 
+
+#blocklight colour settings
+screen.TORCH_COLOR=Torch Colour 
+screen.REDSTONE_TORCH_COLOR=Redstone Torch Colour 
+screen.SOUL_TORCH_COLOR=Soul Torch Colour 
+screen.LANTERN_COLOR=Lantern Colour 
+screen.SOUL_LANTERN_COLOR=Soul Lantern Colour 
+screen.FURNACE_COLOR=Furnace Colour 
+screen.FIRE_COLOR=Fire Colour 
+screen.SOUL_FIRE_COLOR=Soul Fire Colour 
+screen.SHROOMLIGHT_COLOR=Shroomlight Colour 
+screen.JACKOLANTERN_COLOR=Jack o'Lantern Colour 
+screen.GLOWSTONE_COLOR=Glowstone Colour 
+screen.LAVA_COLOR=Lava Colour 
+screen.MAGMA_COLOR=Magma Colour 
+screen.NETHER_PORTAL_COLOR=Nether Portal Colour 
+screen.RESPAWN_ANCHOR_COLOR=Respawn Anchor Colour 
+screen.CRYING_OBSIDIAN_COLOR=Crying Obsidian Colour 
+screen.REDSTONE_LAMP_COLOR=Redstone Lamp Colour 
+screen.END_ROD_COLOR=End Rod Colour 
+screen.END_PORTAL_COLOR=End Portal Colour 
+screen.CONDUIT_COLOR=Conduit Colour 
+screen.BEACON_COLOR=Beacon Colour 
+screen.SEA_PICKLE_COLOR=Sea Pickle Colour 
+screen.REDSTONE_COLORS=Redstone Colours 
+screen.DIAMOND_COLOR=Diamond Ore Colour 
+screen.LAPIS_COLORS=Lapis Colours 
+screen.EMERALD_COLORS=Emerald Colours 
+screen.GOLD_COLOR=Gold Ore Colour 
+screen.IRON_COLOR=Iron Ore Colour 
+screen.FALLBACK_COLOR=Fallback Blocklight Colour
+
+
 #Settings
-option.SECRET=§d§l§n§oSuper Secret Settings
+option.SECRET=§d§l§n§oSup§ker§d§l§n§o Se§kc§d§l§n§oret §kS§d§l§n§oettin§kg§d§l§n§os
 option.SECRET.comment=You have entered the Super Secret Settings.
 value.SECRET.0=
 
@@ -555,7 +589,12 @@ value.shadowDistance.768.0=48 Chunks
 value.shadowDistance.1024.0=64 Chunks
 
 option.SHADOWS=Real-Time Shadows
-option.SHADOWS.comment=Enables ray traced real-time shadows. $cThis MASSIVELY reduces performance.
+option.SHADOWS.comment=Enables ray traced real-time shadows. §cThis MASSIVELY reduces performance.
+
+option.VXHEIGHT=Voxel Volume Height
+option.VXHEIGHT.comment=Height of the voxel volume in blocks. The voxel volume is the volume in which coloured lights and shadows are calculated.
+value.VXHEIGHT.1=64
+value.VXHEIGHT.2=256
 
 option.SHADOW_FILTER=Shadow Filtering
 option.SHADOW_FILTER.comment=Enables shadow filtering. §a[+]§r This effect benefits from TAA.
@@ -641,6 +680,8 @@ option.BLOCKLIGHT_R=Red
 option.BLOCKLIGHT_G=Green
 option.BLOCKLIGHT_B=Blue
 option.BLOCKLIGHT_I=Intensity
+option.TRANSLUCENT_BLOCKLIGHT_TINT=Translucent Block Light Tint
+option.TRANSLUCENT_BLOCKLIGHT_TINT.comment=Controls how much Translucents tint block light as it passes through them.
 
 option.SKY_R=Red
 option.SKY_G=Green
@@ -880,6 +921,9 @@ option.GLOWING_REDSTONE_BLOCK.comment=Adds a glow to the redstone block.
 option.GLOWING_LAPIS_BLOCK=Emissive Lapis Block
 option.GLOWING_LAPIS_BLOCK.comment=Adds a glow to the lapis block.
 
+option.GLOWING_EMERALD_BLOCK=Emissive Emerald Block
+option.GLOWING_EMERALD_BLOCK.comment=Adds a glow to the emerald block.
+
 option.HAND_BLOOM_REDUCTION=Hand Bloom Reduction
 option.HAND_BLOOM_REDUCTION.comment=Reduces the amount of glow on items/blocks that are in player's hands.
 
@@ -978,6 +1022,8 @@ option.BLOCKLIGHT_FLICKER.comment=Adds flickering effect to blocklight.
 option.BLOCKLIGHT_FLICKER_STRENGTH=Blocklight Flickering Strength
 option.BLOCKLIGHT_FLICKER_STRENGTH.comment=Determines how noticable blocklight flicker is going to be.
 
+option.ROLLOVER=Rollover
+option.ROLLOVER.comment=Please don't enable, it is very annoying.
 option.ANAGLYPH=3D Anaglyph
 option.CHROMATIC_ABERRATION=Chromatic Aberration
 value.CHROMATIC_ABERRATION.0=OFF
