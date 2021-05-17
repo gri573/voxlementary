@@ -13,6 +13,9 @@ uniform sampler2D shadowcolor0, shadowcolor1;
 const vec4 shadowcolor0ClearColor = vec4(0);//voxel data stuffs
 const bool shadowcolor1Clear = false;		//flood fill
 
+//Includes//
+#include "/lib/vx/voxelPos.glsl"
+
 void main(){
 const vec3[50] lightcols = vec3[50](
 	vec3(TORCH_COL_R, TORCH_COL_G, TORCH_COL_B),//torch
@@ -88,24 +91,27 @@ const vec3[50] lightcols = vec3[50](
 	vec3(0)
 );
 
-	vec2 oldtexcoord2 = oldtexcoord;
-	//float wrapping = float(oldtexcoord.x > 1 - 0.125 / VXHEIGHT && dpos.y > 0.5) - float(oldtexcoord.x < 0.125 / VXHEIGHT && dpos.y < -0.5);//float(oldtexcoord.x + 0.125 / VXHEIGHT * dpos.y > 1.0) - float(oldtexcoord.x + 0.125 / VXHEIGHT * dpos.y < 0.0);
-	//oldtexcoord2 += vec2(0.125 / VXHEIGHT * dpos.y - wrapping, 0.125 / VXHEIGHT * wrapping);
-	oldtexcoord2 += vec2(0.125 / VXHEIGHT * dpos.y, 0);
+	//vec2 oldtexcoord2 = oldtexcoord;
+	vec3 pos = getVoxelPosInverse(texcoord);
+	pos += dpos;
+	vec3[2] posNorm0 = getVoxelPos(pos);
+	posNorm0[0].xz /= shadowMapResolution * VXHEIGHT;
+	vec2 oldtexcoord2 = posNorm0[0].xz + 0.5;
+/*oldtexcoord2 += vec2(0.125 / VXHEIGHT * dpos.y, 0);
 	float wrapping = float(oldtexcoord2.x > 1.0) - float(oldtexcoord2.x < 0.0);
-	oldtexcoord2 += vec2(-wrapping, 0.125 / VXHEIGHT * wrapping);
+	oldtexcoord2 += vec2(-wrapping, 0.125 / VXHEIGHT * wrapping);*/
 	vec4 blockData = texture2D(shadowcolor0, oldtexcoord2);
 	float ID = floor(blockData.a * 255.0 - 25.5);
 	float isLight = float(ID > 49.5 && ID < 119.5);
 	vec3 colMult = texture2D(shadowcolor0, oldtexcoord2).rgb;
 	colMult /= max(colMult.r, max(colMult.g, colMult.b));
-	wrapping = float(oldtexcoord2.x + 0.125 / VXHEIGHT > 1.0) - float(oldtexcoord.x - 0.125 / VXHEIGHT < 0.0);
-	vec2 pos0 = oldtexcoord2 - vec2(1.0 / shadowMapResolution, 0);
-	vec2 pos1 = oldtexcoord2 - vec2(0, 1.0 / shadowMapResolution);
-	vec2 pos2 = oldtexcoord2 - vec2(0.125 / VXHEIGHT - float(wrapping < -0.5), float(wrapping < -0.5) * 0.125 / VXHEIGHT);
-	vec2 pos3 = oldtexcoord2 + vec2(1.0 / shadowMapResolution, 0);
-	vec2 pos4 = oldtexcoord2 + vec2(0, 1.0 / shadowMapResolution);
-	vec2 pos5 = oldtexcoord2 + vec2(0.125 / VXHEIGHT - float(wrapping > 0.5), float(wrapping > 0.5) * 0.125 / VXHEIGHT);
+	float wrapping = float(oldtexcoord2.x + 0.125 / VXHEIGHT > 1.0) - float(oldtexcoord.x - 0.125 / VXHEIGHT < 0.0);
+	vec2 pos0 = getVoxelPos(pos + vec3(-1, 0, 0))[0].xz / (shadowMapResolution * VXHEIGHT) + vec2(0.5);
+	vec2 pos1 = getVoxelPos(pos + vec3(0, -1, 0))[0].xz / (shadowMapResolution * VXHEIGHT) + vec2(0.5);
+	vec2 pos2 = getVoxelPos(pos + vec3(0, 0, -1))[0].xz / (shadowMapResolution * VXHEIGHT) + vec2(0.5);
+	vec2 pos3 = getVoxelPos(pos + vec3(1, 0, 0))[0].xz / (shadowMapResolution * VXHEIGHT) + vec2(0.5);
+	vec2 pos4 = getVoxelPos(pos + vec3(0, 1, 0))[0].xz / (shadowMapResolution * VXHEIGHT) + vec2(0.5);
+	vec2 pos5 = getVoxelPos(pos + vec3(0, 0, 1))[0].xz / (shadowMapResolution * VXHEIGHT) + vec2(0.5);
 
 	vec4 col0 = texture2D(shadowcolor1, pos0) * float(abs(pos0.x - 0.5) < 0.5 && abs(pos0.y - 0.5) < 0.5);
 	vec4 col1 = texture2D(shadowcolor1, pos1) * float(abs(pos1.x - 0.5) < 0.5 && abs(pos1.y - 0.5) < 0.5);
@@ -116,11 +122,11 @@ const vec3[50] lightcols = vec3[50](
 	vec4 col6 = vec4(float(isLight) * lightcols[int(ID - 49.5)] / 255.0, 1.0);
 
 	col0.rgb *= float(abs(col0.a - 0.75) > 0.1);
-	col1.rgb *= float(abs(col1.a - 0.75) > 0.1);
-	col2.rgb *= float(abs(col2.a - 0.75) > 0.1 && abs(ID - 5.5) > 1.0 && abs(col1.a - 0.5) > 0.1);
+	col1.rgb *= float(abs(col1.a - 0.75) > 0.1 && abs(ID - 5.5) > 1.0 && abs(col1.a - 0.5) > 0.1);
+	col2.rgb *= float(abs(col2.a - 0.75) > 0.1);
 	col3.rgb *= float(abs(col3.a - 0.75) > 0.1);
-	col4.rgb *= float(abs(col4.a - 0.75) > 0.1);
-	col5.rgb *= float(abs(col5.a - 0.75) > 0.1 && abs(ID - 5.5) > 1.0 && abs(col4.a - 0.25) > 0.1);
+	col4.rgb *= float(abs(col4.a - 0.75) > 0.1 && abs(ID - 5.5) > 1.0 && abs(col4.a - 0.25) > 0.1);
+	col5.rgb *= float(abs(col5.a - 0.75) > 0.1);
 	col6.rgb *= float(abs(col6.a - 0.75) > 0.1);
 
 	col0.a = max(max(col0.r, max(col0.g, col0.b)), 0.0001);
@@ -176,7 +182,7 @@ void main(){
 	gl_Position = ftransform();
 	float vxDist = 0.125 * shadowMapResolution / VXHEIGHT;
 	dpos = floor(cameraPosition) - floor(previousCameraPosition);
-	oldtexcoord = gl_Position.xy + 2 * dpos.xz / float(shadowMapResolution);
+	oldtexcoord = gl_Position.xy;// + 2 * dpos.xz / float(shadowMapResolution);
 	oldtexcoord = oldtexcoord * 0.5 + vec2(0.5);
 	texcoord = gl_Position.xy * 0.5 + vec2(0.5);
 }
