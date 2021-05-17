@@ -25,7 +25,7 @@ float GetFakeShadow(float skyLight) {
 	float fakeShadow = 0.0;
 
 	#ifndef END
-		if (isEyeInWater == 0) skyLight = pow(skyLight, 30.0);
+		if (isEyeInWater == 0) skyLight = pow(skyLight, 28.0);
 		fakeShadow = skyLight;
 	#else
 		#ifdef SHADOWS

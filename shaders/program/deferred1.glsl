@@ -552,7 +552,7 @@ void main() {
 		float walpha0 = wdata0[0].a + wdata0[1].a + wdata0[2].a + wdata0[3].a + 0.01;
 		vec4 environment = vec4(0);
 		vec3 envcoords = floor(vec3((texCoord.x - 0.5) * viewWidth * 1.0 / INTERACTIVE_WATER_RES, 32 * VXHEIGHT * VXHEIGHT, (texCoord.y - 0.5) * viewHeight * 1.0 / INTERACTIVE_WATER_RES) + vec3(0.5)) + vec3(0.5);
-		float inRange = max(abs(envcoords.x), abs(envcoords.z)) / (0.0625 * shadowMapResolution / VXHEIGHT - 1.0);
+		float inRange = min(max(abs(envcoords.x), abs(envcoords.z)) / (0.0625 * shadowMapResolution / VXHEIGHT - 1.0) + pow(2.01 * max(abs(texCoord.x - 0.5), abs(texCoord.y - 0.5)), 100), 1.0);
 		while (length(environment) < 0.1 && envcoords.y > -32 * VXHEIGHT * VXHEIGHT && inRange < 1.0){
 			vec2 vxPos = getVoxelPos(envcoords)[0].xz;
 			vec4 vxData = texture2D(shadowcolor0, vxPos / shadowMapResolution + vec2(0.5));
@@ -566,16 +566,19 @@ void main() {
 		}
 		float wavgr = wdata0[0].r * wdata0[0].a + wdata0[1].r * wdata0[1].a + wdata0[2].r * wdata0[2].a + wdata0[3].r * wdata0[3].a;
 		wdata.g -= 0.1 * exp(0.05 * INTERACTIVE_WATER_RES) * (walpha0 * wdata.r - wavgr);
+		wdata.rg *= wdata.a;
 		wdata.r += wdata.g;
-		wdata.rg *= wdata.a * wdata.a;
+		wdata.r += pow(max(wdata.b + floor(cameraPosition.y) - 61, 0.0), 0.05) * 0.0005 * wdata.r;
 		if(wdata.a < 0.1 && length(environment) > 0.1) wdata.r = wavgr /(walpha0 + 0.0001);
 		wdata.rg *= vec2(1.0) / (vec2(1.0) + 0.01 * wdata.rg * wdata.rg * wdata.rg *wdata.rg);
 		wdata.a = float(length(environment.rgb) > 0.1);
-		vec2 playerWaterCoord0 = (texCoord - vec2(0.5)) * vec2(viewWidth, viewHeight) / (1.0 * INTERACTIVE_WATER_RES) + 4 * vec2(frameTimeCounter, 0.573 * frameTimeCounter);
-		vec2 playerWaterCoord1 = (texCoord - vec2(0.5)) * vec2(viewWidth, viewHeight) / (1.0 * INTERACTIVE_WATER_RES) + 4 * vec2(1.6 * frameTimeCounter, -0.273 * frameTimeCounter);
-		vec2 playerWaterCoord2 = (texCoord - vec2(0.5)) * vec2(viewWidth, viewHeight) / (1.0 * INTERACTIVE_WATER_RES) + 4 * vec2(0.8 * frameTimeCounter, -0.473 * frameTimeCounter);
-		float stimulantWave = 30 * WATER_BUMP * (sin(dot(playerWaterCoord0 + floor(cameraPosition.xz), vec2(0.573, 0.2257))) + 0.5 * sin(dot(playerWaterCoord1 + floor(cameraPosition.xz), vec2(0.216, -0.173))) + 0.5 * fract(dot(playerWaterCoord2 + floor(cameraPosition.xz), vec2(0.7312, 0.143))) - 0.25);
-		wdata.r = mix(wdata.r, stimulantWave, pow(min(inRange, 1.0), 70));
+		vec2 playerWaterCoord0 = (texCoord - vec2(0.5)) * vec2(viewWidth, viewHeight) / (1.0 * INTERACTIVE_WATER_RES) + 4 * vec2(frameTimeCounter, 0.573 * frameTimeCounter) + floor(cameraPosition.xz);
+		vec2 playerWaterCoord1 = (texCoord - vec2(0.5)) * vec2(viewWidth, viewHeight) / (1.0 * INTERACTIVE_WATER_RES) + 4 * vec2(1.6 * frameTimeCounter, -0.273 * frameTimeCounter) + floor(cameraPosition.xz);
+		vec2 playerWaterCoord2 = (texCoord - vec2(0.5)) * vec2(viewWidth, viewHeight) / (1.0 * INTERACTIVE_WATER_RES) + 4 * vec2(0.8 * frameTimeCounter, -0.473 * frameTimeCounter) + floor(cameraPosition.xz);
+		float stimulantWave = WATER_BUMP * (0.5 * sin(mod(dot(playerWaterCoord0, vec2(0.173, 0.02257)), 6.2832)) + sin(mod(2 * dot(playerWaterCoord1, vec2(0.216, -0.173)), 5.2832)));
+		wdata.r += stimulantWave * pow(min(inRange, 1.0), 10);
+		wdata.r = mix(wdata.r, 0 * stimulantWave, pow(min(inRange, 1.0), 70));
+		wdata.rg *= float(abs(waterCoord.x - 0.5) < 0.5 || abs(waterCoord.y - 0.5) < 0.5);
 	#endif
 
 	/*DRAWBUFFERS:05*/
