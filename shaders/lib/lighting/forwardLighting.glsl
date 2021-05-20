@@ -251,7 +251,7 @@ void GetLighting(inout vec3 albedo, inout float shadow, inout float fakeShadow, 
 		worldNormal = vec3(0);
 	#endif
 	vec3 blockLighting = vec3(0);
-	#if defined OVERWORLD || defined NETHER || defined END
+	#if (defined OVERWORLD || defined NETHER || defined END) && !defined GBUFFERS_BEACONBEAM
 	float border = (max(max(abs(worldPos.x), abs(worldPos.z)) - 0.0625 / VXHEIGHT * shadowMapResolution, abs(worldPos.y) - 32 * pow2(VXHEIGHT)) + 7) * 0.2;
 	if (border < 1) {
 		vec3[2] voxelPos0 = getVoxelPos(vec3(voxelSpacePos.x, floor(voxelSpacePos.y + 0.51) - 0.01, voxelSpacePos.z) + 1.0 * worldNormal);
@@ -264,7 +264,12 @@ void GetLighting(inout vec3 albedo, inout float shadow, inout float fakeShadow, 
 		blockLighting = mix(blockLighting, blockLighting0, clamp(border, 0, 1));
 	}else{
 	#endif
+	
+	#ifdef GBUFFERS_BEACONBEAM
+		blockLighting = vec3(1.0);
+	#else
 		blockLighting = BLOCKLIGHT_I * vec3(BLOCKLIGHT_R, BLOCKLIGHT_G, BLOCKLIGHT_B) * newLightmap * newLightmap * 1.0/255.0;
+	#endif
 	#if defined OVERWORLD || defined NETHER || defined END
 	}
 	#endif

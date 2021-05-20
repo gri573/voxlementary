@@ -20,7 +20,8 @@ vec4 GetShadow(vec3 pos, vec3 dir){
 	vec3 epsilon = 0.0001 * dir;
 	for(int l = 0; !rayEnd && l < raySteps; l++){
 		float skip = 0;
-		vec3[5] voxelData = voxelTrace(pos, dir, mode, offset); // contents of voxelData: vec3[5](pos.xyz, vec3(midtexcoord, texturesize), normal, vec3(isFound, distance-ish, blockID), glcolor)
+		vec3[5] voxelData = vec3[5](vec3(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec3(0.0));
+		voxelTrace(pos, dir, mode, offset, voxelData); // outputs voxelData: vec3[5](pos.xyz, vec3(midtexcoord, texturesize), normal, vec3(isFound, distance-ish, blockID), glcolor)
 		pos = voxelData[0];
 		int ID = int(floor(voxelData[3].z * 255 + 0.5));
 		float isAABB = float(ID >= 5 && ID < 57);
