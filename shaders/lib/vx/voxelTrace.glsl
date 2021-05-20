@@ -1,5 +1,5 @@
 //WARNING: needs voxelPos to be included
-vec3 voxelTrace[5](vec3 startPos, vec3 vect0, float mode, float end) {
+vec3[5] voxelTrace(vec3 startPos, vec3 vect0, float mode, float end) {
 	float vxDist = shadowMapResolution * 0.0625 / VXHEIGHT;
 	vec2 midtexcoord0 = vec2(-1000.0);
 	vec4 intersect = vec4(1000);
