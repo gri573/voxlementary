@@ -18,7 +18,7 @@ Credits:
  - fayer3            - End portal/gateway shader
  - Jessie            - Dithering
  - Builderb0y        - Vanilla Star Dedection
- - gri573            - Voxelisation, Flood Fill Lighting
+ - gri573            - The developer of Voxlementary
 
 Dimensions:
 
