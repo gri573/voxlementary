@@ -1,5 +1,5 @@
 //WARNING: needs voxelPos to be included
-void voxelTrace(in vec3 startPos, in vec3 vect0, in float mode, in float end, out vec3[5] voxelData) {
+void voxelTrace(inout vec3 startPos, inout vec3 vect0, in float mode, in float end, out mat3 voxelData) {
 	float vxDist = shadowMapResolution * 0.0625 / VXHEIGHT;
 	vec2 midtexcoord0 = vec2(-1000.0);
 	vec4 intersect = vec4(1000);
@@ -45,5 +45,7 @@ void voxelTrace(in vec3 startPos, in vec3 vect0, in float mode, in float end, ou
 		zstep += facing0.z / abs(vect0.z) * presentPerfect;
 		i++;
 	}
-	voxelData =  vec3[5](pos.xyz, vxData.rgb, normal, vec3(isFound, pos.w, vxData.a), glcolor);
+	startPos = pos.xyz;
+	vect0 = vxData.rgb;
+	voxelData =  mat3(normal, vec3(isFound, pos.w, vxData.a), glcolor);
 }

@@ -20,15 +20,15 @@ vec4 GetShadow(vec3 pos, vec3 dir){
 	vec3 epsilon = 0.0001 * dir;
 	for(int l = 0; !rayEnd && l < raySteps; l++){
 		float skip = 0;
-		vec3[5] voxelData = vec3[5](vec3(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec3(0.0));
-		voxelTrace(pos, dir, mode, offset, voxelData); // outputs voxelData: vec3[5](pos.xyz, vec3(midtexcoord, texturesize), normal, vec3(isFound, distance-ish, blockID), glcolor)
-		pos = voxelData[0];
-		int ID = int(floor(voxelData[3].z * 255 + 0.5));
+		mat3 voxelData = mat3(vec3(0.0), vec3(0.0), vec3(0.0));
+		vec3 coloretc = dir;
+		voxelTrace(pos, coloretc, mode, offset, voxelData); // outputs voxelData: vec3[5](pos.xyz, vec3(midtexcoord, texturesize), normal, vec3(isFound, distance-ish, blockID), glcolor)
+		int ID = int(floor(voxelData[1].z * 255 + 0.5));
 		float isAABB = float(ID >= 5 && ID < 57);
 		vec3[2] posNorm = vec3[2](0.0);
 		if (ID >= 57 && ID <= 62 || ID == 4 || ID == 229) skip = 1;
 		if (isAABB > 0.5) {
-			float height = voxelData[1].z;
+			float height = coloretc.z;
 			if (ID >= 50 && ID < 53) ID = 18;
 			if (ID >= 53 && ID < 55) ID = 19;
 			if (ID >= 55 && ID < 57) ID = 5;
@@ -46,11 +46,11 @@ vec4 GetShadow(vec3 pos, vec3 dir){
 			ID += 5;
 		}
 
-		if(length(voxelData[2]) < 0.9) voxelData[2] = vec3(1, 0, 0);
-		vec2 midtexcoord = voxelData[1].xy;
+		if(length(voxelData[0]) < 0.9) voxelData[0] = vec3(1, 0, 0);
+		vec2 midtexcoord = coloretc.xy;
 		vec4 rayColor0 = vec4(float(ID == 1 || (ID >= 60 && ID != 65 && ID != 72 &&(ID < 79 || ID > 82))));
 		if (ID == 120 || ID == 3){
-			rayColor0 = vec4(voxelData[1], 0.5 + 0.25 * float(ID == 3));
+			rayColor0 = vec4(coloretc, 0.5 + 0.25 * float(ID == 3));
 		}
 		if(ID == 121) {
 			rayColor0.a = float(float(abs(fract(pos.x) - 0.5) > 0.4375) + float(abs(fract(pos.y) - 0.5) > 0.4375) + float(abs(fract(pos.z) - 0.5) > 0.4375) > 1.5);
@@ -66,8 +66,8 @@ vec4 GetShadow(vec3 pos, vec3 dir){
 		rayColor0.rgb = (1 - abs(2 * rayColor0.a - 1)) * rayColor0.rgb + max(1 - 2 * rayColor0.a, 0.0) * vec3(1.0);
 		rayColor.rgb *= rayColor0.rgb;
 		rayColor.a = offset;
-		mode = (1 - float(ID == 4) - isAABB) * float(voxelData[3].z * 256 > 0.5);
-		if(offset < 0.0 || voxelData[3].x < 0.5 || length(rayColor.rgb) < 0.01) rayEnd = true;
+		mode = (1 - float(ID == 4) - isAABB) * float(voxelData[1].z * 256 > 0.5);
+		if(offset < 0.0 || voxelData[1].x < 0.5 || length(rayColor.rgb) < 0.01) rayEnd = true;
 		oldmidtexcoord = midtexcoord;
 	}
 	vec4 color = rayColor;

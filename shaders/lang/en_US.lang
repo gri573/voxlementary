@@ -588,8 +588,8 @@ value.shadowDistance.512.0=32 Chunks
 value.shadowDistance.768.0=48 Chunks
 value.shadowDistance.1024.0=64 Chunks
 
-option.SHADOWS=Real-Time Shadows
-option.SHADOWS.comment=Enables ray traced real-time shadows. §cThis MASSIVELY reduces performance.
+option.SHADOWS=NVidia: Real-Time Shadows
+option.SHADOWS.comment=Enables ray traced real-time shadows. Only works on NVidia GPUs. §cThis MASSIVELY reduces performance.
 
 option.VXHEIGHT=Voxel Volume Height
 option.VXHEIGHT.comment=Height of the voxel volume in blocks. The voxel volume is the volume in which coloured lights and shadows are calculated.
