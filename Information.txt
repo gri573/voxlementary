@@ -1,0 +1,44 @@
+Information:
+ For questions, suggestions, early access, and more; feel free to join the Complementary Discord Server: https://discord.gg/A6faFYt
+ If you encounter issues with mods, you can check out this mod issue fixes list: https://justpaste.it/60cgu
+
+Agreement:
+ - You are not allowed to redistribute Complementary. Always direct people to the official download page.
+ - You are allowed to use Complementary for streaming, videos, screenshots. Crediting and keeping the pack updated is preferable but not mandatory.
+ - You are allowed to publish your edit of Complementary under these terms:
+	1) Your edit must be clearly distinguishable from Complementary in terms of general in-game looks.
+	2) You must not use the word "Complementary" or words that are very similar to that (like Complimentary, Supplementary, Compomentary, Conpelantary) in your edit's name.
+	3) You must visibly credit Complementary Shaders in your edit's download page.
+	4) You must allow other people to publish edits of your edit without putting terms stricter than Complementary's.
+	5) Terms #1 and #2 can be ignored if the actual Complementary Shaders haven't been updated at all for more than a year at the time you're releasing your edit.
+ - You are allowed to include Complementary in your mod pack under these terms:
+	1) No setting changes are allowed other than enabling Compatibility Mode and/or changing the profile and/or RP Support mode.
+	2) No code editing is allowed.
+	3) You must visibly credit Complementary Shaders in your mod pack's download page.
+	4) You must use the latest version of Complementary Shaders at the time you are releasing your mod pack. Keeping it updated is preferable.
+	5) You must not rename the shaderpack file. It must be called ComplementaryShaders_"version".
+ - Some terms can be lifted if you get my specific permission.
+
+Credits:
+ EminGT            - Me, the developer of Complementary
+ Capt Tatsu        - Complementary is based on his work, BSL Shaders. And he is the one that gave me the idea of publishing Complementary.
+ Chocapic13        - Previous frame reprojection, jitter offset, probably more
+ Robobo1221        - Volumetric light
+ Horizon Zero Dawn - GGX area light approximation
+ Simon Rodriguez   - FXAA
+ fayer3            - End portal/gateway shader
+ Jessie            - Dithering
+ Builderb0y        - Vanilla star detection
+ Aldebaran S       - Galaxy image
+ 
+Dimensions:
+ -1       NETHER         - Nether
+ 0        OVERWORLD      - Overworld
+ 1        END            - End
+ 2 / -23  TWO            - The Midnight
+ 5 / 7    SEVEN          - Twilight Forest
+ 17       ONESEVEN       - Atum
+ 20       SEVEN + TWENTY - The Betweenlands
+ 50...53  TWO + ABYSS    - AbyssalCraft
+ 10       <empty>   - Placeholder (The Beneath)
+ -27..-31 <empty>   - Placeholder (Galacticraft)
