@@ -388,7 +388,8 @@ Complementary Shaders by EminGT, based on BSL Shaders by Capt Tatsu
   #if (RP_SUPPORT == 1 && !defined COMPATIBILITY_MODE) || RP_SUPPORT > 2 
     #define ADV_MAT
   #endif
-    #define VXHEIGHT 1 //[1 2]
+
+  #define VXHEIGHT 1 //[1 2]
   #define TRANSLUCENT_BLOCKLIGHT_TINT 0.5 //[0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 
   //LIGHT SOURCE COLOURS

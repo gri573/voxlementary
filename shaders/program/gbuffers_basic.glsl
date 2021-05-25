@@ -44,9 +44,8 @@ uniform mat4 gbufferProjectionInverse;
 uniform mat4 gbufferModelViewInverse;
 uniform mat4 shadowProjection;
 uniform mat4 shadowModelView;
-
-#if (defined CLOUD_SHADOW && defined OVERWORLD) || defined RANDOM_BLOCKLIGHT || (defined WATER_CAUSTICS && defined OVERWORLD)
 uniform vec3 cameraPosition;
+#if (defined CLOUD_SHADOW && defined OVERWORLD) || defined RANDOM_BLOCKLIGHT || (defined WATER_CAUSTICS && defined OVERWORLD)
 uniform sampler2D noisetex;
 #endif
 

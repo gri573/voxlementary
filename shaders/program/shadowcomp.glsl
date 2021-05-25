@@ -123,12 +123,12 @@ const vec3[50] lightcols = vec3[50](
 	vec4 col5 = texture2D(shadowcolor1, pos5) * float(abs(pos5.x - 0.5) < 0.5 && abs(pos5.y - 0.5) < 0.5);
 	vec4 col6 = vec4(float(isLight) * lightcols[int(ID - 49.5)] / 255.0, 1.0);
 
-	col0.rgb *= float(abs(col0.a - 0.75) > 0.1);
-	col1.rgb *= float(abs(col1.a - 0.75) > 0.1 && abs(ID - 5.5) > 1.0 && abs(col1.a - 0.5) > 0.1);
-	col2.rgb *= float(abs(col2.a - 0.75) > 0.1);
-	col3.rgb *= float(abs(col3.a - 0.75) > 0.1);
-	col4.rgb *= float(abs(col4.a - 0.75) > 0.1 && abs(ID - 5.5) > 1.0 && abs(col4.a - 0.25) > 0.1);
-	col5.rgb *= float(abs(col5.a - 0.75) > 0.1);
+	col0.rgb *= float(abs(col0.a - 0.75) > 0.1 && ((ID == 5 && abs(col0.a - 0.25) > 0.1) || (ID == 6 && abs(col0.a - 0.5) > 0.1) || abs(ID - 5.5) > 1.0));
+	col1.rgb *= float(abs(col1.a - 0.75) > 0.1 && abs(ID - 5) > 0.5 && abs(col1.a - 0.25) > 0.1);
+	col2.rgb *= float(abs(col2.a - 0.75) > 0.1 && ((ID == 5 && abs(col2.a - 0.25) > 0.1) || (ID == 6 && abs(col2.a - 0.5) > 0.1) || abs(ID - 5.5) > 1.0));
+	col3.rgb *= float(abs(col3.a - 0.75) > 0.1 && ((ID == 5 && abs(col3.a - 0.25) > 0.1) || (ID == 6 && abs(col3.a - 0.5) > 0.1) || abs(ID - 5.5) > 1.0));
+	col4.rgb *= float(abs(col4.a - 0.75) > 0.1 && abs(ID - 6) > 0.5 && abs(col4.a - 0.5) > 0.1);
+	col5.rgb *= float(abs(col5.a - 0.75) > 0.1 && ((ID == 5 && abs(col5.a - 0.25) > 0.1) || (ID == 6 && abs(col5.a - 0.5) > 0.1) || abs(ID - 5.5) > 1.0));
 	col6.rgb *= float(abs(col6.a - 0.75) > 0.1);
 
 	col0.a = max(max(col0.r, max(col0.g, col0.b)), 0.0001);

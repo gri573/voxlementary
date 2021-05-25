@@ -69,8 +69,8 @@ uniform sampler2D texture;
 uniform float far;
 #endif
 
-#if ((defined WATER_CAUSTICS || defined SNOW_MODE || defined CLOUD_SHADOW) && defined OVERWORLD) || defined RANDOM_BLOCKLIGHT
 uniform vec3 cameraPosition;
+#if ((defined WATER_CAUSTICS || defined SNOW_MODE || defined CLOUD_SHADOW) && defined OVERWORLD) || defined RANDOM_BLOCKLIGHT
 uniform sampler2D noisetex;
 #endif
 

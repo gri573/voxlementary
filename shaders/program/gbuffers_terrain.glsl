@@ -842,7 +842,10 @@ void main() {
 	vec4 position = gbufferModelViewInverse * gl_ModelViewMatrix * gl_Vertex;
 	int blockID = int(mc_Entity.x + 0.5);
 	if (blockID > 19999.5) {
-		if (blockID < 21030.5) blockID -= 10000;
+		blockID -= 10000;
+		if ((blockID > 13009.5 && blockID < 13011.5) || (blockID > 13100.5 && blockID < 13103.5)) blockID = 10009;
+		if (blockID > 14023.5 && blockID < 14026.5) blockID = 11023;
+		blockID -= int(floor(max(0.5, blockID - 9999.5)/3000.0) * 3000 + 0.5);
 	}
 
 	#if defined FOG1 && defined FOG1_CHECK
