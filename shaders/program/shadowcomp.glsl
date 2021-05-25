@@ -1,3 +1,5 @@
+#include "/lib/settings.glsl"
+
 //Varyings//
 varying vec2 oldtexcoord;
 varying vec2 texcoord;
