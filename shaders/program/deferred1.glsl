@@ -31,6 +31,9 @@ uniform float eyeAltitude;
 
 uniform ivec2 eyeBrightnessSmooth;
 
+uniform vec3 cameraPosition;
+uniform vec3 previousCameraPosition;
+
 uniform vec3 skyColor;
 uniform vec3 fogColor;
 
@@ -55,29 +58,31 @@ uniform sampler2D colortex3;
 #endif
 
 #if (defined ADV_MAT && defined REFLECTION_SPECULAR) || defined SEVEN || (defined END && defined ENDER_NEBULA) || (defined NETHER && defined NETHER_SMOKE)
-uniform vec3 cameraPosition;
 
 uniform sampler2D colortex6;
 uniform sampler2D colortex1;
 uniform sampler2D noisetex;
 #endif
 
-#ifdef COLORED_LIGHT
-uniform sampler2D colortex8;
-uniform sampler2D colortex9;
-#endif
-
 #ifdef AURORA
 uniform float isDry, isRainy, isSnowy;
+#endif
+
+#ifdef INTERACTIVE_WATER
+uniform sampler2D colortex8;
+uniform sampler2D shadowcolor0;
 #endif
 
 //Optifine Constants//
 #if defined ADV_MAT && defined REFLECTION_SPECULAR
 const bool colortex0MipmapEnabled = true;
 #endif
-#ifdef COLORED_LIGHT
-const bool colortex8MipmapEnabled = true;
-const bool colortex9Clear = false;
+
+#ifdef INTERACTIVE_WATER
+const bool colortex8Clear = false;
+/*
+const int colortex8Format = RGBA16F;
+*/
 #endif
 
 //Common Variables//
@@ -194,6 +199,10 @@ float GetAmbientOcclusion(float z) {
 #include "/lib/reflections/complexFresnel.glsl"
 #include "/lib/surface/materialDeferred.glsl"
 #include "/lib/reflections/roughReflections.glsl"
+#endif
+
+#ifdef INTERACTIVE_WATER
+#include "/lib/vx/voxelPos.glsl"
 #endif
 
 //Program//
@@ -503,28 +512,73 @@ void main() {
 		BlackOutline(color.rgb, depthtex0, wFogMult);
 	#endif
 
-	#ifdef COLORED_LIGHT
-		vec3 lightAlbedo = texture2DLod(colortex8, texCoord, log2(viewHeight)).rgb;
-		float sumlightAlbedo = max(lightAlbedo.r + lightAlbedo.g + lightAlbedo.b, 0.0001);
-		lightAlbedo = lightAlbedo / sumlightAlbedo;
-		lightAlbedo *= lightAlbedo;
-		lightAlbedo *= BLOCKLIGHT_I * vec3(2.0, 1.8, 2.0);
-		//if (gl_FragCoord.x > 960.0) color.rgb = lightAlbedo;
 
-		vec3 lightBuffer = texture2D(colortex9, texCoord).rgb;
+	//Interactive Water Waves
+	#ifdef INTERACTIVE_WATER
+		const float vxDist = 0.0625 * shadowMapResolution / VXHEIGHT;
+		vec2 waterCoord = texCoord + INTERACTIVE_WATER_RES / vec2(viewWidth, viewHeight) * (floor(cameraPosition.xz) - floor(previousCameraPosition.xz));
+		vec3 envcoords0 = vec3((texCoord.x - 0.5) * viewWidth * 1.0 / INTERACTIVE_WATER_RES, 32 * VXHEIGHT * VXHEIGHT, (texCoord.y - 0.5) * viewHeight * 1.0 / INTERACTIVE_WATER_RES) + vec3(0.5);
+		vec2 envScreenCoords = (envcoords0.xz + vec2(vxDist)) / vec2(viewWidth, viewHeight);
+		envcoords0.y = texture2D(colortex8, envScreenCoords).b;
+		vec4 wdata = texture2D(colortex8, waterCoord);
+		color.a = 1.0;
+		wdata.a = 1.0;
+		vec4 environment = vec4(0);
+		vec3 envcoords = vec3(texCoord.x, 24 * VXHEIGHT * VXHEIGHT, texCoord.y) * vec3(viewWidth, 1.0, viewHeight) - vec3(vxDist, 0, vxDist);
+		float inRange0 = min(max(abs(envcoords0.x), abs(envcoords0.z)) / (0.0625 * shadowMapResolution / VXHEIGHT - 1.0) + pow(2.01 * max(abs(texCoord.x - 0.5), abs(texCoord.y - 0.5)), 100), 1.0);
+		float inRange = min(max(abs(envcoords.x), abs(envcoords.z)) / (0.0625 * shadowMapResolution / VXHEIGHT - 1.0) + pow(2.01 * max(abs(texCoord.x - 0.5), abs(texCoord.y - 0.5)), 100), 1.0);
 
-		float lightSpeed = 0.01;
-		    lightBuffer = mix(lightBuffer, blocklightCol, lightSpeed * 0.25);
-		vec3 finalLight = mix(lightBuffer, lightAlbedo, lightSpeed * float(sumlightAlbedo > 0.0002));
+
+		while (length(environment) < 0.1 && envcoords.y > -24 * VXHEIGHT * VXHEIGHT && inRange < 1.0) {
+			vec2 vxPos = getVoxelPos(envcoords)[0].xz;
+			vec4 vxData = texture2D(shadowcolor0, vxPos / shadowMapResolution + vec2(0.5));
+			envcoords.y -= 1;
+			environment.rgb = vec3(abs(vxData.a * 255 - 29) < 0.5);
+			wdata.b = envcoords.y;
+		}
+
+		vec4[4] wdata0 = vec4[4](
+			texture2D(colortex8, waterCoord - vec2(0.0, 1.0 / viewHeight)),
+			texture2D(colortex8, waterCoord + vec2(0.0, 1.0 / viewHeight)),
+			texture2D(colortex8, waterCoord - vec2(1.0 / viewWidth, 0.0)),
+			texture2D(colortex8, waterCoord + vec2(1.0 / viewWidth, 0.0)));
+		wdata0[0].ba = texture2D(colortex8, envScreenCoords - vec2(0.0, float(fract(envcoords0).z < 1.0 / INTERACTIVE_WATER_RES)) / vec2(viewWidth, viewHeight)).ba;
+		wdata0[1].ba = texture2D(colortex8, envScreenCoords + vec2(0.0, float(1 - fract(envcoords0).z < 1.0 / INTERACTIVE_WATER_RES)) / vec2(viewWidth, viewHeight)).ba;
+		wdata0[2].ba = texture2D(colortex8, envScreenCoords - vec2(float(fract(envcoords0).x < 1.0 / INTERACTIVE_WATER_RES), 0.0) / vec2(viewWidth, viewWidth)).ba;
+		wdata0[3].ba = texture2D(colortex8, envScreenCoords + vec2(float(1 - fract(envcoords0).x < 1.0 / INTERACTIVE_WATER_RES), 0.0) / vec2(viewWidth, viewWidth)).ba;
+		wdata0[0].a /= max(1.0, abs(wdata0[0].b - wdata.b));
+		wdata0[1].a /= max(1.0, abs(wdata0[1].b - wdata.b));
+		wdata0[2].a /= max(1.0, abs(wdata0[2].b - wdata.b));
+		wdata0[3].a /= max(1.0, abs(wdata0[3].b - wdata.b));
+		float walpha0 = wdata0[0].a + wdata0[1].a + wdata0[2].a + wdata0[3].a + 0.01;
+		vec2 playerdist = (texCoord - vec2(0.5)) * vec2(viewWidth, viewHeight) / INTERACTIVE_WATER_RES + vec2(0.5) - fract(cameraPosition.xz);
+		if(abs(envcoords0.y + 1) < 1.2 && length(playerdist) < 0.4){
+			wdata.r += 2 * (cameraPosition.y - previousCameraPosition.y - 2 * dot(playerdist, cameraPosition.xz - previousCameraPosition.xz));
+		}
+		float wavgr = wdata0[0].r * wdata0[0].a + wdata0[1].r * wdata0[1].a + wdata0[2].r * wdata0[2].a + wdata0[3].r * wdata0[3].a;
+		wdata.g -= 0.1 * exp(0.05 * INTERACTIVE_WATER_RES) * (walpha0 * wdata.r - wavgr);
+		wdata.rg *= wdata.a;
+		wdata.r += wdata.g;
+		wdata.r += pow(max(wdata.b + floor(cameraPosition.y) - 61, 0.0), 0.05) * 0.0005 * wdata.r;
+		if(wdata.a < 0.1 && length(environment) > 0.1) wdata.r = wavgr /(walpha0 + 0.0001);
+		wdata.rg *= vec2(1.0) / (vec2(1.0) + 0.01 * wdata.rg * wdata.rg * wdata.rg *wdata.rg);
+		wdata.a = float(length(environment.rgb) > 0.1);
+		vec2 playerWaterCoord0 = (texCoord - vec2(0.5)) * vec2(viewWidth, viewHeight) / (1.0 * INTERACTIVE_WATER_RES) + 4 * vec2(frameTimeCounter, 0.573 * frameTimeCounter) + floor(cameraPosition.xz);
+		vec2 playerWaterCoord1 = (texCoord - vec2(0.5)) * vec2(viewWidth, viewHeight) / (1.0 * INTERACTIVE_WATER_RES) + 4 * vec2(1.6 * frameTimeCounter, -0.273 * frameTimeCounter) + floor(cameraPosition.xz);
+		vec2 playerWaterCoord2 = (texCoord - vec2(0.5)) * vec2(viewWidth, viewHeight) / (1.0 * INTERACTIVE_WATER_RES) + 4 * vec2(0.8 * frameTimeCounter, -0.473 * frameTimeCounter) + floor(cameraPosition.xz);
+		float stimulantWave = 3 * WATER_BUMP * (0.5 * sin(mod(dot(playerWaterCoord0, vec2(0.173, 0.02257)), 6.2832)) + sin(mod(2 * dot(playerWaterCoord1, vec2(0.216, -0.173)), 5.2832)));
+		wdata.r += stimulantWave * pow(min(inRange0, 1.0), 10);
+		wdata.r = mix(wdata.r, stimulantWave, pow(min(inRange0, 1.0), 30));
+		wdata.rg *= float((abs(waterCoord.x - 0.5) < 0.5 || abs(waterCoord.y - 0.5) < 0.5) && walpha0 > 0.1);
 	#endif
 	
 	/*DRAWBUFFERS:05*/
     gl_FragData[0] = color;
 	gl_FragData[1] = vec4(pow(color.rgb, vec3(0.125)) * 0.5, 1.0);
 
-	#ifdef COLORED_LIGHT
-	/*DRAWBUFFERS:059*/
-	gl_FragData[2] = vec4(finalLight, 1.0);
+	#ifdef INTERACTIVE_WATER
+	/*DRAWBUFFERS:058*/
+	gl_FragData[2] = wdata;
 	#endif
 }
 

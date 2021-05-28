@@ -69,11 +69,11 @@ uniform sampler2D normals;
 #endif
 
 #ifdef AURORA
-uniform float isDry, isRainy, isSnowy;
+#ifdef INTERACTIVE_WATER
+uniform sampler2D colortex8;
 #endif
 
-#ifdef COLORED_LIGHT
-uniform sampler2D colortex9;
+uniform float isDry, isRainy, isSnowy;
 #endif
 
 //Optifine Constants//
@@ -127,6 +127,15 @@ float InterleavedGradientNoise() {
  
 float GetWaterHeightMap(vec3 worldPos, vec3 nViewPos) {
 	float verticalOffset = worldPos.y * 0.005;
+	float noise = 0.0;
+	#ifdef INTERACTIVE_WATER
+	worldPos -= cameraPosition;
+	worldPos *= 1.065;
+	vec2 waterTexCoord = (worldPos.xz + fract(cameraPosition.xz) - vec2(0.5)) * INTERACTIVE_WATER_RES / vec2(viewWidth, viewHeight) + vec2(0.5);
+	noise = waterBump * 0.5 * texture2D(colortex8,waterTexCoord).r;
+	float noiseMult = 1 - min(pow(max(2.01 * max(abs(waterTexCoord.x - 0.5), abs(waterTexCoord.y - 0.5)), max(abs(worldPos.x), abs(worldPos.z)) / (0.125  * shadowMapResolution * VXHEIGHT)), 10), 1.0);
+	noise *= noiseMult;
+	#else
 
 	vec2 wind = vec2(frametime) * 0.0015;
 	wind *= WATER_SPEED;
@@ -138,12 +147,13 @@ float GetWaterHeightMap(vec3 worldPos, vec3 nViewPos) {
 	float noiseD = texture2D(noisetex, (worldPos.xz) / (0.3 * WATER_SIZE) - wind).g;
 	vec4 noiseS = vec4(noiseA, noiseB, noiseC, noiseD);
 	noiseS *= - noiseS;
-	float noise = noiseS.r * WATER_NOISE_1 
+	noise = noiseS.r * WATER_NOISE_1 
 				- noiseS.r * noiseS.g * WATER_NOISE_2 
 				+ noiseS.g * WATER_NOISE_3 
 				+ (noiseS.b - noiseS.a) * WATER_NOISE_4;
 
 	noise *= waterBump * (lmCoord.y*0.9 + 0.1) * 0.35;
+	#endif
 
     return noise;
 }

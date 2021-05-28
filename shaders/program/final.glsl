@@ -36,10 +36,6 @@ const int gaux2Format = RGB8;			    //reflection
 const int gaux3Format = RG16; 				//normals
 const int gaux4Format = RGB8; 				//taa mask & galaxy image
 
-#ifdef COLORED_LIGHT
-const int colortex8Format = RGB16;
-const int colortex9Format = RGB16;
-#endif
 */
 
 const bool shadowHardwareFiltering = true;

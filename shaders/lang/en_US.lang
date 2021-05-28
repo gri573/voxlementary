@@ -7,11 +7,13 @@ profile.MEDIUM=§eMedium
 profile.VANILLA=§aVanilla / RTX-ish
 profile.HIGH=§bHigh (Default)
 profile.ULTRA=§dUltra
-profile.comment=§4Potato:§r Shadows are disabled. §6Low:§r Reduced shadow resolution and distance. §eMedium:§r Specular Reflections are disabled. §aVanilla / RTX-ish:§r High profile with visuals that resemble vanilla Minecraft or Bedrock RTX. §bHigh (Default):§r Full Complementary experience. §dUltra:§r A bunch of heavier effects are enabled.
+profile.WYNNCRAFT=§2WynnCraft Compatible
+profile.comment=§4Potato:§r Shadows are disabled. §6Low:§r Reduced shadow resolution and distance. §eMedium:§r Specular Reflections are disabled. §aVanilla / RTX-ish:§r High profile with visuals that resemble vanilla Minecraft or Bedrock RTX. §bHigh (Default):§r Full Complementary experience. §dUltra:§r A bunch of heavier effects are enabled. §2Wynncraft: medium adjusted for optimal behaviour on the WynnCraft MMORPG.
 
 #Screens
-screen.ABOUT=Complementary Shaders by EminGT
-screen.ABOUT.comment=Heavily based on "BSL Shaders". Thanks so much to Capt Tatsu for letting me publish Complementary, and also proposing the idea of me doing so.
+screen.ABOUT=Voxlementary Shaders by gri573
+screen.ABOUT.comment=Almost completely based on "Complementary Shaders". Thanks so much to EminGT for letting me publish this Complementaray edit.
+
 
 screen.WORLD=World
 screen.WORLD.comment=Effects that are applied to the world.
@@ -43,6 +45,14 @@ screen.BLOOM_CONFIG=Bloom Settings
 screen.BLOOM_CONFIG.comment=Settings about the glow effect.
 screen.DOF=DOF / Distance Blur Settings
 screen.DOF.comment=Settings about the blur effect.
+screen.BOKEH_CONFIG=Bokeh DOF Settings
+screen.TONEMAP=Tonemap
+screen.COLORGRADING=Color Grading
+screen.CG_R=Color Grading Red Channel
+screen.CG_G=Color Grading Green Channel
+screen.CG_B=Color Grading Blue Channel
+screen.CG_T=Color Grading Tint
+
 
 screen.SHADOWS=Shadows
 screen.SHADOWS.comment=Settings about shadows.
@@ -60,7 +70,7 @@ screen.LIGHT_E=Sun Light - Evening
 screen.AMBIENT_E=Ambience - Evening
 screen.LIGHT_N=Moon Light - Night
 screen.AMBIENT_N=Ambience - Night
-screen.BLOCKLIGHT_COLOR=Blocklight Color
+screen.BLOCKLIGHT_COLOR=Blocklight Colours
 screen.WATER_COLOR=Water Color
 screen.UNDERWATER_COLOR=Underwater Color
 screen.WEATHER_R=Rain Color
@@ -115,8 +125,41 @@ screen.NIGHT_SKY.comment=Settings about the sky during night.
 screen.NEBULA_CONFIG=Ender Nebula Settings
 screen.NEBULA_CONFIG.comment=Settings about the ender nebula.
 
+#blocklight colour settings
+
+screen.TORCH_COLOR=Torch Colour 
+screen.REDSTONE_TORCH_COLOR=Redstone Torch Colour 
+screen.SOUL_TORCH_COLOR=Soul Torch Colour 
+screen.LANTERN_COLOR=Lantern Colour 
+screen.SOUL_LANTERN_COLOR=Soul Lantern Colour 
+screen.FURNACE_COLOR=Furnace Colour 
+screen.FIRE_COLOR=Fire Colour 
+screen.SOUL_FIRE_COLOR=Soul Fire Colour 
+screen.SHROOMLIGHT_COLOR=Shroomlight Colour 
+screen.JACKOLANTERN_COLOR=Jack o'Lantern Colour 
+screen.GLOWSTONE_COLOR=Glowstone Colour 
+screen.LAVA_COLOR=Lava Colour 
+screen.MAGMA_COLOR=Magma Colour 
+screen.NETHER_PORTAL_COLOR=Nether Portal Colour 
+screen.RESPAWN_ANCHOR_COLOR=Respawn Anchor Colour 
+screen.CRYING_OBSIDIAN_COLOR=Crying Obsidian Colour 
+screen.REDSTONE_LAMP_COLOR=Redstone Lamp Colour 
+screen.END_ROD_COLOR=End Rod Colour 
+screen.END_PORTAL_COLOR=End Portal Colour 
+screen.CONDUIT_COLOR=Conduit Colour 
+screen.BEACON_COLOR=Beacon Colour 
+screen.SEA_PICKLE_COLOR=Sea Pickle Colour 
+screen.REDSTONE_COLORS=Redstone Colours 
+screen.DIAMOND_COLOR=Diamond Ore Colour 
+screen.LAPIS_COLORS=Lapis Colours 
+screen.EMERALD_COLORS=Emerald Colours 
+screen.GOLD_COLOR=Gold Ore Colour 
+screen.IRON_COLOR=Iron Ore Colour 
+screen.FALLBACK_COLOR=Fallback Blocklight Colour
+
+
 #Settings
-option.SECRET=§d§l§n§oSuper Secret Settings
+option.SECRET=§d§l§n§oSupe§kr §d§l§n§oSecret Settings
 option.SECRET.comment=You have entered the Super Secret Settings.
 value.SECRET.0=
 
@@ -561,9 +604,15 @@ value.shadowDistance.1024.0=64 Chunks
 
 option.SHADOWS=Real-Time Shadows
 option.SHADOWS.comment=Enables shadows that are getting generated using a shadow map. §e[*]§r Disabling shadows will reduce the quality of many things.
+option.VXHEIGHT=Voxel Volume Height
+option.VXHEIGHT.comment=Height of the voxel volume in blocks. The voxel volume is the volume in which coloured lights and shadows are calculated.
+value.VXHEIGHT.1=48
+value.VXHEIGHT.2=192
 
 option.SHADOW_FILTER=Shadow Filtering
 option.SHADOW_FILTER.comment=Enables shadow filtering. §a[+]§r This effect benefits from TAA.
+option.SHADOW_COLOR=Coloured Shadows
+option.SHADOW_COLOR.comment=Translucents such as stained glass will cast coloured shadows. §cHigh Performance Impact
 
 option.sunPathRotation=Sun/Moon Path Rotation
 option.sunPathRotation.comment=Adjusts sun/moon angle.
