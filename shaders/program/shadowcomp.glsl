@@ -92,7 +92,9 @@ const vec3[50] lightcols = vec3[50](
 	vec3(0),
 	vec3(0)
 );
-
+	vec4 col = vec4(0);
+	vec4 blockData = texture2D(shadowcolor0, texcoord);
+	if(texcoord.x > 0.5 || texcoord.y > 0.5) {
 	//vec2 oldtexcoord2 = oldtexcoord;
 	vec3 pos = getVoxelPosInverse(texcoord);
 	pos += dpos;
@@ -102,7 +104,7 @@ const vec3[50] lightcols = vec3[50](
 /*oldtexcoord2 += vec2(0.125 / VXHEIGHT * dpos.y, 0);
 	float wrapping = float(oldtexcoord2.x > 1.0) - float(oldtexcoord2.x < 0.0);
 	oldtexcoord2 += vec2(-wrapping, 0.125 / VXHEIGHT * wrapping);*/
-	vec4 blockData = texture2D(shadowcolor0, oldtexcoord2);
+	blockData = texture2D(shadowcolor0, oldtexcoord2);
 	float ID = floor(blockData.a * 255.0 - 25.5);
 	float isLight = float(ID > 49.5 && ID < 119.5);
 	vec3 colMult = texture2D(shadowcolor0, oldtexcoord2).rgb;
@@ -156,7 +158,7 @@ const vec3[50] lightcols = vec3[50](
 	//col6.a = max(col6.a * 0.95 - 0.03, 0.0);
 
 	float maxAlpha = max(max(col0.a, max(col1.a, col2.a)), max(max(col3.a, col4.a), max(col5.a, col6.a)));
-	vec4 col = vec4(col0.rgb * max(1 - 5 * (maxAlpha - col0.a), 0.0) + 
+	col = vec4(col0.rgb * max(1 - 5 * (maxAlpha - col0.a), 0.0) + 
 					col1.rgb * max(1 - 5 * (maxAlpha - col1.a), 0.0) + 
 					col2.rgb * max(1 - 5 * (maxAlpha - col2.a), 0.0) + 
 					col3.rgb * max(1 - 5 * (maxAlpha - col3.a), 0.0) + 
@@ -168,6 +170,7 @@ const vec3[50] lightcols = vec3[50](
 	if (abs(ID - 120) < 0.5 || abs(ID - 3) < 0.5) col.rgb *= (TRANSLUCENT_BLOCKLIGHT_TINT * colMult + vec3(1 - TRANSLUCENT_BLOCKLIGHT_TINT));
 	//col = texture2D(shadowcolor1, oldtexcoord2);
 	col.a = 1.0 - 0.25 * float(ID == 1) - 0.5 * float(ID == 5) - 0.75 * float(ID == 6);
+	}
 	/*DRAWBUFFERS:01*/
 	gl_FragData[0] = blockData;
 	gl_FragData[1] = col;

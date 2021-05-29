@@ -11,6 +11,7 @@ varying float mat;
 varying float height;
 
 #ifdef FSH
+//Local Varyings
 //Uniforms//
 uniform ivec2 atlasSize;
 uniform sampler2D texture;
@@ -45,7 +46,15 @@ void main() {
 	gl_FragData[1] = light;
 }
 #endif
+
+#ifdef GSH
+
+#endif
+
 #ifdef VSH
+//Local Varyings
+
+
 //Attributes//
 attribute vec2 mc_Entity;
 attribute vec3 at_midBlock;

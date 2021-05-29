@@ -518,7 +518,7 @@ void main() {
 		const float vxDist = 0.0625 * shadowMapResolution / VXHEIGHT;
 		vec2 waterCoord = texCoord + INTERACTIVE_WATER_RES / vec2(viewWidth, viewHeight) * (floor(cameraPosition.xz) - floor(previousCameraPosition.xz));
 		vec3 envcoords0 = vec3((texCoord.x - 0.5) * viewWidth * 1.0 / INTERACTIVE_WATER_RES, 32 * VXHEIGHT * VXHEIGHT, (texCoord.y - 0.5) * viewHeight * 1.0 / INTERACTIVE_WATER_RES) + vec3(0.5);
-		vec2 envScreenCoords = (envcoords0.xz + vec2(vxDist)) / vec2(viewWidth, viewHeight);
+		vec2 envScreenCoords = (envcoords0.xz + vec2(vxDist) + (floor(cameraPosition.xz) - floor(previousCameraPosition.xz))) / vec2(viewWidth, viewHeight);
 		envcoords0.y = texture2D(colortex8, envScreenCoords).b;
 		vec4 wdata = texture2D(colortex8, waterCoord);
 		color.a = 1.0;
