@@ -1,22 +1,28 @@
 #include "/lib/common.glsl"
 
-//Varyings//
-varying vec2 lmcoord;
-varying vec2 texcoord;
-varying vec2 screentexcoord;
-varying vec4 glcolor;
-varying vec3 glnormal;
-varying float entityMat;
-varying float mat;
-varying float height;
-
 #ifdef FSH
 //Local Varyings
+varying vec2 screentexcoord;
+varying vec2 lmCoordF;
+varying vec2 texCoordF;
+varying vec4 glcolorF;
+varying vec3 glnormalF;
+varying float matF;
+varying float heightF;
+varying vec4 positionF;
+
 //Uniforms//
+
+uniform int isEyeInWater;
+uniform vec3 cameraPosition;
 uniform ivec2 atlasSize;
-uniform sampler2D texture;
+uniform sampler2D tex;
 uniform sampler2D lightmap;
 uniform sampler2D shadowcolor1;
+#ifdef SHADOWS
+uniform sampler2D shadowtex0;
+uniform sampler2D noisetex;
+#endif
 
 //Optifine Constants//
 const float shadowDistanceRenderMul = 1.0;
@@ -28,19 +34,150 @@ vec2[4] offsets = vec2[4](
 	vec2(1, -1),
 	vec2(1, 1)
 );
+#ifdef SHADOWS
+//Common Variables//
+#if WORLD_TIME_ANIMATION >= 2
+uniform int worldTime;
+#else
+uniform float frameTimeCounter;
+#endif
+
+#if WORLD_TIME_ANIMATION >= 2
+float frametime = float(worldTime) * 0.05 * ANIMATION_SPEED;
+#else
+float frametime = frameTimeCounter * ANIMATION_SPEED;
+#endif
+
+//Includes//
+#include "/lib/util/dither.glsl"
+
+//Common Functions//
+void doWaterShadowCaustics(inout vec4 albedo, float dither) {
+	#if defined WATER_CAUSTICS && defined OVERWORLD && defined LIGHTSHAFT_WATER_CAUSTICS
+		vec3 worldPos = positionF.xyz + cameraPosition.xyz;
+		#if LIGHT_SHAFT_MODE > 1
+			worldPos *= 0.5;
+		#else
+			worldPos *= 2.0;
+		#endif
+		float noise = 0.0;
+		float mult = 0.5;
+		
+		vec2 wind = vec2(frametime) * 0.3; //speed
+		float verticalOffset = worldPos.y * 0.2;
+
+		if (mult > 0.01) {
+			float lacunarity = 1.0 / 750.0, persistance = 1.0, weight = 0.0;
+
+			mult *= (lmCoordF.y*0.9 + 0.1);
+
+			for(int i = 0; i < 8; i++){
+				float windSign = mod(i,2) * 2.0 - 1.0;
+				vec2 noiseCoord = worldPos.xz + wind * windSign - verticalOffset;
+				if (i < 7) noise += texture2D(noisetex, noiseCoord * lacunarity).r * persistance;
+				else {
+					noise += texture2D(noisetex, noiseCoord * lacunarity * 0.125).r * persistance * 10.0;
+					noise = -noise;
+					float noisePlus = 1.0 + 0.125 * -noise;
+					noisePlus *= noisePlus;
+					noisePlus *= noisePlus;
+					noise *= noisePlus;
+				}
+
+				if (i == 0) noise = -noise;
+
+				weight += persistance;
+				lacunarity *= 1.50;
+				persistance *= 0.60;
+			}
+			noise *= mult / weight;
+		}
+		#ifdef SHADOW_COLOR
+			float discardFactor = 0.025; //0.025
+			if (noise > discardFactor || noise < -discardFactor) discard;
+		#else
+			//albedo.rgb = sqrt(albedo.rgb);
+			float noiseFactor = 1.1 + noise;
+			noiseFactor = pow(noiseFactor, 10.0);
+			if (noiseFactor > 1.0 - dither * 0.5) discard;
+		#endif
+	#else
+		discard;
+	#endif
+}
+#endif
 
 //Program//
 void main() {
-	if (mat < 0.1) discard;
-	vec4 light = texture2D(shadowcolor1, screentexcoord);
-	vec3 lightmult = vec3(1.0);
-	if (abs(mat - 120) < 0.1 || abs(mat - 3) < 0.1) {
-		lightmult = texture2D(texture, texcoord).rgb * glcolor.rgb;
-	} else {
-		lightmult = vec3(0.5 * texcoord, height);
+	vec4 light = vec4(0);
+	vec4 color = vec4(0);
+	if(screentexcoord.x > 0.5 || screentexcoord.y > 0.5) {
+		if (matF < 0.1) discard;
+		light = texture2D(shadowcolor1, screentexcoord);
+		vec3 lightmult = vec3(1.0);
+		if (abs(matF - 120) < 0.1 || abs(matF - 320) < 0.1 || abs(matF - 3) < 0.1) {
+			lightmult = texture2D(tex, texCoordF).rgb * glcolorF.rgb;
+		} else {
+			lightmult = vec3(0.5 * texCoordF, heightF);
+		}
+		float mat1 = matF + 26 - 200 * float(matF > 300);
+		color = vec4(lightmult, mat1 / 255.0);
+
+		#ifdef SHADOWS
+	}else{
+		//Regular shadow stuff
+		#if defined WRONG_MIPMAP_FIX
+			color.a = texture2DLod(tex, texCoordF.xy, 0.0).a;
+		#else
+			color.a = texture2D(tex, texCoordF.xy).a;
+		#endif
+
+		if (color.a < 0.0001) discard;
+
+		color.rgb *= glcolorF.rgb;
+
+		float premult = float(matF > 119.5 && matF < 120.5);
+		float water = float(matF > 2.5 && matF < 3.5);
+		float ice = float(matF > 319.5 && matF < 330.5);
+		float foliage = 0;//float(mat > 3.95 && mat < 4.05);
+
+		#ifdef NO_FOLIAGE_SHADOWS
+			if (foliage > 0.5) discard;
+		#endif
+		
+		#ifdef FOLIAGE_SHADOWCOL
+			if (foliage > 0.5) {
+				color.a = 0.5;
+				color.b = 1.0;
+			}
+		#endif
+
+		if (water > 0.5) {
+			if (isEyeInWater < 0.5) { 
+				color = vec4(1.0, 1.0, 1.0, 1.0);
+			} else {
+				float dither = Bayer64(gl_FragCoord.xy);
+				doWaterShadowCaustics(color, dither);
+			}
+		}
+		#ifndef SHADOW_COLOR
+			if (premult > 0.5) {
+				if (color.a < 0.51) discard;
+			}
+		#else
+			vec3 shadowcol = texture2D(tex, texCoordF).rgb;
+			shadowcol = mix(shadowcol, vec3(1), pow(6, -color.a) * (1 - length(shadowcol) * 0.58));
+			shadowcol *= 1 - pow(color.a, 6);
+			shadowcol = floor(15.9 * shadowcol);
+			shadowcol.r /= 32;
+			shadowcol.g /= 512;
+			shadowcol.b /= 8192;
+			color.g = shadowcol.r + shadowcol.g + shadowcol.b;
+			shadowcol *= max(1 - pow(abs(2.2 * texture2D(shadowtex0, texCoordF).r - 1.1), 1000.0), 0.0);
+		#endif
+	#endif
 	}
-	float mat1 = mat + 26;
-	vec4 color = vec4(lightmult, mat1 / 255.0);
+
 	/*DRAWBUFFERS:01*/
 	gl_FragData[0] = color;
 	gl_FragData[1] = light;
@@ -48,11 +185,77 @@ void main() {
 #endif
 
 #ifdef GSH
+#ifdef SHADOWS
+const int maxVerticesOut = 6;
+#else
+const int maxVerticesOut = 3;
+#endif
 
+varying in vec4 shadowPos[3];
+varying in vec2 lmCoord[3];
+varying in vec2 texCoord[3];
+varying in vec4 glcolor[3];
+varying in vec3 glnormal[3];
+varying in float mat[3];
+varying in float height[3];
+varying in vec4 position[3];
+
+
+varying out vec2 screentexcoord;
+varying out vec2 lmCoordF;
+varying out vec2 texCoordF;
+varying out vec4 glcolorF;
+varying out vec3 glnormalF;
+varying out float matF;
+varying out float heightF;
+varying out vec4 positionF;
+
+
+void main() {
+	for (int i = 0; i < 3; i++) {
+		gl_Position = gl_PositionIn[i];
+		screentexcoord = gl_Position.xy * 0.5 + vec2(0.5);
+		lmCoordF = lmCoord[i];
+		texCoordF = texCoord[i];
+		glcolorF = glcolor[i];
+		glnormalF = glnormal[i];
+		matF = mat[i];
+		heightF = height[i];
+		positionF = position[i];
+		EmitVertex();
+	}
+	EndPrimitive();
+
+#ifdef SHADOWS
+	for (int i = 0; i < 3; i++) {
+		gl_Position = shadowPos[i];
+		gl_Position.xy *= 0.5;
+		gl_Position.xy -= vec2(0.5);
+		screentexcoord = gl_Position.xy * 0.5 + vec2(0.5);
+		lmCoordF = lmCoord[i];
+		texCoordF = texCoord[i];
+		glcolorF = glcolor[i];
+		glnormalF = glnormal[i];
+		matF = mat[i];
+		heightF = height[i];
+		positionF = position[i];
+		EmitVertex();
+	}
+	EndPrimitive();
+#endif	
+}
 #endif
 
 #ifdef VSH
 //Local Varyings
+varying vec4 position;
+varying vec4 shadowPos;
+varying vec2 lmCoord;
+varying vec2 texCoord;
+varying vec4 glcolor;
+varying vec3 glnormal;
+varying float mat;
+varying float height;
 
 
 //Attributes//
@@ -61,11 +264,34 @@ attribute vec3 at_midBlock;
 attribute vec2 mc_midTexCoord;
 
 //Uniforms//
+#if WORLD_TIME_ANIMATION >= 2
+uniform int worldTime;
+#else
+uniform float frameTimeCounter;
+#endif
+
 uniform int blockEntityId;
+
 uniform vec3 cameraPosition, previousCameraPosition;
+
+uniform mat4 gbufferModelView, gbufferModelViewInverse;
 uniform mat4 shadowModelView, shadowModelViewInverse;
 uniform mat4 shadowProjection, shadowProjectionInverse;
+
+//Common Variables//
+#if WORLD_TIME_ANIMATION >= 2
+float frametime = float(worldTime) * 0.05 * ANIMATION_SPEED;
+#else
+float frametime = frameTimeCounter * ANIMATION_SPEED;
+#endif
+
 //Includes//
+#include "/lib/vertex/waving.glsl"
+
+#ifdef WORLD_CURVATURE
+#include "/lib/vertex/worldCurvature.glsl"
+#endif
+
 #include "/lib/vx/voxelPos.glsl"
 
 //Program//
@@ -128,7 +354,8 @@ void main() {
 		92 * float(abs(mc_Entity.x - 10210) < 0.1) + //redstone block
 		93 * float(abs(mc_Entity.x - 10211) < 0.1) + //lapis block
 
-		120 * float(abs(mc_Entity.x - 79) < 0.1 || abs(mc_Entity.x - 12002) < 0.1 || abs(mc_Entity.x - 7979) < 0.1) + //stained glass, honey, slime
+		120 * float(abs(mc_Entity.x - 79) < 0.1 || abs(mc_Entity.x - 12002) < 0.1) + //stained glass, honey, slime
+		320 * float(abs(mc_Entity.x - 7979) < 0.1) + //ice
 		121 * float(abs(mc_Entity.x - 10008) < 0.1) + //clear glass
 		0;
 	height = 
@@ -145,26 +372,48 @@ void main() {
 		0.875 * float(abs(mc_Entity.x - 23103) < 0.1) + //seven snow layers
 		0.9375 * float(abs(mc_Entity.x - 20007) < 0.1 || abs(mc_Entity.x - 10229) < 0.1) + //grass path, farmland
 	0;
-	entityMat = 0;
-	texcoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
-	texcoord = mc_midTexCoord;
-	lmcoord  = (gl_TextureMatrix[1] * gl_MultiTexCoord1).xy;
+	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
+	lmCoord  = (gl_TextureMatrix[1] * gl_MultiTexCoord1).xy;
 	glcolor = gl_Color;
 	glnormal = gl_Normal;
 	float vxDist = shadowMapResolution * 0.0625 / VXHEIGHT;
-	vec3 position = (shadowModelViewInverse * shadowProjectionInverse * ftransform()).xyz;
-	position += cameraPosition - floor(previousCameraPosition);
-	position += at_midBlock / 64;
+	position = (shadowModelViewInverse * shadowProjectionInverse * ftransform());
+	vec3 vxPos = position.xyz;
+	vxPos += cameraPosition - floor(previousCameraPosition);
+	vxPos += at_midBlock / 64;
 	//if (at_midBlock == vec3(0)) position = vec3(1000.5);
-	vec3[2] posNorm = getVoxelPos(position);
-	position = posNorm[0];
+	vec3[2] posNorm = getVoxelPos(vxPos);
+	vxPos = posNorm[0];
 	if (mat < 79 || mat > 81) {
-		position.xz += (at_midBlock.xy * glnormal.z + at_midBlock.zx * glnormal.y + at_midBlock.yz * glnormal.x)/64.0;
+		vxPos.xz += (at_midBlock.xy * glnormal.z + at_midBlock.zx * glnormal.y + at_midBlock.yz * glnormal.x)/64.0;
 	}else{
-		position.xz += (at_midBlock.xy * glnormal.z + at_midBlock.zx * glnormal.y + at_midBlock.yz * glnormal.x)/64.0 + vec2(0.28, -0.28);
+		vxPos.xz += (at_midBlock.xy * glnormal.z + at_midBlock.zx * glnormal.y + at_midBlock.yz * glnormal.x)/64.0 + vec2(0.28, -0.28);
 	}
 	if(posNorm[1].y < 0.5 || blockEntityId == 12000 || abs(mat - 2.0) < 0.1) mat = -1;
-	gl_Position = vec4((2 * position.xz / shadowMapResolution), 1.0 - (position.y + cameraPosition.y + 0.001 * (glnormal.y + at_midBlock.y *0.002)) / 128, 1.0);
-	screentexcoord = gl_Position.xy * 0.5 + vec2(0.5);
+	gl_Position = vec4((2 * vxPos.xz / shadowMapResolution), 1.0 - (vxPos.y + cameraPosition.y + 0.001 * (glnormal.y + at_midBlock.y *0.002)) / 128, 1.0);
+	if (gl_Position.x < 0.0 && gl_Position.y < 0.0) gl_Position = vec4(-0);
+	shadowPos = vec4(0);
+	#ifdef SHADOWS
+	//Regular shadow stuff//
+	if (mc_Entity.x == 8) {  //water
+		#ifdef WATER_DISPLACEMENT
+			position.y += WavingWater(position.xyz);
+		#endif
+	}
+	float istopv = gl_MultiTexCoord0.t < mc_midTexCoord.t ? 1.0 : 0.0;
+	position.xyz += WavingBlocks(position.xyz, istopv);
+
+	#ifdef WORLD_CURVATURE
+		position.y -= WorldCurvature(position.xz);
+	#endif
+	
+	shadowPos = shadowProjection * shadowModelView * position;
+
+	float dist = length(shadowPos.xy);
+	float distortFactor = dist * shadowMapBias + (1.0 - shadowMapBias);
+	
+	shadowPos.xy *= 1.0 / distortFactor;
+	shadowPos.z = shadowPos.z * 0.2;
+	#endif
 }
 #endif

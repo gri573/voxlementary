@@ -46,7 +46,7 @@ float SampleTAAFilteredShadow(vec3 shadowPos, float offset) {
 }
 
 float GetShadow(vec3 shadowPos, float offset) {
-
+	shadowPos.xy *= 0.5;
     #ifdef SHADOW_FILTER
         #if AA > 1
             float shadow = SampleTAAFilteredShadow(shadowPos, offset);

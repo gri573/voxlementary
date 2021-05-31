@@ -160,9 +160,10 @@ vec3 getVolumetricRays(float pixeldepth0, float pixeldepth1, vec3 color, float d
 			if (depth1 < minDist || (depth0 < minDist && color == vec3(0.0))) break;
 
 			worldposition = getShadowSpace(distx(minDist), texCoord.st);
+			worldposition.xy *= 0.5;
 			//worldposition.z += 0.00002;
 
-			if (length(worldposition.xy * 2.0 - 1.0) < 1.0)	{
+			if (length(worldposition.xy * 4.0 - 1.0) < 1.0)	{
 				vec3 sample = vec3(shadow2D(shadowtex0, worldposition.xyz).z);
 			
 				if (depth0 < minDist) sample *= color;

@@ -227,7 +227,7 @@ void main() {
 		vec3 vl = getVolumetricRays(z0, z1, translucent, dither, viewPos);
 	#else
 		vec3 vl = vec3(0.0);
-    #endif
+	#endif
 
 	#if NIGHT_VISION > 1
 		if (nightVision > 0.0) {

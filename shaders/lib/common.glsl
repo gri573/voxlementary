@@ -539,9 +539,9 @@ Complementary Shaders by EminGT, based on BSL Shaders by Capt Tatsu
     #undef NORMAL_MAPPING
   #endif
 
-  //#ifndef SHADOWS
+  #ifndef SHADOWS
     #undef LIGHT_SHAFTS
-  //#endif
+  #endif
 
   #ifdef COMPATIBILITY_MODE
     #undef LIGHTNING_BOLTS_FIX

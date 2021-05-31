@@ -4,7 +4,7 @@ uniform sampler2D shadowcolor1;
 
 #if (defined OVERWORLD || defined END || defined SEVEN) && defined SHADOWS
 	uniform sampler2D shadowcolor0;
-	#include "/lib/vx/getShadowData.glsl"
+	#include "/lib/lighting/shadows.glsl"
 
 	vec3 DistortShadow(inout vec3 worldPos, float distortFactor) {
 		worldPos.xy /= distortFactor;
@@ -55,9 +55,17 @@ void GetLighting(inout vec3 albedo, inout float shadow, inout vec3 lightAlbedo, 
 	#endif
 
     #if defined OVERWORLD || defined END || defined SEVEN
-		#if defined SHADOWS && (defined GBUFFERS_TERRAIN || defined GBUFFERS_WATER)
-			if ((NdotL > 0.0 || subsurface + scattering > 0.001) && max(abs(voxelSpacePos.x), abs(voxelSpacePos.z)) + 1.21 < 0.0625 * shadowMapResolution / VXHEIGHT && abs(voxelSpacePos.y) + 1.21 < 32 * pow2(VXHEIGHT)) {
+		#ifdef SHADOWS
+			if ((NdotL > 0.0 || subsurface > 0.001)) {
+				float shadowLengthX = length(worldPos.xy);
+				float shadowLengthZ = length(worldPos.yz);
+				float shadowLength = shadowDistance - max(shadowLengthX, shadowLengthZ) - shadowDistance / 12.0;
 
+				#if (defined OVERWORLD || defined SEVEN) && defined LIGHT_LEAK_FIX
+					if (isEyeInWater == 0) shadowLength *= float(lightmap.y > 0.001);
+				#endif
+
+				if (shadowLength > 0.000001) {
 					vec3 shadowPos = ToShadow(worldPos);
 					float distb = sqrt(shadowPos.x * shadowPos.x + shadowPos.y * shadowPos.y);
 					float distortFactor = distb * shadowMapBias + (1.0 - shadowMapBias);
@@ -72,19 +80,23 @@ void GetLighting(inout vec3 albedo, inout float shadow, inout vec3 lightAlbedo, 
 
 					float dotWorldPos = dot(worldPos.xyz, worldPos.xyz);
 					
-/*					float biasFactor = sqrt(1.0 - NdotLm * NdotLm) / NdotLm;
+					float biasFactor = sqrt(1.0 - NdotLm * NdotLm) / NdotLm;
 					float distortBias = distortFactor * shadowDistance / 256.0;
 					distortBias *= 8.0 * distortBias;
 					
 					float bias = (distortBias * biasFactor + dotWorldPos * 0.000005 + 0.05) / shadowMapResolution;
-					float offset = 1.0 / shadowMapResolution;*/
-					worldSunVec *= 2 * float(worldSunVec.y > 0.0) - 1;
-					if(abs(worldSunVec.x) < 0.00001 || abs(worldSunVec.y) < 0.00001 || abs(worldSunVec.z) < 0.00001) worldSunVec += vec3(0.0001);
-					shadowcol = GetShadow(voxelSpacePos + 0.001 * normalize(worldSunVec), worldSunVec);
-					shadowcol.rgb += float(length(shadowcol.rgb) < 0.01) * vec3(pow2(clamp(1 - 0.3 * shadowcol.a / (subsurface + scattering + 0.001), 0, 1)));
-					shadow = float(max(shadowcol.r, max(shadowcol.g, shadowcol.b)) > 0.51);
+					float offset = 1.0 / shadowMapResolution;
 
-/*					#if defined WATER_CAUSTICS && defined OVERWORLD && !defined GBUFFERS_WATER && defined PROJECTED_CAUSTICS
+					if (subsurface > 0.001) {
+						bias = 0.0002;
+						offset = 0.002;
+					}
+					if (isEyeInWater == 1) offset *= 5.0;
+
+					shadowPos.z -= bias;
+					shadow = GetShadow(shadowPos, offset);
+
+					#if defined WATER_CAUSTICS && defined OVERWORLD && !defined GBUFFERS_WATER && defined PROJECTED_CAUSTICS
 						if (isEyeInWater == 0) {
 							if (shadow < 0.999) {
 								water = texture2D(shadowcolor0, shadowPos.st).r
@@ -102,15 +114,27 @@ void GetLighting(inout vec3 albedo, inout float shadow, inout vec3 lightAlbedo, 
 								water *= NdotL;
 							}
 						}
-					#endif*/
+					#endif
 				} else {
-					shadow = GetFakeShadow(lightmap.y);
-					shadowcol = vec4(shadow);
+					//albedo.rgb *= 0.0;
 				}
+				float shadowLength2 = shadowLength;
+				float shadowSmooth = 16.0;
+				if (shadowLength2 < shadowSmooth) {
+					float shadowLengthDecider = max(shadowLength2 / shadowSmooth, 0.0);
+					float skyLightShadow = GetFakeShadow(lightmap.y);
+					shadow = mix(skyLightShadow, shadow, shadowLengthDecider);
+					subsurface *= mix(subsurface * 0.5, subsurface, shadowLengthDecider);
+					fakeShadow = mix(1.0, fakeShadow, shadowLengthDecider);
+					fakeShadow = 1.0 - fakeShadow;
+					fakeShadow *= fakeShadow;
+					fakeShadow = 1.0 - fakeShadow;
+				}
+			}
 		#else
 			shadow = GetFakeShadow(lightmap.y);
-			shadowcol = vec4(shadow);
 		#endif
+		shadowcol = vec4(shadow);
 		
 		#if defined CLOUD_SHADOW && defined OVERWORLD
 			float cloudSize = 0.000025;
