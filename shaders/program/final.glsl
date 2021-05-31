@@ -87,8 +87,13 @@ void main() {
 	wh /= 32.0;
 	texCoord2 = floor(texCoord2 * wh) / wh;
 	*/
-	
-	vec3 color = texture2D(colortex1, texCoord2).rgb;
+
+	#ifdef ANAGLYPH
+		float texOffset = 0.01 - clamp(0.0008 / (GetLinearDepth(texture2D(depthtex0, texCoord2).r) + 0.001), 0.0, 0.05);
+		vec3 color = vec3(texture2D(colortex1, texCoord2 + vec2(texOffset, 0)).r,texture2D(colortex1, texCoord2 -  vec2(texOffset, 0)).gb);
+	#else
+		vec3 color = texture2D(colortex1, texCoord2).rgb;
+	#endif
 
 	#if SHARPEN > 0
 		SharpenFilter(color, texCoord2);

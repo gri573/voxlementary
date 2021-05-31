@@ -462,6 +462,7 @@ option.GENERATED_NORMALS.comment=Generates subtle normal maps out of the differe
 option.DOF=Type
 value.DOF.1=Depth Of Field
 value.DOF.2=Distance Blur
+value.DOF.3=Polygonal Bokeh
 option.DOF.comment=Depth Of Field: Blurs the objects that the player isn't looking at to simulate focusing. Distance Blur: Blurs distant objects to simulate fog scattering the light.
 option.DOF_STRENGTH=Blur Strength
 option.DOF_STRENGTH.comment=Adjusts the strength of the dof / distance blur.

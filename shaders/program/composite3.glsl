@@ -32,7 +32,7 @@ uniform float rainStrengthS;
 uniform ivec2 eyeBrightnessSmooth;
 #endif
 
-#if DOF == 1 && !(defined NETHER_BLUR && defined NETHER)
+#if (DOF == 1 || DOF == 3) && !(defined NETHER_BLUR && defined NETHER)
 uniform float centerDepthSmooth;
 #endif
 
@@ -116,6 +116,50 @@ vec3 DepthOfField(vec3 color, float z) { // DOF
 			dof += texture2DLod(colortex0, texCoord + offset, lod).rgb;
 		}
 		dof /= 18.0;
+	}
+	else dof = color;
+	return dof;
+}
+#endif
+
+#if DOF == 3 && !(defined NETHER_BLUR && defined NETHER)
+vec3 DepthOfField(vec3 color, float z) { // BDOF
+	#ifdef MANUAL_FOCUS
+		float focalPlane = FOCUS_DISTANCE / 100.0;
+	#else
+		float focalPlane = pow(centerDepthSmooth, BOKEH_FARNESS);
+	#endif
+	vec3 dof = vec3(0);
+	float hand = float(z < 0.56);
+	float farness = BOKEH_FARNESS;
+	float bladeCount = BOKEH_BLADES;
+	float bStrength = BOKEH_STRENGTH;
+	float bCount = 1;
+	float coc = BOKEH_STRENGTH * abs(pow(z, BOKEH_FARNESS) - focalPlane);
+	float bStepSize = coc / (floor(coc) + 1.0);
+	float dmax = coc + 2;
+	if(coc * 0.5 > 1.0 / max(viewWidth, viewHeight) && hand < 0.5){
+		for(int d = 1; d < dmax; d++){
+			for(int i = 0; i < BOKEH_BLADES; i++){
+				vec2 offset0 = vec2(sin(6.28 * (i + 0.1 * BOKEH_ROTATION) / BOKEH_BLADES), cos(6.28 * (i + 0.1 * BOKEH_ROTATION) / BOKEH_BLADES));
+				vec2 offset1 = vec2(sin(6.28 * (i + 1.0 + 0.1 * BOKEH_ROTATION) / BOKEH_BLADES), cos(6.28 * (i + 1.0 + 0.1 * BOKEH_ROTATION) / BOKEH_BLADES));
+				for(int j = 0; j < d; j++){
+					float omix = j / (d * 1.0);
+					vec2 offset = mix(offset0, offset1, omix);
+					offset *= 1.5 * d * bStepSize / vec2(viewWidth, viewHeight);
+					#ifdef ANAMORPHIC_BLUR
+						offset *= vec2(0.4, 1.0);
+					#endif
+					float d2 = BOKEH_STRENGTH * abs(pow(texture2D(depthtex0, texCoord + offset).r, BOKEH_FARNESS) - focalPlane);
+					if(d2 > d * bStepSize){
+						dof += texture2D(colortex0, texCoord + offset).rgb;
+						bCount++;
+					} 
+				}
+			}
+		}
+		dof += color;
+		dof /= bCount;
 	}
 	else dof = color;
 	return dof;
