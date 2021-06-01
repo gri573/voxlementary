@@ -185,7 +185,7 @@ void main() {
 #endif
 
 #ifdef GSH
-#ifdef SHADOWS
+#if defined SHADOWS && (defined OVERWORLD || defined END || defined SEVEN)
 const int maxVerticesOut = 6;
 #else
 const int maxVerticesOut = 3;
@@ -226,7 +226,7 @@ void main() {
 	}
 	EndPrimitive();
 
-#ifdef SHADOWS
+#if defined SHADOWS && (defined OVERWORLD || defined END || defined SEVEN)
 	for (int i = 0; i < 3; i++) {
 		gl_Position = shadowPos[i];
 		gl_Position.xy *= 0.5;
