@@ -70,6 +70,9 @@ uniform float isDry, isRainy, isSnowy;
 
 #ifdef INTERACTIVE_WATER
 uniform sampler2D colortex8;
+
+uniform sampler2D colortex9;
+
 uniform sampler2D shadowcolor0;
 #endif
 
@@ -550,11 +553,16 @@ void main() {
 		wdata0[1].a /= max(1.0, abs(wdata0[1].b - wdata.b));
 		wdata0[2].a /= max(1.0, abs(wdata0[2].b - wdata.b));
 		wdata0[3].a /= max(1.0, abs(wdata0[3].b - wdata.b));
+
 		float walpha0 = wdata0[0].a + wdata0[1].a + wdata0[2].a + wdata0[3].a + 0.01;
 		vec2 playerdist = (texCoord - vec2(0.5)) * vec2(viewWidth, viewHeight) / INTERACTIVE_WATER_RES + vec2(0.5) - fract(cameraPosition.xz);
 		if(abs(envcoords0.y + 1) < 1.2 && length(playerdist) < 0.4){
 			wdata.r += 2 * (cameraPosition.y - previousCameraPosition.y - 2 * dot(playerdist, cameraPosition.xz - previousCameraPosition.xz));
 		}
+
+		vec4 entitydata = texture2D(colortex9, waterCoord);
+		if(abs((entitydata.g - 0.5) * 255 - wdata.b + 1.0) < 0.5) wdata.r -= 0.5 * (entitydata.r - 0.5);
+
 		float wavgr = wdata0[0].r * wdata0[0].a + wdata0[1].r * wdata0[1].a + wdata0[2].r * wdata0[2].a + wdata0[3].r * wdata0[3].a;
 		wdata.g -= 0.1 * exp(0.05 * INTERACTIVE_WATER_RES) * (walpha0 * wdata.r - wavgr);
 		wdata.rg *= wdata.a;
@@ -563,10 +571,12 @@ void main() {
 		if(wdata.a < 0.1 && length(environment) > 0.1) wdata.r = wavgr /(walpha0 + 0.0001);
 		wdata.rg *= vec2(1.0) / (vec2(1.0) + 0.01 * wdata.rg * wdata.rg * wdata.rg *wdata.rg);
 		wdata.a = float(length(environment.rgb) > 0.1);
+
 		vec2 playerWaterCoord0 = (texCoord - vec2(0.5)) * vec2(viewWidth, viewHeight) / (1.0 * INTERACTIVE_WATER_RES) + 4 * vec2(frameTimeCounter, 0.573 * frameTimeCounter) + floor(cameraPosition.xz);
 		vec2 playerWaterCoord1 = (texCoord - vec2(0.5)) * vec2(viewWidth, viewHeight) / (1.0 * INTERACTIVE_WATER_RES) + 4 * vec2(1.6 * frameTimeCounter, -0.273 * frameTimeCounter) + floor(cameraPosition.xz);
 		vec2 playerWaterCoord2 = (texCoord - vec2(0.5)) * vec2(viewWidth, viewHeight) / (1.0 * INTERACTIVE_WATER_RES) + 4 * vec2(0.8 * frameTimeCounter, -0.473 * frameTimeCounter) + floor(cameraPosition.xz);
-		float stimulantWave = 3 * WATER_BUMP * (0.5 * sin(mod(dot(playerWaterCoord0, vec2(0.173, 0.02257)), 6.2832)) + sin(mod(2 * dot(playerWaterCoord1, vec2(0.216, -0.173)), 5.2832)));
+
+		float stimulantWave = 0;//3 * WATER_BUMP * (0.5 * sin(mod(dot(playerWaterCoord0, vec2(0.173, 0.02257)), 6.2832)) + sin(mod(2 * dot(playerWaterCoord1, vec2(0.216, -0.173)), 5.2832)));
 		wdata.r += stimulantWave * pow(min(inRange0, 1.0), 10);
 		wdata.r = mix(wdata.r, stimulantWave, pow(min(inRange0, 1.0), 30));
 		wdata.rg *= float((abs(waterCoord.x - 0.5) < 0.5 || abs(waterCoord.y - 0.5) < 0.5) && walpha0 > 0.1);
