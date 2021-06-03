@@ -72,7 +72,6 @@ uniform mat4 shadowProjection;
 uniform mat4 shadowModelView;
 
 uniform sampler2D texture;
-uniform sampler2D colortex0;
 
 #if defined FOG1 && defined FOG1_CHECK
 uniform float far;
@@ -416,8 +415,9 @@ void main() {
 		#endif
 	#ifdef INTERACTIVE_WATER
 	} else {
-		wdata = vec4(velocity.y * 20 + 0.5, water / 255.0 + 0.5, 0, 1);
-		albedo = texture2D(colortex0, screentexcoord);
+		if (abs(water) > 20 * VXHEIGHT * VXHEIGHT) discard;
+		wdata = vec4(velocity.y * 20 + 0.5, water / 64.0 + 0.5, 0, 1);
+		albedo = vec4(wdata.g, 0.0, 0.0, 0.1);
 	}
 	#endif
     /* DRAWBUFFERS:037 */

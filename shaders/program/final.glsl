@@ -120,8 +120,8 @@ void main() {
 		color.rgb = mix(grayStart, color.rgb, animation);
 	#endif
 
-	//gl_FragColor = vec4(color, 1.0);
-	gl_FragColor = vec4(texture2D(colortex9, texCoord).rgb * 0.2 + color * 0.8, 1.0);
+	gl_FragColor = vec4(color, 1.0);
+	//gl_FragColor = vec4(texture2D(colortex9, texCoord).rgb * 0.2 + color * 0.8, 1.0);
 }
 
 #endif
