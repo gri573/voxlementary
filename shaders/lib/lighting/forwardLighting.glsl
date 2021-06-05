@@ -67,7 +67,7 @@ void GetLighting(inout vec3 albedo, inout float shadow, inout vec3 lightAlbedo, 
 
 				if (shadowLength > 0.000001) {
 					vec3 shadowPos = ToShadow(worldPos);
-					float distb = sqrt(shadowPos.x * shadowPos.x + shadowPos.y * shadowPos.y);
+					float distb = length(shadowPos.xy);
 					float distortFactor = distb * shadowMapBias + (1.0 - shadowMapBias);
 					shadowPos = DistortShadow(shadowPos, distortFactor);
 
@@ -97,6 +97,7 @@ void GetLighting(inout vec3 albedo, inout float shadow, inout vec3 lightAlbedo, 
 					shadow = GetShadow(shadowPos, offset);
 
 					#if defined WATER_CAUSTICS && defined OVERWORLD && !defined GBUFFERS_WATER && defined PROJECTED_CAUSTICS
+						shadowPos.xy *= 0.5;
 						if (isEyeInWater == 0) {
 							if (shadow < 0.999) {
 								water = texture2D(shadowcolor0, shadowPos.st).r
