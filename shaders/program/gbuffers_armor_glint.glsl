@@ -48,10 +48,8 @@ uniform int worldTime;
 
 uniform float frameTimeCounter;
 
-#ifdef WORLD_CURVATURE
 uniform mat4 gbufferModelView;
 uniform mat4 gbufferModelViewInverse;
-#endif
 
 //Common Variables//
 #if WORLD_TIME_ANIMATION >= 2
@@ -71,18 +69,16 @@ void main() {
 
 	color = gl_Color;
 
+	vec4 position = gbufferModelViewInverse * gl_ModelViewMatrix * gl_Vertex;
 	#ifdef WORLD_CURVATURE
-		vec4 position = gbufferModelViewInverse * gl_ModelViewMatrix * gl_Vertex;
 		if (gl_ProjectionMatrix[2][2] < -0.5) position.y -= WorldCurvature(position.xz);
-		gl_Position = gl_ProjectionMatrix * gbufferModelView * position;
-	#else
-		gl_Position = ftransform();
 	#endif
+	gl_Position = gl_ProjectionMatrix * gbufferModelView * position;
 
-	if (HAND_SWAY > 0.001) {
-		if (gl_ProjectionMatrix[2][2] > -0.5) {
-		gl_Position.x += HAND_SWAY * (sin(frametime * 0.86)) / 256.0;
-		gl_Position.y += HAND_SWAY * (cos(frametime * 1.5)) / 64.0;
+	if (gl_ProjectionMatrix[2][2] > -0.5) { // Hands
+		if (HAND_SWAY > 0.001) {
+			gl_Position.x += HAND_SWAY * (sin(frametime * 0.86)) / 256.0;
+			gl_Position.y += HAND_SWAY * (cos(frametime * 1.5)) / 64.0;
 		}
 	}
 }

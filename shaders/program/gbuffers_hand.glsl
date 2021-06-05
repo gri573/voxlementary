@@ -397,13 +397,11 @@ void main() {
 
 	upVec = normalize(gbufferModelView[1].xyz);
 
+	vec4 position = gbufferModelViewInverse * gl_ModelViewMatrix * gl_Vertex;
 	#ifdef WORLD_CURVATURE
-		vec4 position = gbufferModelViewInverse * gl_ModelViewMatrix * gl_Vertex;
 		if (gl_ProjectionMatrix[2][2] < -0.5) position.y -= WorldCurvature(position.xz);
-		gl_Position = gl_ProjectionMatrix * gbufferModelView * position;
-	#else
-		gl_Position = ftransform();
 	#endif
+	gl_Position = gl_ProjectionMatrix * gbufferModelView * position;
 
 	if (HAND_SWAY > 0.001) {
 		gl_Position.x += HAND_SWAY * (sin(frametime * 0.86)) / 256.0;
