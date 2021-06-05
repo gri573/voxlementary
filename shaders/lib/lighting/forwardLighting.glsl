@@ -134,7 +134,6 @@ void GetLighting(inout vec3 albedo, inout float shadow, inout vec3 lightAlbedo, 
 		#else
 			shadow = GetFakeShadow(lightmap.y);
 		#endif
-		shadowcol = vec4(shadow);
 		
 		#if defined CLOUD_SHADOW && defined OVERWORLD
 			float cloudSize = 0.000025;
@@ -153,15 +152,15 @@ void GetLighting(inout vec3 albedo, inout float shadow, inout vec3 lightAlbedo, 
 			#endif
 		#endif
 
+		shadowcol = vec4(shadow);
 		fullShadow = shadowcol.rgb * max(NdotL, subsurface * (1.0 - max(rainStrengthS, (1.0 - sunVisibility)) * 0.40));
-		
+
 		#if defined OVERWORLD && !defined TWO
 			shadowMult = 1.0 * (1.0 - 0.9 * rainStrengthS);
-			
+
 			shadowTime = abs(sunVisibility - 0.5) * 2.0;
 			shadowTime *= shadowTime;
 			shadowMult *= shadowTime * shadowTime;
-			
 			#ifndef LIGHT_LEAK_FIX
 				ambientCol *= pow(lightmap.y, 2.5);
 			#else

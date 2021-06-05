@@ -93,7 +93,7 @@ uniform ivec2 atlasSize;
 
 //Common Variables//
 float eBS = eyeBrightnessSmooth.y / 240.0;
-float sunVisibility  = clamp(dot( sunVec,upVec) + 0.0625, 0.0, 0.125) * 8.0;
+float sunVisibility = clamp(dot(sunVec, upVec) + 0.0625, 0.0, 0.125) * 8.0;
 float vsBrightness = clamp(screenBrightness, 0.0, 1.0);
 
 #if WORLD_TIME_ANIMATION >= 2
@@ -417,7 +417,7 @@ void main() {
 	} else {
 		if (abs(water) > 20 * VXHEIGHT * VXHEIGHT) discard;
 		wdata = vec4(velocity.y * 20 + 0.5, water / 64.0 + 0.5, 0, 1);
-		albedo = vec4(wdata.g, 0.0, 0.0, 0.1);
+		albedo = vec4(0.0, 0.0, 0.0, 1.0);
 	}
 	#endif
     /* DRAWBUFFERS:037 */
@@ -518,6 +518,8 @@ void main() {
 		texCoord = texCoordV[i];
 		lmCoord = lmCoordV[i];
 		normal = normalV[i];
+		sunVec = sunVecV[i];
+		upVec = upVecV[i];
 		color = colorV[i];
 		water = 10000.0;
 		#ifdef INTERACTIVE_WATER
@@ -549,6 +551,8 @@ void main() {
 			texCoord = texCoordV[i];
 			lmCoord = lmCoordV[i];
 			normal = normalV[i];
+			sunVec = sunVecV[i];
+			upVec = upVecV[i];
 			color = colorV[i];
 			water = waterPos[i].y;
 			#ifdef INTERACTIVE_WATER
