@@ -415,7 +415,13 @@ void main() {
 		#endif
 	#ifdef INTERACTIVE_WATER
 	} else {
-		if (abs(water) > 3) discard;
+		#ifdef WATER_ENTITIES
+		if (abs(water) > 3) {
+		#endif
+			discard;
+		#ifdef WATER_ENTITIES
+		}
+		#endif
 		wdata = vec4(velocity.y * 20 + 0.5, water / 64.0 + 0.5, 0, 1);
 		//albedo = texture2D(texture, texCoord);
 	}
