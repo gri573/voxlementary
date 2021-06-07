@@ -94,12 +94,12 @@ const vec3[50] lightcols = vec3[50](
 );
 	vec4 col = vec4(0);
 	vec4 blockData = texture2D(shadowcolor0, texcoord);
+	vec3 pos = vec3(0);
 	if(texcoord.x > 0.5 || texcoord.y > 0.5) {
-	//vec2 oldtexcoord2 = oldtexcoord;
-	vec3 pos = getVoxelPosInverse(texcoord);
+	pos = getVoxelPosInverse(texcoord);
 	pos += dpos;
 	vec3[2] posNorm0 = getVoxelPos(pos);
-	posNorm0[0].xz /= shadowMapResolution * VXHEIGHT;
+	posNorm0[0].xz /= shadowMapResolution;
 	vec2 oldtexcoord2 = posNorm0[0].xz + 0.5;
 /*oldtexcoord2 += vec2(0.125 / VXHEIGHT * dpos.y, 0);
 	float wrapping = float(oldtexcoord2.x > 1.0) - float(oldtexcoord2.x < 0.0);
@@ -110,12 +110,12 @@ const vec3[50] lightcols = vec3[50](
 	vec3 colMult = texture2D(shadowcolor0, oldtexcoord2).rgb;
 	colMult /= max(colMult.r, max(colMult.g, colMult.b));
 	float wrapping = float(oldtexcoord2.x + 0.125 / VXHEIGHT > 1.0) - float(oldtexcoord.x - 0.125 / VXHEIGHT < 0.0);
-	vec2 pos0 = getVoxelPos(pos + vec3(-1, 0, 0))[0].xz / (shadowMapResolution * VXHEIGHT) + vec2(0.5);
-	vec2 pos1 = getVoxelPos(pos + vec3(0, -1, 0))[0].xz / (shadowMapResolution * VXHEIGHT) + vec2(0.5);
-	vec2 pos2 = getVoxelPos(pos + vec3(0, 0, -1))[0].xz / (shadowMapResolution * VXHEIGHT) + vec2(0.5);
-	vec2 pos3 = getVoxelPos(pos + vec3(1, 0, 0))[0].xz / (shadowMapResolution * VXHEIGHT) + vec2(0.5);
-	vec2 pos4 = getVoxelPos(pos + vec3(0, 1, 0))[0].xz / (shadowMapResolution * VXHEIGHT) + vec2(0.5);
-	vec2 pos5 = getVoxelPos(pos + vec3(0, 0, 1))[0].xz / (shadowMapResolution * VXHEIGHT) + vec2(0.5);
+	vec2 pos0 = getVoxelPos(pos + vec3(-1, 0, 0))[0].xz / shadowMapResolution + vec2(0.5);
+	vec2 pos1 = getVoxelPos(pos + vec3(0, -1, 0))[0].xz / shadowMapResolution + vec2(0.5);
+	vec2 pos2 = getVoxelPos(pos + vec3(0, 0, -1))[0].xz / shadowMapResolution + vec2(0.5);
+	vec2 pos3 = getVoxelPos(pos + vec3(1, 0, 0))[0].xz / shadowMapResolution + vec2(0.5);
+	vec2 pos4 = getVoxelPos(pos + vec3(0, 1, 0))[0].xz / shadowMapResolution + vec2(0.5);
+	vec2 pos5 = getVoxelPos(pos + vec3(0, 0, 1))[0].xz / shadowMapResolution + vec2(0.5);
 
 	vec4 col0 = texture2D(shadowcolor1, pos0) * float(abs(pos0.x - 0.5) < 0.5 && abs(pos0.y - 0.5) < 0.5);
 	vec4 col1 = texture2D(shadowcolor1, pos1) * float(abs(pos1.x - 0.5) < 0.5 && abs(pos1.y - 0.5) < 0.5);

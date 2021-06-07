@@ -415,9 +415,9 @@ void main() {
 		#endif
 	#ifdef INTERACTIVE_WATER
 	} else {
-		if (abs(water) > 20 * VXHEIGHT * VXHEIGHT) discard;
+		if (abs(water) > 3) discard;
 		wdata = vec4(velocity.y * 20 + 0.5, water / 64.0 + 0.5, 0, 1);
-		albedo = vec4(0.0, 0.0, 0.0, 1.0);
+		//albedo = texture2D(texture, texCoord);
 	}
 	#endif
     /* DRAWBUFFERS:037 */

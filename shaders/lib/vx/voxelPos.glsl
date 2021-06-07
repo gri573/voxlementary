@@ -11,12 +11,9 @@ vec3[2] getVoxelPos(vec3 pos){
 
 vec3 getVoxelPosInverse(vec2 voxelScreenPos) {
 	float vxDist = shadowMapResolution * 0.0625 / VXHEIGHT;
-	vec3 pos = vec3(fract(voxelScreenPos.x * 8 * VXHEIGHT), 0, fract(voxelScreenPos.y * 8 * VXHEIGHT));
-	pos.xz -= 0.5;
-	pos.xz *= 2 * vxDist;
-	if(voxelScreenPos.x < 0.5) voxelScreenPos.xy += 0.5;
-	//voxelScreenPos.y += 0.25;
-	pos.y = floor((voxelScreenPos.x) * 8 * VXHEIGHT - 4) + 4 * VXHEIGHT * floor(voxelScreenPos.y * 8 * VXHEIGHT) - 24 * VXHEIGHT * VXHEIGHT;
-	//pos.z -= 0.5;
+	vec3 pos = vec3(mod(voxelScreenPos.x * shadowMapResolution, 2 * vxDist), 0, mod(voxelScreenPos.y * shadowMapResolution, 2 * vxDist));
+	pos.xz -= vxDist;
+	if(voxelScreenPos.x < 0.5) voxelScreenPos += vec2(0.5);
+	pos.y = floor((voxelScreenPos.x - 0.5) * 8 * VXHEIGHT) + 4 * VXHEIGHT * floor(voxelScreenPos.y * 8 * VXHEIGHT) - 24 * VXHEIGHT * VXHEIGHT;
 	return pos;
 }
