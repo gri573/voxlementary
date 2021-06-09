@@ -278,6 +278,10 @@ void GetLighting(inout vec3 albedo, inout float shadow, inout vec3 lightAlbedo, 
 		blockLighting = pow(blockLighting, vec3(1.5));
 		vec3 blockLighting0 = BLOCKLIGHT_I * vec3(BLOCKLIGHT_R, BLOCKLIGHT_G, BLOCKLIGHT_B) * newLightmap * newLightmap * 0.5 / 255.0;
 		blockLighting = mix(blockLighting, blockLighting0, clamp(border, 0, 1));
+		float blockLightBrightness = max(max(blockLighting.r, blockLighting.g), blockLighting.b);
+		finalHandLight *= finalHandLight * BLOCKLIGHT_I;
+		finalHandLight = max(finalHandLight, 0.0);
+		blockLighting = max(blockLightBrightness, finalHandLight) * mix(blockLighting / (blockLightBrightness + 0.0001), vec3(BLOCKLIGHT_R, BLOCKLIGHT_G, BLOCKLIGHT_B) / max(BLOCKLIGHT_R * 1.0, max(BLOCKLIGHT_G * 1.0, BLOCKLIGHT_B * 1.0)), finalHandLight / (finalHandLight + blockLightBrightness + 0.0001));
 	}else{
 	#endif
 	
