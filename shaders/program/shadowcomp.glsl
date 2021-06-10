@@ -133,13 +133,13 @@ const vec3[50] lightcols = vec3[50](
 	col5.rgb *= float(abs(col5.a - 0.75) > 0.1 && ((ID == 5 && abs(col5.a - 0.25) > 0.1) || (ID == 6 && abs(col5.a - 0.5) > 0.1) || abs(ID - 5.5) > 1.0));
 	col6.rgb *= float(abs(col6.a - 0.75) > 0.1);
 
-	col0.a = max(max(col0.r, max(col0.g, col0.b)), 0.0001);
-	col1.a = max(max(col1.r, max(col1.g, col1.b)), 0.0001);
-	col2.a = max(max(col2.r, max(col2.g, col2.b)), 0.0001);
-	col3.a = max(max(col3.r, max(col3.g, col3.b)), 0.0001);
-	col4.a = max(max(col4.r, max(col4.g, col4.b)), 0.0001);
-	col5.a = max(max(col5.r, max(col5.g, col5.b)), 0.0001);
-	col6.a = max(max(col6.r, max(col6.g, col6.b)), 0.0001);
+	col0.a = min(max(max(col0.r, max(col0.g, col0.b)), 0.0001), 1.0);
+	col1.a = min(max(max(col1.r, max(col1.g, col1.b)), 0.0001), 1.0);
+	col2.a = min(max(max(col2.r, max(col2.g, col2.b)), 0.0001), 1.0);
+	col3.a = min(max(max(col3.r, max(col3.g, col3.b)), 0.0001), 1.0);
+	col4.a = min(max(max(col4.r, max(col4.g, col4.b)), 0.0001), 1.0);
+	col5.a = min(max(max(col5.r, max(col5.g, col5.b)), 0.0001), 1.0);
+	col6.a = min(max(max(col6.r, max(col6.g, col6.b)), 0.0001), 1.0);
 
 	col0.rgb /= col0.a;
 	col1.rgb /= col1.a;
