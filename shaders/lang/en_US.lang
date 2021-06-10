@@ -925,6 +925,9 @@ option.LAVA_VISIBILITY.comment=Improves visibility under lava by reducing the la
 option.EMISSIVE_ORES=Emissive Ores
 option.EMISSIVE_ORES.comment=Adds glow to all ores except coal and nether ores.
 
+option.ORE_EMISSION=Ore Emission Intensity
+option.ORE_EMISSION.comment=Adjusts the intensity of glow on ores and ancient debris.
+
 option.EMISSIVE_NETHER_STEMS=Emissive Nether Stems
 option.EMISSIVE_NETHER_STEMS.comment=Adds subtle glow to crimson/warped stem and hyphae.
 

@@ -434,7 +434,7 @@ void main() {
 						float stoneDif = max(abs(albedo.r - albedo.g), max(abs(albedo.r - albedo.b), abs(albedo.g - albedo.b)));
 						float brightFactor = max(lAlbedoP - 1.5, 0.0);
 						float ore = max(max(stoneDif - 0.175 + specG, 0.0), brightFactor);
-						emissive *= sqrt4(ore) * 0.15;
+						emissive *= sqrt4(ore) * 0.15 * ORE_EMISSION;
 						metalness = 0.0;
 						if (albedo.r > 0.95 && albedo.b + albedo.g < 1.1 && albedo.b + albedo.g > 0.5 && albedo.g < albedo.b + 0.1)
 							// White pixels of the new Redstone Ore
@@ -1067,7 +1067,7 @@ void main() {
 			specR = 12.135, specG = 0.7;
 		else if (blockID == 10209) // Ancient Debris
 			#ifdef GLOWING_DEBRIS
-				specB = 6.3, color.a = 1.0,
+				specB = 6.0 + min(0.3 * ORE_EMISSION, 0.9), color.a = 1.0,
 			#endif
 			specR = 8.07, specG = 0.7;
 	} else {

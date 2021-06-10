@@ -56,12 +56,12 @@ const vec3[50] lightcols = vec3[50](
 	vec3(CRYING_OBSIDIAN_COL_R, CRYING_OBSIDIAN_COL_G, CRYING_OBSIDIAN_COL_B),//crying_obsidian
 	vec3(REDSTONE_COL_R, REDSTONE_COL_G, REDSTONE_COL_B) * 0.5,//redstone_ore:lit=true
 	#ifdef EMISSIVE_ORES
-		vec3(LAPIS_COL_R, LAVA_COL_G, LAPIS_COL_B) * 0.3,//lapis_ore
-		vec3(DIAMOND_COL_R, DIAMOND_COL_G, DIAMOND_COL_B) * 0.4,//diamond_ore
-		vec3(EMERALD_COL_R, EMERALD_COL_G, EMERALD_COL_B) * 0.4,//emerald_ore
-		vec3(GOLD_COL_R, GOLD_COL_G, GOLD_COL_B) * 0.4,//gold_ore
-		vec3(IRON_COL_R, IRON_COL_G, IRON_COL_B) * 0.4,//iron_ore
-		vec3(REDSTONE_COL_R, REDSTONE_COL_G, REDSTONE_COL_B) * 0.2,//redstone_ore:lit=false
+		vec3(LAPIS_COL_R, LAVA_COL_G, LAPIS_COL_B) * 0.3 * ORE_EMISSION,//lapis_ore
+		vec3(DIAMOND_COL_R, DIAMOND_COL_G, DIAMOND_COL_B) * 0.4 * ORE_EMISSION,//diamond_ore
+		vec3(EMERALD_COL_R, EMERALD_COL_G, EMERALD_COL_B) * 0.4 * ORE_EMISSION,//emerald_ore
+		vec3(GOLD_COL_R, GOLD_COL_G, GOLD_COL_B) * 0.4 * ORE_EMISSION,//gold_ore
+		vec3(IRON_COL_R, IRON_COL_G, IRON_COL_B) * 0.4 * ORE_EMISSION,//iron_ore
+		vec3(REDSTONE_COL_R, REDSTONE_COL_G, REDSTONE_COL_B) * 0.2 * ORE_EMISSION,//redstone_ore:lit=false
 	#else
 		vec3(0),
 		vec3(0),
