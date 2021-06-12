@@ -100,8 +100,8 @@ Complementary Shaders by EminGT, based on BSL Shaders by Capt Tatsu
   #define REFLECTION_TRANSLUCENT
   #define WATER_TRANSLUCENT_SKY_REF
   #define WATER_CAUSTICS
-  #define INTERACTIVE_WATER
-  #define WATER_ENTITIES
+//#define INTERACTIVE_WATER
+//#define WATER_ENTITIES
   #define INTERACTIVE_WATER_RES 8 //[4 6 8 10 12 24 16 20 24 32 48 64]
 //#define PROJECTED_CAUSTICS
 //#define WATER_REFRACT

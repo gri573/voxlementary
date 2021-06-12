@@ -191,11 +191,13 @@ const int maxVerticesOut = 6;
 const int maxVerticesOut = 3;
 #endif
 
+//Varyings//
 varying in vec4 shadowPos[3];
 varying in vec2 lmCoord[3];
 varying in vec2 texCoord[3];
 varying in vec4 glcolor[3];
 varying in vec3 glnormal[3];
+varying in vec3 worldNormal[3];
 varying in float mat[3];
 varying in float height[3];
 varying in vec4 position[3];
@@ -210,16 +212,32 @@ varying out float matF;
 varying out float heightF;
 varying out vec4 positionF;
 
+//Uniforms//
+uniform vec3 cameraPosition;
+uniform vec3 previousCameraPosition;
+
+//Includes//
+#include "/lib/vx/voxelPos.glsl"
 
 void main() {
+	vec3 vxPos0 = position[0].xyz + position[1].xyz + position[2].xyz;
+	vxPos0 /= 3.0;
+	vxPos0 += cameraPosition - floor(previousCameraPosition);
 	for (int i = 0; i < 3; i++) {
-		gl_Position = gl_PositionIn[i];
+		vec3 vxPos = vxPos0 - 0.01 * normalize(worldNormal[i]);
+		vxPos.xz = floor(vxPos).xz + 0.5;
+		vec3[2] posNorm = getVoxelPos(vxPos);
+		vxPos = posNorm[0];
+		vxPos.x += 0.5 * (i - 1);
+		vxPos.z += -0.5 - i * i + 2 * i;
+		gl_Position = vec4((2 * vxPos.xz / shadowMapResolution), 1.0 - (vxPos.y + cameraPosition.y + 0.001 * (worldNormal[i].y + fract(vxPos.y) * 0.002)) / 128, 1.0);
 		screentexcoord = gl_Position.xy * 0.5 + vec2(0.5);
 		lmCoordF = lmCoord[i];
 		texCoordF = texCoord[i];
 		glcolorF = glcolor[i];
 		glnormalF = glnormal[i];
 		matF = mat[i];
+		if (posNorm[1].x < 0.5) matF = -1;
 		heightF = height[i];
 		positionF = position[i];
 		EmitVertex();
@@ -231,6 +249,7 @@ void main() {
 		gl_Position = shadowPos[i];
 		gl_Position.xy *= 0.5;
 		gl_Position.xy -= vec2(0.5);
+		gl_Position.xy = clamp(gl_Position.xy, vec2(-1.0), vec2(0.0));
 		screentexcoord = gl_Position.xy * 0.5 + vec2(0.5);
 		lmCoordF = lmCoord[i];
 		texCoordF = texCoord[i];
@@ -254,13 +273,13 @@ varying vec2 lmCoord;
 varying vec2 texCoord;
 varying vec4 glcolor;
 varying vec3 glnormal;
+varying vec3 worldNormal;
 varying float mat;
 varying float height;
 
 
 //Attributes//
 attribute vec2 mc_Entity;
-attribute vec3 at_midBlock;
 attribute vec2 mc_midTexCoord;
 
 //Uniforms//
@@ -376,22 +395,10 @@ void main() {
 	lmCoord  = (gl_TextureMatrix[1] * gl_MultiTexCoord1).xy;
 	glcolor = gl_Color;
 	glnormal = gl_Normal;
-	float vxDist = shadowMapResolution * 0.0625 / VXHEIGHT;
-	position = (shadowModelViewInverse * shadowProjectionInverse * ftransform());
-	vec3 vxPos = position.xyz;
-	vxPos += cameraPosition - floor(previousCameraPosition);
-	vxPos += at_midBlock / 64;
-	//if (at_midBlock == vec3(0)) position = vec3(1000.5);
-	vec3[2] posNorm = getVoxelPos(vxPos);
-	vxPos = posNorm[0];
-	if (mat < 79 || mat > 81) {
-		vxPos.xz += (at_midBlock.xy * glnormal.z + at_midBlock.zx * glnormal.y + at_midBlock.yz * glnormal.x)/64.0;
-	}else{
-		vxPos.xz += (at_midBlock.xy * glnormal.z + at_midBlock.zx * glnormal.y + at_midBlock.yz * glnormal.x)/64.0 + vec2(0.28, -0.28);
-	}
-	if(posNorm[1].y < 0.5 || blockEntityId == 12000 || abs(mat - 2.0) < 0.1) mat = -1;
-	gl_Position = vec4((2 * vxPos.xz / shadowMapResolution), 1.0 - (vxPos.y + cameraPosition.y + 0.001 * (glnormal.y + at_midBlock.y *0.002)) / 128, 1.0);
-	if (gl_Position.x < 0.0 && gl_Position.y < 0.0) gl_Position = vec4(-0);
+	worldNormal = (shadowModelViewInverse * shadowProjectionInverse * vec4(glnormal, 1.0)).xyz;
+	position = shadowModelViewInverse * shadowProjectionInverse * ftransform();
+	if(abs(mat - 2.0) < 0.1) mat = -1;
+	gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
 	shadowPos = vec4(0);
 	#ifdef SHADOWS
 	//Regular shadow stuff//
