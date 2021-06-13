@@ -192,8 +192,6 @@ const vec3[60] lightcols = vec3[60](
 #ifdef VSH
 //Uniforms//
 uniform vec3 cameraPosition, previousCameraPosition;
-uniform mat4 shadowModelView, shadowModelViewInverse;
-uniform mat4 shadowProjection, shadowProjectionInverse;
 
 void main(){
 	gl_Position = ftransform();
