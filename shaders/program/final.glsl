@@ -121,7 +121,7 @@ void main() {
 	#endif
 
 	gl_FragColor = vec4(color, 1.0);
-	//gl_FragColor = vec4(texture2D(shadowcolor0, texCoord).rgb * 0.9 + color * 0.1, 1.0);
+	//gl_FragColor = vec4(texture2D(shadowcolor0, texCoord).rgb * 0.7 + color * 0.3, 1.0);
 }
 
 #endif

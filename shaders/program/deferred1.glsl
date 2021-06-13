@@ -549,10 +549,10 @@ void main() {
 		wdata0[1].ba = texture2D(colortex8, envScreenCoords + vec2(0.0, float(1 - fract(envcoords0).z < 1.0 / INTERACTIVE_WATER_RES)) / vec2(viewWidth, viewHeight)).ba;
 		wdata0[2].ba = texture2D(colortex8, envScreenCoords - vec2(float(fract(envcoords0).x < 1.0 / INTERACTIVE_WATER_RES), 0.0) / vec2(viewWidth, viewWidth)).ba;
 		wdata0[3].ba = texture2D(colortex8, envScreenCoords + vec2(float(1 - fract(envcoords0).x < 1.0 / INTERACTIVE_WATER_RES), 0.0) / vec2(viewWidth, viewWidth)).ba;
-		wdata0[0].a /= max(1.0, abs(wdata0[0].b - wdata.b));
-		wdata0[1].a /= max(1.0, abs(wdata0[1].b - wdata.b));
-		wdata0[2].a /= max(1.0, abs(wdata0[2].b - wdata.b));
-		wdata0[3].a /= max(1.0, abs(wdata0[3].b - wdata.b));
+		wdata0[0].a /= max(1.0, abs(wdata0[0].b - envcoords0.y));
+		wdata0[1].a /= max(1.0, abs(wdata0[1].b - envcoords0.y));
+		wdata0[2].a /= max(1.0, abs(wdata0[2].b - envcoords0.y));
+		wdata0[3].a /= max(1.0, abs(wdata0[3].b - envcoords0.y));
 
 		float walpha0 = wdata0[0].a + wdata0[1].a + wdata0[2].a + wdata0[3].a + 0.01;
 		vec2 playerdist = (texCoord - vec2(0.5)) * vec2(viewWidth, viewHeight) / INTERACTIVE_WATER_RES + vec2(0.5) - fract(cameraPosition.xz);
@@ -561,13 +561,13 @@ void main() {
 		}
 
 		vec4 entitydata = texture2D(colortex9, waterCoord);
-		if(abs((entitydata.g - 0.5) * 64 - wdata.b + 1.0) < 0.5) wdata.r -= 0.5 * (entitydata.r - 0.5);
+		if(abs((entitydata.g - 0.5) * 64 - envcoords0.y + 1.0) < 0.5) wdata.r -= 0.5 * (entitydata.r - 0.5);
 
 		float wavgr = wdata0[0].r * wdata0[0].a + wdata0[1].r * wdata0[1].a + wdata0[2].r * wdata0[2].a + wdata0[3].r * wdata0[3].a;
 		wdata.g -= 0.1 * exp(0.05 * INTERACTIVE_WATER_RES) * (walpha0 * wdata.r - wavgr);
 		wdata.rg *= wdata.a;
 		wdata.r += wdata.g;
-		wdata.r += pow(max(wdata.b + floor(cameraPosition.y) - 61, 0.0), 0.05) * 0.0005 * wdata.r;
+		wdata.r += pow(max(envcoords0.y + floor(cameraPosition.y) - 61, 0.0), 0.05) * 0.0005 * wdata.r;
 		if(wdata.a < 0.1 && length(environment) > 0.1) wdata.r = wavgr /(walpha0 + 0.0001);
 		wdata.rg *= vec2(1.0) / (vec2(1.0) + 0.01 * wdata.rg * wdata.rg * wdata.rg *wdata.rg);
 		wdata.a = float(length(environment.rgb) > 0.1);
@@ -580,6 +580,7 @@ void main() {
 		wdata.r += stimulantWave * pow(min(inRange0, 1.0), 10);
 		wdata.r = mix(wdata.r, stimulantWave, pow(min(inRange0, 1.0), 30));
 		wdata.rg *= float((abs(waterCoord.x - 0.5) < 0.5 || abs(waterCoord.y - 0.5) < 0.5) && walpha0 > 0.1);
+		//wdata.rgb = vec3(wdata.a - 0.5) * 2;
 	#endif
 	
 	/*DRAWBUFFERS:05*/

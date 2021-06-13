@@ -111,7 +111,7 @@ void doWaterShadowCaustics(inout vec4 albedo, float dither) {
 void main() {
 	vec4 light = vec4(0);
 	vec4 color = vec4(0);
-	if(screentexcoord.x > 0.5 || screentexcoord.y > 0.5) {
+	if(screentexcoord.x > -5) {
 		if (matF < 0.1) discard;
 		light = texture2D(shadowcolor1, screentexcoord);
 		vec3 lightmult = vec3(1.0);
@@ -133,8 +133,6 @@ void main() {
 		#endif
 
 		if (color.a < 0.0001) discard;
-
-		color.rgb *= glcolorF.rgb;
 
 		float premult = float(matF > 119.5 && matF < 120.5);
 		float water = float(matF > 2.5 && matF < 3.5);
@@ -197,10 +195,10 @@ varying in vec2 lmCoord[3];
 varying in vec2 texCoord[3];
 varying in vec4 glcolor[3];
 varying in vec3 glnormal[3];
-varying in vec3 worldNormal[3];
 varying in float mat[3];
 varying in float height[3];
 varying in vec4 position[3];
+varying in vec3 pos0[3];
 
 
 varying out vec2 screentexcoord;
@@ -220,17 +218,17 @@ uniform vec3 previousCameraPosition;
 #include "/lib/vx/voxelPos.glsl"
 
 void main() {
-	vec3 vxPos0 = position[0].xyz + position[1].xyz + position[2].xyz;
-	vxPos0 /= 3.0;
-	vxPos0 += cameraPosition - floor(previousCameraPosition);
+	vec3 worldNormal = normalize(cross(pos0[1] - pos0[0], pos0[2] - pos0[1]));
+	vec3 vxPos0 = (pos0[0] + pos0[1] + pos0[2]) / 3.0 + cameraPosition - floor(previousCameraPosition) - 0.05 * worldNormal;
+	vxPos0.xz = floor(vxPos0).xz + 0.5;
+	vec3[2] posNorm = getVoxelPos(vxPos0);
+	vxPos0 = posNorm[0];
 	for (int i = 0; i < 3; i++) {
-		vec3 vxPos = vxPos0 - 0.01 * normalize(worldNormal[i]);
-		vxPos.xz = floor(vxPos).xz + 0.5;
-		vec3[2] posNorm = getVoxelPos(vxPos);
-		vxPos = posNorm[0];
-		vxPos.x += 0.5 * (i - 1);
-		vxPos.z += -0.5 - i * i + 2 * i;
-		gl_Position = vec4((2 * vxPos.xz / shadowMapResolution), 1.0 - (vxPos.y + cameraPosition.y + 0.001 * (worldNormal[i].y + fract(vxPos.y) * 0.002)) / 128, 1.0);
+		vec3 vxPos = vxPos0;
+		vxPos.xz += vec2(0.5 * (i - 1), 0.5 + (i - 2) * i);
+		gl_Position = vec4((2 * vxPos.xz / shadowMapResolution), - (vxPos.y + 0.001 * (worldNormal.y + pos0[0].y)) / 128, 1.0);
+		//if(abs(mat[i] - 3.0) < 0.5) gl_Position.xy = (2 * vxPos.xz / shadowMapResolution) + 0.1 * vec2(0.4 * (i - 1), (i - 2) * i);
+
 		screentexcoord = gl_Position.xy * 0.5 + vec2(0.5);
 		lmCoordF = lmCoord[i];
 		texCoordF = texCoord[i];
@@ -250,7 +248,7 @@ void main() {
 		gl_Position.xy *= 0.5;
 		gl_Position.xy -= vec2(0.5);
 		gl_Position.xy = clamp(gl_Position.xy, vec2(-1.0), vec2(0.0));
-		screentexcoord = gl_Position.xy * 0.5 + vec2(0.5);
+		screentexcoord = vec2(-10.0);
 		lmCoordF = lmCoord[i];
 		texCoordF = texCoord[i];
 		glcolorF = glcolor[i];
@@ -268,12 +266,12 @@ void main() {
 #ifdef VSH
 //Local Varyings
 varying vec4 position;
+varying vec3 pos0;
 varying vec4 shadowPos;
 varying vec2 lmCoord;
 varying vec2 texCoord;
 varying vec4 glcolor;
 varying vec3 glnormal;
-varying vec3 worldNormal;
 varying float mat;
 varying float height;
 
@@ -311,13 +309,10 @@ float frametime = frameTimeCounter * ANIMATION_SPEED;
 #include "/lib/vertex/worldCurvature.glsl"
 #endif
 
-#include "/lib/vx/voxelPos.glsl"
-
 //Program//
 void main() {
 	mat =
 		float((mc_Entity.x > 9999.5 && mc_Entity.x < 10203.5 && abs(mc_Entity.x - 10008) > 0.5) || abs(mc_Entity.x - 10225) < 3.5 || abs(mc_Entity.x - 11015.5) < 1.0 || abs(mc_Entity.x - 7978) < 0.1 || abs(mc_Entity.x - 10205.5) < 1.0 || abs(mc_Entity.x - 10208.5) < 1.0 || abs(mc_Entity.x - 10218) < 1.5 || (abs(mc_Entity.x - 10232) < 2.5 && abs(mc_Entity.x - 10231) > 0.5)) + //full blocks
-		//2 * float(abs(mc_Entity.x - 55) < 0.1 || abs(mc_Entity.x - 300) < 0.1 || abs(mc_Entity.x - 63) < 0.1 || abs(mc_Entity.x - 12000) < 0.1 || abs(mc_Entity.x - 59) < 0.1 || abs(mc_Entity.x - 10212.5) < 1.0) + //discard
 		3 * float(abs(mc_Entity.x - 8) < 0.1) + //water
 		4 * float(abs(mc_Entity.x - 31) < 0.1 || abs(mc_Entity.x - 6) < 0.1 || abs(mc_Entity.x - 175) < 0.1 || abs(mc_Entity.x - 176) < 0.1 || abs(mc_Entity.x - 83) < 0.1) + //cross model blocks
 		5 * float((mc_Entity.x > 20008.5 && mc_Entity.x < 20011.5) || (mc_Entity.x > 23008.5 && mc_Entity.x < 23011.5) || (mc_Entity.x > 23100.5 && mc_Entity.x < 23103.5) || abs(mc_Entity.x - 11013.5) < 1.0 || abs(mc_Entity.x - 11024.5) < 1.0 || abs(mc_Entity.x - 20212) < 0.5 || abs(mc_Entity.x - 20003) < 0.5 || (mc_Entity.x > 20010.5 && mc_Entity.x < 20118.5) || abs(mc_Entity.x - 20218) < 1.5 || abs(mc_Entity.x - 20201.5) < 1.0 || abs(mc_Entity.x - 20222) < 0.5 || abs(mc_Entity.x - 20228) < 0.5 || abs(mc_Entity.x - 20232.5) < 1.0 || abs(mc_Entity.x - 20199.5) < 1.0) + //block bottom stuff
@@ -395,11 +390,12 @@ void main() {
 	lmCoord  = (gl_TextureMatrix[1] * gl_MultiTexCoord1).xy;
 	glcolor = gl_Color;
 	glnormal = gl_Normal;
-	worldNormal = (shadowModelViewInverse * shadowProjectionInverse * vec4(glnormal, 1.0)).xyz;
 	position = shadowModelViewInverse * shadowProjectionInverse * ftransform();
-	if(abs(mat - 2.0) < 0.1) mat = -1;
-	gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
-	shadowPos = vec4(0);
+	pos0 = position.xyz;
+	
+	gl_Position = position.xzyw * 1.0 / shadowMapResolution;
+	gl_Position.z = 1.0 - gl_Position.z;
+	shadowPos = vec4(-1);
 	#ifdef SHADOWS
 	//Regular shadow stuff//
 	if (mc_Entity.x == 8) {  //water
