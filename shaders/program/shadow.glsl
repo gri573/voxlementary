@@ -19,6 +19,7 @@ uniform ivec2 atlasSize;
 uniform sampler2D tex;
 uniform sampler2D lightmap;
 uniform sampler2D shadowcolor1;
+uniform vec4 entityColor;
 #ifdef SHADOWS
 uniform sampler2D shadowtex0;
 uniform sampler2D noisetex;
@@ -288,6 +289,7 @@ uniform float frameTimeCounter;
 #endif
 
 uniform int blockEntityId;
+uniform int entityId;
 
 uniform vec3 cameraPosition, previousCameraPosition;
 
@@ -312,16 +314,15 @@ float frametime = frameTimeCounter * ANIMATION_SPEED;
 //Program//
 void main() {
 	mat =
-		float((mc_Entity.x > 9999.5 && mc_Entity.x < 10203.5 && abs(mc_Entity.x - 10008) > 0.5) || abs(mc_Entity.x - 10225) < 3.5 || abs(mc_Entity.x - 11015.5) < 1.0 || abs(mc_Entity.x - 7978) < 0.1 || abs(mc_Entity.x - 10205.5) < 1.0 || abs(mc_Entity.x - 10208.5) < 1.0 || abs(mc_Entity.x - 10218) < 1.5 || (abs(mc_Entity.x - 10232) < 2.5 && abs(mc_Entity.x - 10231) > 0.5)) + //full blocks
+		float((mc_Entity.x > 9999.5 && mc_Entity.x < 10203.5 && abs(mc_Entity.x - 10008) > 0.5) || abs(mc_Entity.x - 10225) < 3.5 || abs(mc_Entity.x - 11015.5) < 1.0 || abs(mc_Entity.x - 7978) < 0.1 || abs(mc_Entity.x - 10205.5) < 1.0 || abs(mc_Entity.x - 10208.5) < 1.0 || abs(mc_Entity.x - 10218) < 1.5 || (abs(mc_Entity.x - 10232) < 2.5 && abs(mc_Entity.x - 10231) > 0.5) || abs(mc_Entity.x - 10212) < 0.1 || abs(mc_Entity.x - 10213) < 0.1) + //full blocks
 		3 * float(abs(mc_Entity.x - 8) < 0.1) + //water
 		4 * float(abs(mc_Entity.x - 31) < 0.1 || abs(mc_Entity.x - 6) < 0.1 || abs(mc_Entity.x - 175) < 0.1 || abs(mc_Entity.x - 176) < 0.1 || abs(mc_Entity.x - 83) < 0.1) + //cross model blocks
-		5 * float((mc_Entity.x > 20008.5 && mc_Entity.x < 20011.5) || (mc_Entity.x > 23008.5 && mc_Entity.x < 23011.5) || (mc_Entity.x > 23100.5 && mc_Entity.x < 23103.5) || abs(mc_Entity.x - 11013.5) < 1.0 || abs(mc_Entity.x - 11024.5) < 1.0 || abs(mc_Entity.x - 20212) < 0.5 || abs(mc_Entity.x - 20003) < 0.5 || (mc_Entity.x > 20010.5 && mc_Entity.x < 20118.5) || abs(mc_Entity.x - 20218) < 1.5 || abs(mc_Entity.x - 20201.5) < 1.0 || abs(mc_Entity.x - 20222) < 0.5 || abs(mc_Entity.x - 20228) < 0.5 || abs(mc_Entity.x - 20232.5) < 1.0 || abs(mc_Entity.x - 20199.5) < 1.0) + //block bottom stuff
+		5 * float((mc_Entity.x > 20008.5 && mc_Entity.x < 20011.5) || (mc_Entity.x > 23008.5 && mc_Entity.x < 23011.5) || (mc_Entity.x > 23100.5 && mc_Entity.x < 23103.5) || abs(mc_Entity.x - 11013.5) < 1.0 || abs(mc_Entity.x - 11024.5) < 1.0 || abs(mc_Entity.x - 20212) < 0.5 || abs(mc_Entity.x - 20003) < 0.5 || (mc_Entity.x > 20010.5 && mc_Entity.x < 20118.5) || abs(mc_Entity.x - 20218) < 1.5 || abs(mc_Entity.x - 20201.5) < 1.0 || abs(mc_Entity.x - 20222) < 0.5 || abs(mc_Entity.x - 20228) < 0.5 || abs(mc_Entity.x - 20232.5) < 1.0 || abs(mc_Entity.x - 20199.5) < 1.0 || abs(mc_Entity.x - 10214) < 0.1) + //block bottom stuff
 		6 * float((mc_Entity.x > 23110.5 && mc_Entity.x < 23118.5) || abs(mc_Entity.x - 23051.5) < 1.0 || abs(mc_Entity.x - 23012) < 0.5 || abs(mc_Entity.x - 23003) < 0.5 || abs(mc_Entity.x - 23218) < 1.5 || abs(mc_Entity.x - 23201.5) < 1.0 || abs(mc_Entity.x - 23222) < 0.5 || abs(mc_Entity.x - 23228) < 0.5 || abs(mc_Entity.x - 23232.5) < 1.0 || abs(mc_Entity.x - 23199.5) < 1.0) + //top slabs
-		8 * float(abs(mc_Entity.x - 12004) < 0.1) + //top trapdoors
-		9 * float(abs(mc_Entity.x - 12005) < 0.1) + //more trapdoors
+		/*9 * float(abs(mc_Entity.x - 12005) < 0.1) + //more trapdoors
 		10 * float(abs(mc_Entity.x - 12006) < 0.1) + //MOAR trapdoors
 		11 * float(abs(mc_Entity.x - 12007) < 0.1) + //EVEN MOAR trapdoors
-		12 * float(abs(mc_Entity.x - 12008) < 0.1) + //THE MOST trapdoors
+		12 * float(abs(mc_Entity.x - 12008) < 0.1) + //THE MOST trapdoors*/
 		13 * float(abs(mc_Entity.x - 12009) < 0.1) + //fences
 		14 * float(abs(mc_Entity.x - 12010) < 0.1) + //walls
 		17 * float(abs(mc_Entity.x - 12011) < 0.1) + //pressure plates
@@ -368,6 +369,10 @@ void main() {
 		92 * float(abs(mc_Entity.x - 10210) < 0.1) + //redstone block
 		93 * float(abs(mc_Entity.x - 10211) < 0.1) + //lapis block
 
+		ENTITYLIGHTS * 100 * float(entityId == 10208) + //creeper
+		ENTITYLIGHTS * 101 * float(entityId == 10101) + //lightning bolt
+		ENTITYLIGHTS * 102 * float(entityId == 10204) + //blaze
+
 		120 * float(abs(mc_Entity.x - 79) < 0.1 || abs(mc_Entity.x - 12002) < 0.1) + //stained glass, honey, slime
 		320 * float(abs(mc_Entity.x - 7979) < 0.1) + //ice
 		121 * float(abs(mc_Entity.x - 10008) < 0.1) + //clear glass
@@ -375,7 +380,7 @@ void main() {
 	height = 
 		0.0625 * float(abs(mc_Entity.x - 20212) < 0.1) + //carpet
 		0.125 * float(abs(mc_Entity.x - 20009) < 0.1 || abs(mc_Entity.x - 11013.5) < 1.0) + //repeater etc
-		0.1875 * float(abs(mc_Entity.x - 12003) < 0.1) + //bottom trapdoors
+		//0.1875 * float(abs(mc_Entity.x - 12003) < 0.1) + //bottom trapdoors
 		0.25 * float(abs(mc_Entity.x - 23009) < 0.1) + //two snow layers
 		0.375 * float(abs(mc_Entity.x - 23010) < 0.1) + //three snow layers
 		0.4375 * float(abs(mc_Entity.x - 11024) < 0.1 || abs(mc_Entity.x - 11025) < 0.1 || abs(mc_Entity.x - 21024) < 0.1 || abs(mc_Entity.x - 21025) < 0.1) + //campfires

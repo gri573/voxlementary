@@ -14,12 +14,15 @@ uniform sampler2D shadowcolor0, shadowcolor1;
 //Optifine Constants//
 const vec4 shadowcolor0ClearColor = vec4(0);//voxel data stuffs
 const bool shadowcolor1Clear = false;		//flood fill
+/*
+const int shadowcolor1Format = RGBA16F;
+*/
 
 //Includes//
 #include "/lib/vx/voxelPos.glsl"
 
 void main(){
-const vec3[50] lightcols = vec3[50](
+const vec3[60] lightcols = vec3[60](
 	vec3(TORCH_COL_R, TORCH_COL_G, TORCH_COL_B),//torch
 	vec3(REDSTONE_TORCH_COL_R, REDSTONE_TORCH_COL_G, REDSTONE_TORCH_COL_B),//redstone_torch
 	vec3(SOUL_TORCH_COL_R, SOUL_TORCH_COL_G, SOUL_TORCH_COL_B),//soul_torch
@@ -90,6 +93,16 @@ const vec3[50] lightcols = vec3[50](
 	vec3(0),
 	vec3(0),
 	vec3(0),
+	vec3(0),
+	vec3(CREEPER_COL_R, CREEPER_COL_G, CREEPER_COL_B),
+	vec3(LIGHTNING_COL_R, LIGHTNING_COL_G, LIGHTNING_COL_B) * 5,
+	vec3(BLAZE_COL_R, BLAZE_COL_G, BLAZE_COL_B),
+	vec3(0),
+	vec3(0),
+	vec3(0),
+	vec3(0),
+	vec3(0),
+	vec3(0),
 	vec3(0)
 );
 	vec4 col = vec4(0);
@@ -133,13 +146,13 @@ const vec3[50] lightcols = vec3[50](
 	col5.rgb *= float(abs(col5.a - 0.75) > 0.1 && ((ID == 5 && abs(col5.a - 0.25) > 0.1) || (ID == 6 && abs(col5.a - 0.5) > 0.1) || abs(ID - 5.5) > 1.0));
 	col6.rgb *= float(abs(col6.a - 0.75) > 0.1);
 
-	col0.a = min(max(max(col0.r, max(col0.g, col0.b)), 0.0001), 1.0);
-	col1.a = min(max(max(col1.r, max(col1.g, col1.b)), 0.0001), 1.0);
-	col2.a = min(max(max(col2.r, max(col2.g, col2.b)), 0.0001), 1.0);
-	col3.a = min(max(max(col3.r, max(col3.g, col3.b)), 0.0001), 1.0);
-	col4.a = min(max(max(col4.r, max(col4.g, col4.b)), 0.0001), 1.0);
-	col5.a = min(max(max(col5.r, max(col5.g, col5.b)), 0.0001), 1.0);
-	col6.a = min(max(max(col6.r, max(col6.g, col6.b)), 0.0001), 1.0);
+	col0.a = max(max(col0.r, max(col0.g, col0.b)), 0.0001);
+	col1.a = max(max(col1.r, max(col1.g, col1.b)), 0.0001);
+	col2.a = max(max(col2.r, max(col2.g, col2.b)), 0.0001);
+	col3.a = max(max(col3.r, max(col3.g, col3.b)), 0.0001);
+	col4.a = max(max(col4.r, max(col4.g, col4.b)), 0.0001);
+	col5.a = max(max(col5.r, max(col5.g, col5.b)), 0.0001);
+	col6.a = max(max(col6.r, max(col6.g, col6.b)), 0.0001);
 
 	col0.rgb /= col0.a;
 	col1.rgb /= col1.a;
@@ -149,13 +162,12 @@ const vec3[50] lightcols = vec3[50](
 	col5.rgb /= col5.a;
 	col6.rgb /= col6.a;
 
-	col0.a = max(col0.a * 0.85 - 0.03, 0.0);
-	col1.a = max(col1.a * 0.85 - 0.03, 0.0);
-	col2.a = max(col2.a * 0.85 - 0.03, 0.0);
-	col3.a = max(col3.a * 0.85 - 0.03, 0.0);
-	col4.a = max(col4.a * 0.85 - 0.03, 0.0);
-	col5.a = max(col5.a * 0.85 - 0.03, 0.0);
-	//col6.a = max(col6.a * 0.95 - 0.03, 0.0);
+	col0.a = max(col0.a * 0.92 - 0.05, 0.0);
+	col1.a = max(col1.a * 0.92 - 0.05, 0.0);
+	col2.a = max(col2.a * 0.92 - 0.05, 0.0);
+	col3.a = max(col3.a * 0.92 - 0.05, 0.0);
+	col4.a = max(col4.a * 0.92 - 0.05, 0.0);
+	col5.a = max(col5.a * 0.92 - 0.05, 0.0);
 
 	float maxAlpha = max(max(col0.a, max(col1.a, col2.a)), max(max(col3.a, col4.a), max(col5.a, col6.a)));
 	col = vec4(col0.rgb * max(1 - 5 * (maxAlpha - col0.a), 0.0) + 
