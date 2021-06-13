@@ -95,7 +95,7 @@ const vec3[60] lightcols = vec3[60](
 	vec3(0),
 	vec3(0),
 	vec3(CREEPER_COL_R, CREEPER_COL_G, CREEPER_COL_B),
-	vec3(LIGHTNING_COL_R, LIGHTNING_COL_G, LIGHTNING_COL_B) * 5,
+	vec3(LIGHTNING_COL_R, LIGHTNING_COL_G, LIGHTNING_COL_B) * 10,
 	vec3(BLAZE_COL_R, BLAZE_COL_G, BLAZE_COL_B),
 	vec3(0),
 	vec3(0),
@@ -162,12 +162,12 @@ const vec3[60] lightcols = vec3[60](
 	col5.rgb /= col5.a;
 	col6.rgb /= col6.a;
 
-	col0.a = max(col0.a * 0.92 - 0.05, 0.0);
-	col1.a = max(col1.a * 0.92 - 0.05, 0.0);
-	col2.a = max(col2.a * 0.92 - 0.05, 0.0);
-	col3.a = max(col3.a * 0.92 - 0.05, 0.0);
-	col4.a = max(col4.a * 0.92 - 0.05, 0.0);
-	col5.a = max(col5.a * 0.92 - 0.05, 0.0);
+	col0.a = max(col0.a * BLOCKLIGHT_SPREAD_MULT - BLOCKLIGHT_SPREAD_SUB, 0.0);
+	col1.a = max(col1.a * BLOCKLIGHT_SPREAD_MULT - BLOCKLIGHT_SPREAD_SUB, 0.0);
+	col2.a = max(col2.a * BLOCKLIGHT_SPREAD_MULT - BLOCKLIGHT_SPREAD_SUB, 0.0);
+	col3.a = max(col3.a * BLOCKLIGHT_SPREAD_MULT - BLOCKLIGHT_SPREAD_SUB, 0.0);
+	col4.a = max(col4.a * BLOCKLIGHT_SPREAD_MULT - BLOCKLIGHT_SPREAD_SUB, 0.0);
+	col5.a = max(col5.a * BLOCKLIGHT_SPREAD_MULT - BLOCKLIGHT_SPREAD_SUB, 0.0);
 
 	float maxAlpha = max(max(col0.a, max(col1.a, col2.a)), max(max(col3.a, col4.a), max(col5.a, col6.a)));
 	col = vec4(col0.rgb * max(1 - 5 * (maxAlpha - col0.a), 0.0) + 
