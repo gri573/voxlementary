@@ -80,7 +80,7 @@ void main() {
 	col.a = 1.0 - 0.25 * float(ID == 1) - 0.5 * float(ID == 5) - 0.75 * float(ID == 6);
 	}
 	/*DRAWBUFFERS:1*/
-	gl_FragData[0] = col;
+	gl_FragData[0] = max(col, vec4(0));
 }
 #endif
 #ifdef VSH

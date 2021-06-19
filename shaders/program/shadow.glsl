@@ -368,11 +368,11 @@ void main() {
 		91 * float(abs(mc_Entity.x - 10207) < 0.1) + //emerald block
 		92 * float(abs(mc_Entity.x - 10210) < 0.1) + //redstone block
 		93 * float(abs(mc_Entity.x - 10211) < 0.1) + //lapis block
-
-		ENTITYLIGHTS * 100 * float(entityId == 10208) + //creeper
-		ENTITYLIGHTS * 101 * float(entityId == 10101) + //lightning bolt
-		ENTITYLIGHTS * 102 * float(entityId == 10204) + //blaze
-
+		#ifdef ENTITYLIGHTS
+			100 * float(entityId == 10208) + //creeper
+			101 * float(entityId == 10101) + //lightning bolt
+			102 * float(entityId == 10204) + //blaze
+		#endif
 		120 * float(abs(mc_Entity.x - 79) < 0.1 || abs(mc_Entity.x - 12002) < 0.1) + //stained glass, honey, slime
 		320 * float(abs(mc_Entity.x - 7979) < 0.1) + //ice
 		121 * float(abs(mc_Entity.x - 10008) < 0.1) + //clear glass

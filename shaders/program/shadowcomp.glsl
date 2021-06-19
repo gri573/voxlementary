@@ -185,7 +185,7 @@ const vec3[60] lightcols = vec3[60](
 	}
 	/*DRAWBUFFERS:01*/
 	gl_FragData[0] = blockData;
-	gl_FragData[1] = col;
+	gl_FragData[1] = max(col, vec4(0));
 }
 #endif
 
