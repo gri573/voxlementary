@@ -471,7 +471,7 @@ void main() {
 		
 		float shadow = 0.0;
 		GetLighting(albedo.rgb, shadow, lightAlbedo, viewPos, lViewPos, worldPos, lightmap, smoothLighting, NdotL, quarterNdotU,
-					parallaxShadow, emissive, subsurface, leaves, materialAO);
+					parallaxShadow, emissive, subsurface, leaves, materialAO, newNormal);
 
 		#ifdef ADV_MAT
 			#if defined OVERWORLD || defined END

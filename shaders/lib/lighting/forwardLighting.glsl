@@ -37,12 +37,21 @@ float GetFakeShadow(float skyLight) {
 
 	return fakeShadow;
 }
-
-void GetLighting(inout vec3 albedo, inout float shadow, inout vec3 lightAlbedo, vec3 viewPos, float lViewPos, vec3 worldPos,
+#ifndef GBUFFERS_TERRAIN
+	void GetLighting(inout vec3 albedo, inout float shadow, inout vec3 lightAlbedo, vec3 viewPos, float lViewPos, vec3 worldPos,
                  vec2 lightmap, float smoothLighting, float NdotL, float quarterNdotU,
                  float parallaxShadow, float emissive, float subsurface, float leaves, float materialAO) {
+#else
+	void GetLighting(inout vec3 albedo, inout float shadow, inout vec3 lightAlbedo, vec3 viewPos, float lViewPos, vec3 worldPos,
+                 vec2 lightmap, float smoothLighting, float NdotL, float quarterNdotU,
+                 float parallaxShadow, float emissive, float subsurface, float leaves, float materialAO, vec3 newNormal) {
+#endif
 	vec3 voxelSpacePos = worldPos + fract(cameraPosition);
-	vec3 worldNormal = mat3(gbufferModelViewInverse) * normal;
+	#ifndef GBUFFERS_TERRAIN
+		vec3 worldNormal = normalize(mat3(gbufferModelViewInverse) * normal);
+	#else
+		vec3 worldNormal = normalize(mat3(gbufferModelViewInverse) * newNormal);
+	#endif
 	vec3 worldSunVec = mat3(gbufferModelViewInverse) *sunVec;
 	vec3 fullShadow = vec3(0.0);
 	float fakeShadow = 0.0;
@@ -269,10 +278,11 @@ void GetLighting(inout vec3 albedo, inout float shadow, inout vec3 lightAlbedo, 
 	#if (defined OVERWORLD || defined NETHER || defined END) && !defined GBUFFERS_BEACONBEAM
 	float border = (max(max(abs(worldPos.x), abs(worldPos.z)) - 0.0625 / VXHEIGHT * shadowMapResolution, abs(worldPos.y) - 24 * pow2(VXHEIGHT)) + 5) * 0.2;
 	if (border < 1) {
+		voxelSpacePos += worldNormal;
 		float floorVxSpacePosY = floor(voxelSpacePos.y + 0.51);
-		vec3[2] voxelPos0 = getVoxelPos(vec3(voxelSpacePos.x, floorVxSpacePosY - 0.01, voxelSpacePos.z) + 1.0 * worldNormal);
+		vec3[2] voxelPos0 = getVoxelPos(vec3(voxelSpacePos.x, floorVxSpacePosY - 0.01, voxelSpacePos.z));
 		vec3 blockLightCol0 = texture2D(shadowcolor1, voxelPos0[0].xz / shadowMapResolution + vec2(0.5)).rgb;// * float(abs(voxelPos0[0].x / shadowMapResolution) < 0.5 && abs(voxelPos0[0].z / shadowMapResolution) < 0.5);
-		vec3[2] voxelPos1 = getVoxelPos(vec3(voxelSpacePos.x, floorVxSpacePosY + 0.99, voxelSpacePos.z) + 1.0 * worldNormal);
+		vec3[2] voxelPos1 = getVoxelPos(vec3(voxelSpacePos.x, floorVxSpacePosY + 0.99, voxelSpacePos.z));
 		vec3 blockLightCol1 = texture2D(shadowcolor1, voxelPos1[0].xz / shadowMapResolution + vec2(0.5)).rgb;// * float(abs(voxelPos1[0].x / shadowMapResolution) < 0.5 && abs(voxelPos1[0].z / shadowMapResolution) < 0.5);
 		blockLighting = mix(blockLightCol0, blockLightCol1, voxelSpacePos.y + 0.51 - floorVxSpacePosY);
 		blockLighting = pow(blockLighting, vec3(1.5));
