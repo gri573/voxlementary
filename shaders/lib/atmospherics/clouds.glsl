@@ -123,6 +123,52 @@
 		return vec4(cloudcolor * colorMultiplier, cloud * CLOUD_OPACITY);
 	}
 
+	#ifdef VANILLAEY_CLOUDS
+	vec4 DrawVanillaCloud(vec3 viewPos, float dither, vec3 lightCol, vec3 ambientCol, float NdotU, vec3 lightVec) {
+		lightVec = normalize((gbufferModelViewInverse * vec4(lightVec, 1.0)).xyz);
+		vec3 wpos = normalize((gbufferModelViewInverse * vec4(viewPos, 1.0)).xyz);
+		vec2 cloudStep = - (mod(cameraPosition.xz, 12) - 12 * vec2(wpos.x < 0, wpos.z < 0)) / wpos.xz;
+		vec4 cloudColor = vec4(0);
+		float cloudDist = max((128 - cameraPosition.y) / wpos.y, 0);
+		float cloudDist1 = max((132 - cameraPosition.y) / wpos.y, 0);
+		float cloudDist0 = min(cloudDist, cloudDist1);
+		cloudDist1 = max(cloudDist, cloudDist1);
+		cloudDist = cloudDist0;
+		//cloudStep += floor(cloudDist) / (12 * wpos.xz);
+		float dist = 0;
+		cloudColor.rgb = 2.5 * ambientCol;
+		while (cloudDist < min(cloudDist1 + 0.01, 256) && cloudDist > -1000){
+			vec3 cloudPos = cameraPosition + wpos * cloudDist;
+			vec2 cloudStepNext = min(cloudStep + 12 / abs(wpos.xz) * vec2(cloudStep.x <= cloudStep.y || cloudStep.x < cloudDist0, cloudStep.x >= 
+			cloudStep.y || cloudStep.y < cloudDist0), vec2(cloudDist1 + 0.01));
+			float cloudDistNext = min(cloudStepNext.x, cloudStepNext.y);
+			if(cloudDist < cloudDist0 && cloudDistNext > cloudDist0) {
+				cloudDist = cloudDist0;
+			}
+			if(cloudDist > cloudDist0 - 0.01 && abs(cloudPos.y - 130) < 2.01) {
+				vec2 noiseCoord = (floor(cloudPos.xz / 12.0 + 0.0001 * wpos.xz) + 0.5) / 512.0;
+				vec4 noiseColor = texture2D(noisetex, fract(noiseCoord));
+				vec3 cloudPosNext = cameraPosition + wpos * cloudDistNext;
+				vec2 noiseCoordNext = (floor(cloudPosNext.xz / 12.0 + 0.0001 * wpos.xz) + 0.5) / 512.0;
+				vec4 noiseColorNext = texture2D(noisetex, fract(noiseCoordNext));
+				float localDist = max(cloudDistNext - cloudDist, 0);
+				if(noiseColor.r > (CLOUD_AMOUNT - 5.0) / 10.0) {
+					vec3 cloudInnerPos = fract((cloudPos + 0.0001 * wpos) / vec3(12.0, 4.0, 12.0));
+					cloudInnerPos -= 0.5;
+					cloudInnerPos *= 2;
+					cloudInnerPos *= pow(abs(cloudInnerPos), vec3(4));
+					cloudColor.rgb += max(lightCol * max(cloudInnerPos.x * lightVec.x, max(cloudInnerPos.y * lightVec.y, cloudInnerPos.z * lightVec.z)), vec3(0));
+					dist += localDist;
+				}
+			}
+			cloudStep = cloudStepNext;
+			cloudDist = cloudDistNext;
+		}
+		cloudColor.a = 1 - exp(-dist * 0.3);
+		return cloudColor;
+	}
+	#endif
+
 	#ifdef AURORA
 
 		float AuroraNoise(vec2 coord, vec2 wind) {
