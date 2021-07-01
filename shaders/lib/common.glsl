@@ -101,7 +101,6 @@ Complementary Shaders by EminGT, based on BSL Shaders by Capt Tatsu
   #define WATER_TRANSLUCENT_SKY_REF
   #define WATER_CAUSTICS
 //#define INTERACTIVE_WATER
-//#define WATER_ENTITIES
   #define INTERACTIVE_WATER_RES 8 //[4 6 8 10 12 24 16 20 24 32 48 64]
 //#define PROJECTED_CAUSTICS
 //#define WATER_REFRACT
@@ -317,6 +316,7 @@ Complementary Shaders by EminGT, based on BSL Shaders by Capt Tatsu
   #define SKY_RAIN_NIGHT 1.00 //[0.05 0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1.00 1.05 1.10 1.15 1.20 1.25 1.30 1.35 1.40 1.45 1.50 1.55 1.60 1.65 1.70 1.75 1.80 1.85 1.90 1.95 2.00 2.05 2.10 2.15 2.20 2.25 2.30 2.35 2.40 2.45 2.50 2.55 2.60 2.65 2.70 2.75 2.80 2.85 2.90 2.95 3.00]
 
   #define CLOUDS
+//#define VANILLAEY_CLOUDS
   #define CLOUD_THICKNESS 4.00 //[0.25 0.50 0.75 1.00 2.00 3.00 4.00 5.00 6.00 7.00 8.00]
   #define CLOUD_AMOUNT 10.5 //[14.0 13.5 13.0 12.5 12.0 11.5 11.0 10.5 10.0 9.5 9.0 8.5 8.0 7.5 7.0 6.5 6.0]
   #define CLOUD_HEIGHT 30.0 //[2.5 5.0 10.0 15.0 20.0 25.0 30.0 35.0 40.0 45.0 50.0]

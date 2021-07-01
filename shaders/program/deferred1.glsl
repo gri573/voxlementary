@@ -70,9 +70,6 @@ uniform float isDry, isRainy, isSnowy;
 
 #ifdef INTERACTIVE_WATER
 uniform sampler2D colortex8;
-
-uniform sampler2D colortex9;
-
 uniform sampler2D shadowcolor0;
 #endif
 
@@ -559,9 +556,6 @@ void main() {
 		if(abs(envcoords0.y + 1) < 1.2 && length(playerdist) < 0.4){
 			wdata.r += 2 * (cameraPosition.y - previousCameraPosition.y - 2 * dot(playerdist, cameraPosition.xz - previousCameraPosition.xz));
 		}
-
-		vec4 entitydata = texture2D(colortex9, waterCoord);
-		if(abs((entitydata.g - 0.5) * 64 - envcoords0.y + 1.0) < 0.5) wdata.r -= 0.5 * (entitydata.r - 0.5);
 
 		float wavgr = wdata0[0].r * wdata0[0].a + wdata0[1].r * wdata0[1].a + wdata0[2].r * wdata0[2].a + wdata0[3].r * wdata0[3].a;
 		wdata.g -= 0.1 * exp(0.05 * INTERACTIVE_WATER_RES) * (walpha0 * wdata.r - wavgr);
