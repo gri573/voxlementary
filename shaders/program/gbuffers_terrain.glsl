@@ -217,12 +217,13 @@ void main() {
 		
 		#if defined PARALLAX || defined SELF_SHADOW
 			float parallaxFade = clamp((dist - PARALLAX_DISTANCE) / 32.0, 0.0, 1.0);
+			float parallaxDepth = 1.0;
 		#endif
 
 		#ifdef PARALLAX
 			float skipParallax = float(blockEntityId == 63 || material == 4.0); // Fixes broken signs and lava with pom
 			if (skipParallax < 0.5) {
-				GetParallaxCoord(parallaxFade, newCoord);
+				GetParallaxCoord(parallaxFade, newCoord, parallaxDepth);
 				if (mipmapDisabling < 0.5) albedo = texture2DGradARB(texture, newCoord, dcdx, dcdy) * vec4(color.rgb, 1.0);
 				else 					   albedo = texture2DLod(texture, newCoord, 0.0) * vec4(color.rgb, 1.0);
 			}
@@ -458,7 +459,7 @@ void main() {
 					doParallax = float(NdotL > 0.0);
 				#endif
 				if (doParallax > 0.5) {
-					parallaxShadow = GetParallaxShadow(parallaxFade, newCoord, lightVec, tbnMatrix);
+					parallaxShadow = GetParallaxShadow(parallaxFade, newCoord, lightVec, tbnMatrix, parallaxDepth);
 				}
 			#endif
 

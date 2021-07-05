@@ -3,34 +3,46 @@ vec4 ReadNormal(vec2 coord) {
 	return texture2DGradARB(normals, coord, dcdx, dcdy);
 }
 
-void GetParallaxCoord(float parallaxFade, inout vec2 newCoord) {
+void GetParallaxCoord(float parallaxFade, inout vec2 newCoord, inout float parallaxDepth) {
     vec2 coord = vTexCoord.st;
+    float invParallaxQuality = 1.0 / PARALLAX_QUALITY;
 	
     if (parallaxFade < 1.0) {
         vec3 normalMap = ReadNormal(vTexCoord.st).xyz * 2.0 - 1.0;
 		
         float normalCheck = normalMap.x + normalMap.y;
-        float minHeight = 1.0 - 1.0 / PARALLAX_QUALITY;
+        float minHeight = 1.0 - invParallaxQuality;
 
         if (viewVector.z < 0.0 && ReadNormal(vTexCoord.st).a < minHeight && normalCheck > -1.999) {
             float multiplier = 0.2 * (1.0 - parallaxFade) * PARALLAX_DEPTH /
                                 (-viewVector.z * PARALLAX_QUALITY);
             vec2 interval = viewVector.xy * multiplier;
             for(int i = 0; i < PARALLAX_QUALITY; i++) {
-                if (ReadNormal(coord).a < 1.0 - float(i) / PARALLAX_QUALITY) coord += interval;
-                else break;
+                if (ReadNormal(coord).a < 1.0 - float(i) / PARALLAX_QUALITY) {
+                    coord += interval;
+                    #ifdef SELF_SHADOW
+                        if (i > 0) parallaxDepth -= invParallaxQuality;
+                    #endif
+                } else break;
             }
             newCoord = fract(coord.st) * vTexCoordAM.pq + vTexCoordAM.st;
         }
     }
+    #ifdef SELF_SHADOW
+        parallaxDepth = parallaxDepth;
+    #endif
 }
 
-float GetParallaxShadow(float parallaxFade, vec2 coord, vec3 lightVec, mat3 tbn) {
+float GetParallaxShadow(float parallaxFade, vec2 coord, vec3 lightVec, mat3 tbn, float parallaxDepth) {
     float parallaxshadow = 1.0;
     float minHeight = 1.0 - 1.0 / PARALLAX_QUALITY;
 
     if (dist < PARALLAX_DISTANCE + 32.0) {
-        float height = texture2DGradARB(normals, coord, dcdx, dcdy).a;
+        #ifdef PARALLAX
+            float height = parallaxDepth;
+        #else
+			float height = texture2DGradARB(normals, coord, dcdx, dcdy).a;
+		#endif
         if (height < minHeight) {
             vec3 parallaxdir = tbn * lightVec;
             parallaxdir.xy *= 0.2 * SELF_SHADOW_ANGLE * PARALLAX_DEPTH;

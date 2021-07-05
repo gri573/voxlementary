@@ -167,11 +167,12 @@ void main() {
 		#if defined PARALLAX || defined SELF_SHADOW
 			float parallaxFade = clamp((dist - PARALLAX_DISTANCE) / 32.0, 0.0, 1.0);
 			float skipParallax = itemFrameOrPainting;
+			float parallaxDepth = 1.0;
 		#endif
 		
 		#ifdef PARALLAX
 			if (skipParallax < 0.5) {
-				GetParallaxCoord(parallaxFade, newCoord);
+				GetParallaxCoord(parallaxFade, newCoord, parallaxDepth);
 				albedo = texture2DGradARB(texture, newCoord, dcdx, dcdy) * color;
 			}
 		#endif
@@ -345,7 +346,7 @@ void main() {
 				#endif
 				
 				if (doParallax > 0.5) {
-					parallaxShadow = GetParallaxShadow(parallaxFade, newCoord, lightVec, tbnMatrix);
+					parallaxShadow = GetParallaxShadow(parallaxFade, newCoord, lightVec, tbnMatrix, parallaxDepth);
 					NdotL *= parallaxShadow;
 				}
 			#endif
