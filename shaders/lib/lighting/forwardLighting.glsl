@@ -236,7 +236,7 @@ float GetFakeShadow(float skyLight) {
 			vec3 sceneLighting = vec3(0.0);
 		#endif
     #endif
-	
+
 	float finalHandLight = 0;
 	#ifdef DYNAMIC_SHADER_LIGHT
 		float handLight = min(float(heldBlockLightValue2 + heldBlockLightValue), 15.0) / 15.0;
