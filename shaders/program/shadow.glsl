@@ -21,6 +21,7 @@ uniform sampler2D lightmap;
 uniform sampler2D shadowcolor1;
 uniform vec4 entityColor;
 #ifdef SHADOWS
+uniform int blockEntityId;
 uniform sampler2D shadowtex0;
 uniform sampler2D noisetex;
 #endif
@@ -53,8 +54,8 @@ float frametime = frameTimeCounter * ANIMATION_SPEED;
 #include "/lib/util/dither.glsl"
 
 //Common Functions//
-void doWaterShadowCaustics(inout vec4 albedo, float dither) {
-	#if defined WATER_CAUSTICS && defined OVERWORLD && defined LIGHTSHAFT_WATER_CAUSTICS
+void doWaterShadowCaustics(float dither) {
+	#if defined WATER_CAUSTICS && defined OVERWORLD
 		vec3 worldPos = positionF.xyz + cameraPosition.xyz;
 		#if LIGHT_SHAFT_MODE > 1
 			worldPos *= 0.5;
@@ -70,9 +71,7 @@ void doWaterShadowCaustics(inout vec4 albedo, float dither) {
 		if (mult > 0.01) {
 			float lacunarity = 1.0 / 750.0, persistance = 1.0, weight = 0.0;
 
-			mult *= (lmCoordF.y*0.9 + 0.1);
-
-			for(int i = 0; i < 8; i++){
+			for(int i = 0; i < 8; i++) {
 				float windSign = mod(i,2) * 2.0 - 1.0;
 				vec2 noiseCoord = worldPos.xz + wind * windSign - verticalOffset;
 				if (i < 7) noise += texture2D(noisetex, noiseCoord * lacunarity).r * persistance;
@@ -93,15 +92,9 @@ void doWaterShadowCaustics(inout vec4 albedo, float dither) {
 			}
 			noise *= mult / weight;
 		}
-		#ifdef SHADOW_COLOR
-			float discardFactor = 0.025; //0.025
-			if (noise > discardFactor || noise < -discardFactor) discard;
-		#else
-			//albedo.rgb = sqrt(albedo.rgb);
-			float noiseFactor = 1.1 + noise;
-			noiseFactor = pow(noiseFactor, 10.0);
-			if (noiseFactor > 1.0 - dither * 0.5) discard;
-		#endif
+		float noiseFactor = 1.1 + noise;
+		noiseFactor = pow(noiseFactor, 10.0);
+		if (noiseFactor > 1.0 - dither * 0.5) discard;
 	#else
 		discard;
 	#endif
@@ -127,57 +120,63 @@ void main() {
 		#ifdef SHADOWS
 	}else{
 		//Regular shadow stuff
-		#if defined WRONG_MIPMAP_FIX
-			color.a = texture2DLod(tex, texCoordF.xy, 0.0).a;
+		#ifdef WRONG_MIPMAP_FIX
+			#ifndef COLORED_SHADOWS
+				color.a = texture2DLod(tex, texCoordF.xy, 0.0).a;
+			#else
+				color = texture2DLod(tex, texCoordF.xy, 0.0);
+			#endif
 		#else
-			color.a = texture2D(tex, texCoordF.xy).a;
+			#ifndef COLORED_SHADOWS
+				color.a = texture2D(tex, texCoordF.xy).a;
+			#else
+				color = texture2D(tex, texCoordF.xy);
+			#endif
 		#endif
+
+		if (blockEntityId == 200) { // End Gateway Beam Fix
+			if (color.r > 0.1) discard;
+		}
 
 		if (color.a < 0.0001) discard;
 
 		float premult = float(matF > 119.5 && matF < 120.5);
 		float water = float(matF > 2.5 && matF < 3.5);
-		float ice = float(matF > 319.5 && matF < 330.5);
-		float foliage = 0;//float(mat > 3.95 && mat < 4.05);
+		float ice = float(matF > 319.5 && matF < 320.5);
+
 
 		#ifdef NO_FOLIAGE_SHADOWS
-			if (foliage > 0.5) discard;
+			if (matF > 3.95 && matF < 4.05) discard;
 		#endif
 		
-		#ifdef FOLIAGE_SHADOWCOL
-			if (foliage > 0.5) {
-				color.a = 0.5;
-				color.b = 1.0;
-			}
-		#endif
-
+		vec4 color0 = color;
 		if (water > 0.5) {
 			if (isEyeInWater < 0.5) { 
 				color = vec4(1.0, 1.0, 1.0, 1.0);
+				color0 = vec4(0.0, 0.0, 0.0, 1.0);
 			} else {
 				float dither = Bayer64(gl_FragCoord.xy);
-				doWaterShadowCaustics(color, dither);
+				doWaterShadowCaustics(dither);
 			}
-		}
-		#ifndef SHADOW_COLOR
+		} else color.rgb = vec3(0.0);
+		#ifndef COLORED_SHADOWS
 			if (premult > 0.5) {
-				if (color.a < 0.51) discard;
+				if (color0.a < 0.51) discard;
 			}
-		#else
-			vec3 shadowcol = texture2D(tex, texCoordF).rgb;
-			shadowcol = mix(shadowcol, vec3(1), pow(6, -color.a) * (1 - length(shadowcol) * 0.58));
-			shadowcol *= 1 - pow(color.a, 6);
-			shadowcol = floor(15.9 * shadowcol);
-			shadowcol.r /= 32;
-			shadowcol.g /= 512;
-			shadowcol.b /= 8192;
-			color.g = shadowcol.r + shadowcol.g + shadowcol.b;
-			shadowcol *= max(1 - pow(abs(2.2 * texture2D(shadowtex0, texCoordF).r - 1.1), 1000.0), 0.0);
+		#endif
+		#ifdef COLORED_SHADOWS
+			vec4 color1 = color0;
+
+			/*#if defined PROJECTED_CAUSTICS && defined OVERWORLD
+				if (ice > 0.5) color1 = (color1 * color1) * (color1 * color1);
+			#else
+				if (ice > 0.5) color1 = vec4(0.0, 0.0, 0.0, 1.0);
+			#endif*/
+			light = clamp(color1, vec4(0.0), vec4(1.0));
 		#endif
 	#endif
 	}
 
-	/*DRAWBUFFERS:01*/
 	gl_FragData[0] = color;
 	gl_FragData[1] = light;
 }

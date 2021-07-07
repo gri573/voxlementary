@@ -11,7 +11,7 @@ uniform sampler2D shadowcolor1;
 #include "/lib/vx/voxelPos.glsl"
 
 void main() {
-	vec4 col = vec4(0);
+	vec4 col = texture2D(shadowcolor1, texCoord);
 	vec3 pos = vec3(0);
 	if(texCoord.x > 0.5 || texCoord.y > 0.5) {
 	pos = getVoxelPosInverse(texCoord);

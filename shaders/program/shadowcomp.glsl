@@ -105,7 +105,7 @@ const vec3[60] lightcols = vec3[60](
 	vec3(0),
 	vec3(0)
 );
-	vec4 col = vec4(0);
+	vec4 col = texture2D(shadowcolor1, texcoord);
 	vec4 blockData = texture2D(shadowcolor0, texcoord);
 	vec3 pos = vec3(0);
 	if(texcoord.x > 0.5 || texcoord.y > 0.5) {

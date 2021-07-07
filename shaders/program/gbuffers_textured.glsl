@@ -207,7 +207,7 @@ void main() {
 			float quarterNdotU = clamp(0.25 * dot(normal, upVec) + 0.75, 0.5, 1.0);
 				quarterNdotU*= quarterNdotU;
 			
-			float shadow = 0.0;
+			vec3 shadow = vec3(0.0);
 			vec3 lightAlbedo = vec3(0.0);
 			GetLighting(albedo.rgb, shadow, lightAlbedo, viewPos, lViewPos, worldPos, lightmap, 1.0, NdotL, 1.0,
 							1.0, emissive, 0.0, 0.0, 1.0);

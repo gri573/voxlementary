@@ -326,7 +326,7 @@ void main() {
 			}
 		#endif
 		
-		float shadow = 0.0;
+		vec3 shadow = vec3(0.0);
 		vec3 lightAlbedo = vec3(0.0);
 		GetLighting(albedo.rgb, shadow, lightAlbedo, viewPos, lViewPos, worldPos, lightmap, color.a, NdotL, quarterNdotU,
 					parallaxShadow, emissive, subsurface, 0.0, materialAO);

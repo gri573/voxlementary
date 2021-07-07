@@ -2,8 +2,11 @@ uniform sampler2D shadowcolor1;
 
 #include "/lib/vx/voxelPos.glsl"
 
+#if defined SHADOWS && ((defined PROJECTED_CAUSTICS && !defined GBUFFERS_WATER && defined OVERWORLD) || defined COLORED_SHADOWS)
+	uniform sampler2DShadow shadowtex1;
+#endif
+
 #if (defined OVERWORLD || defined END || defined SEVEN) && defined SHADOWS
-	uniform sampler2D shadowcolor0;
 	#include "/lib/lighting/shadows.glsl"
 
 	vec3 DistortShadow(inout vec3 worldPos, float distortFactor) {
@@ -13,11 +16,7 @@ uniform sampler2D shadowcolor1;
 	}
 #endif
 
-#if defined WATER_CAUSTICS && defined OVERWORLD && !defined GBUFFERS_WATER
-	#ifdef PROJECTED_CAUSTICS
-		uniform sampler2DShadow shadowtex1;
-	#endif
-
+#if defined WATER_CAUSTICS && defined OVERWORLD
 	#include "/lib/lighting/caustics.glsl"
 #endif
 
@@ -38,11 +37,11 @@ float GetFakeShadow(float skyLight) {
 	return fakeShadow;
 }
 #ifndef GBUFFERS_TERRAIN
-	void GetLighting(inout vec3 albedo, inout float shadow, inout vec3 lightAlbedo, vec3 viewPos, float lViewPos, vec3 worldPos,
+	void GetLighting(inout vec3 albedo, inout vec3 shadow, inout vec3 lightAlbedo, vec3 viewPos, float lViewPos, vec3 worldPos,
                  vec2 lightmap, float smoothLighting, float NdotL, float quarterNdotU,
                  float parallaxShadow, float emissive, float subsurface, float leaves, float materialAO) {
 #else
-	void GetLighting(inout vec3 albedo, inout float shadow, inout vec3 lightAlbedo, vec3 viewPos, float lViewPos, vec3 worldPos,
+	void GetLighting(inout vec3 albedo, inout vec3 shadow, inout vec3 lightAlbedo, vec3 viewPos, float lViewPos, vec3 worldPos,
                  vec2 lightmap, float smoothLighting, float NdotL, float quarterNdotU,
                  float parallaxShadow, float emissive, float subsurface, float leaves, float materialAO, vec3 newNormal) {
 #endif
@@ -54,13 +53,15 @@ float GetFakeShadow(float skyLight) {
 	#endif
 	vec3 worldSunVec = mat3(gbufferModelViewInverse) *sunVec;
 	vec3 fullShadow = vec3(0.0);
+	float fullShadow1 = 0.0;
 	float fakeShadow = 0.0;
-	vec4 shadowcol = vec4(0.0);
 	float shadowMult = 1.0;
 	float shadowTime = 1.0;
+	float water = 0.0;
 
-	#if defined WATER_CAUSTICS && defined OVERWORLD && !defined GBUFFERS_WATER && defined PROJECTED_CAUSTICS
-		float water = 0.0;
+	#ifdef PIXEL_SHADOWS
+		float shadowPixel = 16.0;
+		worldPos = floor((worldPos + cameraPosition) * shadowPixel + 0.001) / shadowPixel - cameraPosition + 0.5 / shadowPixel;
 	#endif
 
     #if defined OVERWORLD || defined END || defined SEVEN
@@ -102,27 +103,20 @@ float GetFakeShadow(float skyLight) {
 					}
 					if (isEyeInWater == 1) offset *= 5.0;
 
-					shadowPos.z -= bias;
-					shadow = GetShadow(shadowPos, offset);
+					#ifdef PIXEL_SHADOWS
+						bias += 0.0025 / shadowPixel;
+					#endif
 
-					#if defined WATER_CAUSTICS && defined OVERWORLD && !defined GBUFFERS_WATER && defined PROJECTED_CAUSTICS
+					shadowPos.z -= bias;
+					shadow = GetShadow(shadowPos, offset, water);
+
+					#if defined PROJECTED_CAUSTICS && defined WATER_CAUSTICS && defined OVERWORLD && !defined GBUFFERS_WATER
 						shadowPos.xy *= 0.5;
 						if (isEyeInWater == 0) {
-							if (shadow < 0.999) {
-								water = texture2D(shadowcolor0, shadowPos.st).r
-									* shadow2D(shadowtex1, vec3(shadowPos.st, shadowPos.z)).x;
-								#ifdef SHADOW_FILTER
-									shadowPos.z -= bias * shadowMapResolution / 2048.0;
-									for(int i = 0; i < 8; i++) {
-										vec2 shadowOffset = 0.002 * shadowoffsets[i];
-										water += texture2D(shadowcolor0, shadowOffset + shadowPos.st).r
-											* shadow2D(shadowtex1, vec3(shadowOffset + shadowPos.st, shadowPos.z)).x;
-									}
-									water *= 0.1;
-									water *= water;
-								#endif
-								water *= NdotL;
-							}
+							water = float(water > 0.99);
+							water *= NdotL;
+							float shadowSum = (shadow.r + shadow.g + shadow.b) / 3.0;
+							water *= pow2(1.0 - shadowSum);
 						}
 					#endif
 				} else {
@@ -133,7 +127,7 @@ float GetFakeShadow(float skyLight) {
 				if (shadowLength2 < shadowSmooth) {
 					float shadowLengthDecider = max(shadowLength2 / shadowSmooth, 0.0);
 					float skyLightShadow = GetFakeShadow(lightmap.y);
-					shadow = mix(skyLightShadow, shadow, shadowLengthDecider);
+					shadow = mix(vec3(skyLightShadow), shadow, shadowLengthDecider);
 					subsurface *= mix(subsurface * 0.5, subsurface, shadowLengthDecider);
 					fakeShadow = mix(1.0, fakeShadow, shadowLengthDecider);
 					fakeShadow = 1.0 - fakeShadow;
@@ -142,7 +136,7 @@ float GetFakeShadow(float skyLight) {
 				}
 			}
 		#else
-			shadow = GetFakeShadow(lightmap.y);
+			shadow = vec3(GetFakeShadow(lightmap.y));
 		#endif
 		
 		#if defined CLOUD_SHADOW && defined OVERWORLD
@@ -158,12 +152,19 @@ float GetFakeShadow(float skyLight) {
 
 		#ifdef ADV_MAT
 			#ifdef SELF_SHADOW
-				shadow *= mix(1.0, parallaxShadow, NdotL);
+				float shadowNdotL = min(NdotL + 0.5, 1.0);
+				shadowNdotL *= shadowNdotL;
+				shadow *= mix(1.0, parallaxShadow, shadowNdotL);
 			#endif
 		#endif
 
-		shadowcol = vec4(shadow);
-		fullShadow = shadowcol.rgb * max(NdotL, subsurface * (1.0 - max(rainStrengthS, (1.0 - sunVisibility)) * 0.40));
+		fullShadow = shadow * max(NdotL, subsurface * (1.0 - max(rainStrengthS, (1.0 - sunVisibility)) * 0.40));
+
+		fullShadow1 = (fullShadow.r + fullShadow.g + fullShadow.b) / 3.0;
+
+		#ifdef ADV_MAT
+			shadow *= float(fullShadow1 > 0.01);
+		#endif
 
 		#if defined OVERWORLD && !defined TWO
 			shadowMult = 1.0 * (1.0 - 0.9 * rainStrengthS);
@@ -171,6 +172,7 @@ float GetFakeShadow(float skyLight) {
 			shadowTime = abs(sunVisibility - 0.5) * 2.0;
 			shadowTime *= shadowTime;
 			shadowMult *= shadowTime * shadowTime;
+
 			#ifndef LIGHT_LEAK_FIX
 				ambientCol *= pow(lightmap.y, 2.5);
 			#else
@@ -218,10 +220,13 @@ float GetFakeShadow(float skyLight) {
 			sceneLighting *= lightmap.y * lightmap.y;
 		#endif
 		
-		#ifdef SHADOWS
+		#if defined SHADOWS && defined OVERWORLD
 			if (subsurface > 0.001) {
 				float VdotL = clamp(dot(normalize(viewPos.xyz), lightVec), 0.0, 1.0);
-				sceneLighting *= 5.0 * (1.0 - fakeShadow) * shadowTime * fullShadow * (1.0 + leaves) * pow(VdotL, 10.0) + vec3(1.0);
+				//sceneLighting *= 5.0 * (1.0 - fakeShadow) * shadowTime * fullShadow * (1.0 + leaves) * pow(VdotL, 10.0) + vec3(1.0);
+				
+				vec3 subsurfaceGlow = (5.5 + 22.0 * leaves) * (1.0 - fakeShadow) * shadowTime * fullShadow * pow(VdotL, 10.0);
+				albedo.rgb += albedo.g * normalize(sqrt(albedo.rgb * lightCol)) * subsurfaceGlow;
 			}
 		#endif
     #else
@@ -252,7 +257,7 @@ float GetFakeShadow(float skyLight) {
 
 		float handLightFactor = 1.0 - min(DYNAMIC_LIGHT_DISTANCE * handLight, lViewPos) / (DYNAMIC_LIGHT_DISTANCE * handLight);
 		#ifdef GBUFFERS_WATER
-			handLight *= 0.9;
+			if (mat > 0.05) handLight *= 0.9;
 		#endif
 		#ifdef GBUFFERS_HAND
 			handLight = min(handLight, 0.95);
@@ -333,8 +338,8 @@ float GetFakeShadow(float skyLight) {
 	albedo *= shade;
 	if (smoothLighting > 0.01) albedo *= smoothLighting;
 
-	#if defined WATER_CAUSTICS && defined OVERWORLD && !defined GBUFFERS_WATER
-		#ifdef PROJECTED_CAUSTICS
+	#if defined WATER_CAUSTICS && defined OVERWORLD
+		#if defined PROJECTED_CAUSTICS && !defined GBUFFERS_WATER
 		if (water > 0.0 || isEyeInWater == 1) {
 		#else
 		if (isEyeInWater == 1) {
@@ -349,7 +354,7 @@ float GetFakeShadow(float skyLight) {
 			float caustic = getCausticWaves(causticpos * 0.75);
 			vec3 causticcol = underwaterColor.rgb / UNDERWATER_I;
 			
-			#ifdef PROJECTED_CAUSTICS
+			#if defined PROJECTED_CAUSTICS && !defined GBUFFERS_WATER
 				if (isEyeInWater == 0) {
 					//causticfactor *= (1.0 - skyLightMap * skyLightMap);
 					causticfactor *= 1.0 - pow2(pow2((1.0 - skyLightMap)));
@@ -358,22 +363,23 @@ float GetFakeShadow(float skyLight) {
 					causticcol *= causticcol;
 					causticcol *= causticcol;
 					albedoCaustic = albedo.rgb * mix(underwaterColor.rgb * 20.0, causticcol * 1000.0, sunVisibility);
-					causticcol *= 120.0;
+					causticcol *= 150.0;
 				} else {
 			#endif
-					causticfactor *= (1.0 - skyLightMap * skyLightMap) * shadow * NdotL * (1.0 - rainStrengthS);
-					causticfactor *= 0.1 + 0.9 * (1.0 - pow2(1.0 - skyLightMap));
+					causticfactor *= shadow.g * NdotL * (1.0 - rainStrengthS);
+					causticfactor *= 0.25 - 0.15 * pow2(pow2((1.0 - skyLightMap)));
+					if (skyLightMap > 0.98) causticfactor *= (1.0 - skyLightMap) * 50.0;
 
 					albedoCaustic = (albedo.rgb + albedo.rgb * underwaterColor.rgb * 16.0) * 0.225;
 					causticcol = sqrt(causticcol) * 30.0;
-			#ifdef PROJECTED_CAUSTICS
+			#if defined PROJECTED_CAUSTICS && !defined GBUFFERS_WATER
 				}
 			#endif
 
 			vec3 lightcaustic = caustic * causticfactor * causticcol * UNDERWATER_I;
 			albedoCaustic *= 1.0 + lightcaustic;
 
-			#ifdef PROJECTED_CAUSTICS
+			#if defined PROJECTED_CAUSTICS && !defined GBUFFERS_WATER
 				if (isEyeInWater == 0) albedo = mix(albedo, albedoCaustic, max(water - rainStrengthS, 0.0));
 				else albedo = albedoCaustic;
 			#else
@@ -384,7 +390,7 @@ float GetFakeShadow(float skyLight) {
 
 	#if defined GBUFFERS_HAND && defined HAND_BLOOM_REDUCTION
 		float albedoStrength = (albedo.r + albedo.g + albedo.b) / 10.0;
-		if (albedoStrength > 1.0) albedo.rgb = albedo.rgb * max(2.0 - pow(albedoStrength, 1.0), 0.34);
+		if (albedoStrength > 1.0) albedo.rgb = albedo.rgb * max(2.0 - albedoStrength, 0.34);
 	#endif
 
 	//if (water > 0.0) albedo = vec3(1.0, 0.0, 1.0);
