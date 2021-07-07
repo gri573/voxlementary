@@ -3,7 +3,7 @@ uniform sampler2DShadow shadowtex0;
 #if defined PROJECTED_CAUSTICS && defined WATER_CAUSTICS && defined OVERWORLD && !defined GBUFFERS_WATER
 uniform sampler2D shadowcolor0;
 #endif
-vec2 shadowoffsets[8] = 2 * vec2[8](    vec2( 0.0   , 1.0   ),
+vec2 shadowoffsets[8] = vec2[8](    vec2( 0.0   , 1.0   ),
                                     vec2( 0.7071, 0.7071),
                                     vec2( 1.0   , 0.0   ),
                                     vec2( 0.7071,-0.7071),
