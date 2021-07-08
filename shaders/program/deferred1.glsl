@@ -577,12 +577,12 @@ void main() {
 		//wdata.rgb = vec3(wdata.a - 0.5) * 2;
 	#endif
 	
-	/*DRAWBUFFERS:05*/
+	/*DRAWBUFFERS:05 */
     gl_FragData[0] = color;
 	gl_FragData[1] = vec4(pow(color.rgb, vec3(0.125)) * 0.5, 1.0);
 
 	#ifdef INTERACTIVE_WATER
-	/*DRAWBUFFERS:058*/
+	/*DRAWBUFFERS:058 */
 	gl_FragData[2] = wdata;
 	#endif
 }

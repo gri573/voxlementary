@@ -607,15 +607,15 @@ gl_FragData[0] = albedo;
 		gl_FragData[2] = vec4(EncodeNormal(newNormal), 0.0, 1.0);
 		gl_FragData[3] = vec4(rawAlbedo, 1.0);
 
-		#ifdef COLORED_LIGHT
-			/* DRAWBUFFERS:03618 */
-			gl_FragData[4] = vec4(lightAlbedo, 1.0);
-		#endif
-	#else
-		#ifdef COLORED_LIGHT
-			/* DRAWBUFFERS:08 */
-			gl_FragData[1] = vec4(lightAlbedo, 1.0);
-		#endif
+		//#ifdef COLORED_LIGHT
+		//	/* DRAWBUFFERS:03618 */
+		//	gl_FragData[4] = vec4(lightAlbedo, 1.0);
+		//#endif
+	//#else
+	//	#ifdef COLORED_LIGHT
+	//		/* DRAWBUFFERS:08 */
+	//		gl_FragData[1] = vec4(lightAlbedo, 1.0);
+	//	#endif
 	#endif
 }
 
