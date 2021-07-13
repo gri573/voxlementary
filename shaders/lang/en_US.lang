@@ -759,6 +759,9 @@ option.SUN_GLARE_STRENGTH.comment=Adjusts the extra sky brightness around the su
 option.CLOUDS=Shader Clouds
 option.CLOUDS.comment=Enables shader-based clouds. §e[*]§r When this is disabled, "Clouds" option in Video Settings will decide if Vanilla Clouds should appear or not. §a[+]§r This effect benefits from TAA. §c[-]§r Disabling this can cause problems with some mods.
 
+option.VANILLAEY_CLOUDS=Vanilla-Styled Clouds
+option.VANILLAEY_CLOUDS.comment=Blocky clouds similar to vanilla's default ones.
+
 option.ENDER_NEBULA=Ender Nebula
 option.ENDER_NEBULA.comment=Enables ender nebula for the sky of The End dimension.
 

@@ -233,11 +233,11 @@ void main() {
 			float dither = Bayer64(gl_FragCoord.xy);
 		#endif
 		#ifdef CLOUDS
-			#ifdef VANILLAEY_CLOUDS
-				vec4 cloud = DrawVanillaCloud(viewPos.xyz * 1000000.0, dither, lightCol, ambientCol, NdotU, lightVec);
-			#else
+			//#ifdef VANILLAEY_CLOUDS
+			//	vec4 cloud = DrawVanillaCloud(viewPos.xyz * 1000000.0, dither, lightCol, ambientCol, NdotU, lightVec);
+			//#else
 				vec4 cloud = DrawCloud(viewPos.xyz * 1000000.0, dither, lightCol, ambientCol, NdotU, 6);
-			#endif
+			//#endif
 			float cloudMask = min((cloud.a / (CLOUD_OPACITY * 2.0)), 0.25) + (cloud.a / (CLOUD_OPACITY * 2.0)) * 0.5;
 			float cloudMaskR = cloud.a / CLOUD_OPACITY;
 		#endif

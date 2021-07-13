@@ -45,6 +45,9 @@
 		float gradientMix = dither * 0.1667;
 		float colorMultiplier = CLOUD_BRIGHTNESS * (0.23 + 0.07 * timeBrightnessS);
 		float noiseMultiplier = CLOUD_THICKNESS * 0.125;
+		#ifdef VANILLAEY_CLOUDS
+			noiseMultiplier *= 1.5;
+		#endif
 		float scattering = 0.5 * pow(cosS * 0.5 * (2.0 * sunVisibility - 1.0) + 0.5, 6.0);
 
 		float cloudHeightFactor = max(1.07 - 0.001 * eyeAltitude, 0.0);
@@ -74,15 +77,23 @@
 				vec2 planeCoord = wpos.xz * ((cloudHeight + (i + dither) * stretchFactor * 6.0 / sampleCount) / wpos.y) * 0.0085;
 				vec2 coord = cameraPosition.xz * 0.00025 + planeCoord;
 				
+				float coverage = float(i - 3.0 + dither) * 0.725;
+
+				#ifndef VANILLAEY_CLOUDS
 				float ang1 = (i + frametime * 0.025) * 2.391;
 				float ang2 = ang1 + 2.391;
 				coord += mix(vec2(cos(ang1), sin(ang1)), vec2(cos(ang2), sin(ang2)), dither * 0.25 + 0.75) * coordFactor;
-				
-				float coverage = float(i - 3.0 + dither) * 0.725;
-				
+
 				float noise = CloudNoise(coord, wind);
 					  noise = CloudCoverage(noise, coverage, NdotU, cosS) * noiseMultiplier;
 					  noise = noise / pow(pow(noise, 2.5) + 1.0, 0.4);
+				#else
+				coord += 0.02 * (texture2D(noisetex, fract(coord * 1000 + vec2(sin(dither), cos(dither)))).rg - 0.5);
+				float noise = CloudNoise(floor(coord * 5.0 - vec2(cloudframetime * 0.05, 0.0)), vec2(0.0));
+					//noise = clamp(100 * noise - 50, 0.0, 2.0);
+					noise = CloudCoverage(noise, coverage, NdotU, cosS) * noiseMultiplier;
+					noise = noise / pow(pow(noise, 2.5) + 1.0, 0.4);
+				#endif
 				
 				cloudGradient = mix(cloudGradient,
 									mix(gradientMix * gradientMix, 1.0 - noise, 0.25),
