@@ -316,6 +316,7 @@ Complementary Shaders by EminGT, based on BSL Shaders by Capt Tatsu
 
   #define CLOUDS
 //#define VANILLAEY_CLOUDS
+  #define VANILLA_CLOUD_SIZE 1.00 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.50 3.00 3.50 4.00 5.00]
   #define CLOUD_THICKNESS 4.00 //[0.25 0.50 0.75 1.00 2.00 3.00 4.00 5.00 6.00 7.00 8.00]
   #define CLOUD_AMOUNT 10.5 //[14.0 13.5 13.0 12.5 12.0 11.5 11.0 10.5 10.0 9.5 9.0 8.5 8.0 7.5 7.0 6.5 6.0]
   #define CLOUD_HEIGHT 30.0 //[2.5 5.0 10.0 15.0 20.0 25.0 30.0 35.0 40.0 45.0 50.0]

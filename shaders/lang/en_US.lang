@@ -156,6 +156,9 @@ screen.EMERALD_COLORS=Emerald Colours
 screen.GOLD_COLOR=Gold Ore Colour 
 screen.IRON_COLOR=Iron Ore Colour 
 screen.FALLBACK_COLOR=Fallback Blocklight Colour
+screen.LIGHTNING_COLOR=Lightning Bolt Colour
+screen.BLAZE_COLOR=Blaze Colour
+screen.CREEPER_COLOR=Creeper Colour
 
 
 #Settings
@@ -612,8 +615,8 @@ value.VXHEIGHT.2=192
 
 option.SHADOW_FILTER=Shadow Filtering
 option.SHADOW_FILTER.comment=Enables shadow filtering. §a[+]§r This effect benefits from TAA.
-option.SHADOW_COLOR=Coloured Shadows
-option.SHADOW_COLOR.comment=Translucents such as stained glass will cast coloured shadows. §cHigh Performance Impact
+option.COLORED_SHADOWS=Coloured Shadows
+option.COLORED_SHADOWS.comment=Translucents such as stained glass will cast coloured shadows. §cHigh Performance Impact
 
 option.sunPathRotation=Sun/Moon Path Rotation
 option.sunPathRotation.comment=Adjusts sun/moon angle.
@@ -688,6 +691,10 @@ option.LIGHT_GROUND.comment=Multiplies all sun/moon light colors on surfaces (do
 option.AMBIENT_GROUND=Ambience Intensity On Surface
 option.AMBIENT_GROUND.comment=Multiplies all sun/moon ambience colors on surfaces (doesn't affect the sky).
 
+option.TRANSLUCENT_BLOCKLIGHT_TINT=Translucent Tint
+option.TRANSLUCENT_BLOCKLIGHT_TINT.comment=Controls how much translucents such as glass tint Blocklight.
+option.ENTITYLIGHTS=Entity Lights
+option.ENTITYLIGHTS.comment=Enables light emission from entities.
 option.BLOCKLIGHT_R=Red
 option.BLOCKLIGHT_G=Green
 option.BLOCKLIGHT_B=Blue
@@ -759,8 +766,10 @@ option.SUN_GLARE_STRENGTH.comment=Adjusts the extra sky brightness around the su
 option.CLOUDS=Shader Clouds
 option.CLOUDS.comment=Enables shader-based clouds. §e[*]§r When this is disabled, "Clouds" option in Video Settings will decide if Vanilla Clouds should appear or not. §a[+]§r This effect benefits from TAA. §c[-]§r Disabling this can cause problems with some mods.
 
-option.VANILLAEY_CLOUDS=Vanilla-Styled Clouds
+option.VANILLAEY_CLOUDS=Blocky Clouds
 option.VANILLAEY_CLOUDS.comment=Blocky clouds similar to vanilla's default ones.
+option.VANILLA_CLOUD_SIZE= Blocky Cloud Size
+option.VANILLA_CLOUD_SIZE.comment=The grid size of blocky clouds (yes, I suck at explaining).
 
 option.ENDER_NEBULA=Ender Nebula
 option.ENDER_NEBULA.comment=Enables ender nebula for the sky of The End dimension.
@@ -896,6 +905,8 @@ option.UNDERWATER_DISTORT=Underwater Distortion
 option.UNDERWATER_DISTORT.comment=Adjusts the intensity of screen distortion underwater.
 value.UNDERWATER_DISTORT.100.0=Too Much
 value.UNDERWATER_DISTORT.1000.0=What?
+option.INTERACTIVE_WATER=Interactive Water
+option.INTERACTIVE_WATER.comment=Water waves interact with the environment and the player (no other entities).
 
 option.EMISSIVE_RECOLOR=Lava Recolor
 option.EMISSIVE_RECOLOR.comment=Enable this if you find lava too bright

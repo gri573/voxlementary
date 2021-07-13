@@ -89,7 +89,7 @@
 					  noise = noise / pow(pow(noise, 2.5) + 1.0, 0.4);
 				#else
 				coord += 0.02 * (texture2D(noisetex, fract(coord * 1000 + vec2(sin(dither), cos(dither)))).rg - 0.5);
-				float noise = CloudNoise(floor(coord * 5.0 - vec2(cloudframetime * 0.05, 0.0)), vec2(0.0));
+				float noise = CloudNoise(VANILLA_CLOUD_SIZE / 5.0 * floor(coord * 5.0 / VANILLA_CLOUD_SIZE - wind * 10), vec2(0.0));
 					//noise = clamp(100 * noise - 50, 0.0, 2.0);
 					noise = CloudCoverage(noise, coverage, NdotU, cosS) * noiseMultiplier;
 					noise = noise / pow(pow(noise, 2.5) + 1.0, 0.4);
