@@ -129,7 +129,8 @@ screen.NEBULA_CONFIG.comment=Settings about the ender nebula.
 
 screen.TORCH_COLOR=Torch Colour 
 screen.REDSTONE_TORCH_COLOR=Redstone Torch Colour 
-screen.SOUL_TORCH_COLOR=Soul Torch Colour 
+screen.SOUL_TORCH_COLOR=Soul Torch Colour
+screen.CANDLE_COLOR=Candle Colour 
 screen.LANTERN_COLOR=Lantern Colour 
 screen.SOUL_LANTERN_COLOR=Soul Lantern Colour 
 screen.FURNACE_COLOR=Furnace Colour 
@@ -155,10 +156,12 @@ screen.LAPIS_COLORS=Lapis Colours
 screen.EMERALD_COLORS=Emerald Colours 
 screen.GOLD_COLOR=Gold Ore Colour 
 screen.IRON_COLOR=Iron Ore Colour 
+screen.GLOWBERRY_COLOR=Glow Berry Colour
 screen.FALLBACK_COLOR=Fallback Blocklight Colour
 screen.LIGHTNING_COLOR=Lightning Bolt Colour
 screen.BLAZE_COLOR=Blaze Colour
 screen.CREEPER_COLOR=Creeper Colour
+screen.GLOW_SQUID_COLOR=Glow Squid Colour
 
 
 #Settings

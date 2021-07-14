@@ -88,16 +88,17 @@ const vec3[60] lightcols = vec3[60](
 	#else
 		vec3(0),
 	#endif
-	vec3(0),
-	vec3(0),
-	vec3(0),
-	vec3(0),
-	vec3(0),
-	vec3(0),
-	vec3(CREEPER_COL_R, CREEPER_COL_G, CREEPER_COL_B),
-	vec3(LIGHTNING_COL_R, LIGHTNING_COL_G, LIGHTNING_COL_B) * 10,
-	vec3(BLAZE_COL_R, BLAZE_COL_G, BLAZE_COL_B),
-	vec3(0),
+	vec3(GLOWBERRY_COL_R, GLOWBERRY_COL_G, GLOWBERRY_COL_B),//cave_vines
+	vec3(GLOW_LICHEN_COL_R, GLOW_LICHEN_COL_G, GLOW_LICHEN_COL_B),//glow lichen
+	vec3(CANDLE_COL_R, CANDLE_COL_G, CANDLE_COL_B) * 0.25,//candle:candles=1
+	vec3(CANDLE_COL_R, CANDLE_COL_G, CANDLE_COL_B) * 0.5,//candle:candles=2
+	vec3(CANDLE_COL_R, CANDLE_COL_G, CANDLE_COL_B) * 0.75,//candle:candles=3
+	vec3(CANDLE_COL_R, CANDLE_COL_G, CANDLE_COL_B),//candle:candles=4
+	
+	vec3(CREEPER_COL_R, CREEPER_COL_G, CREEPER_COL_B),//creeper
+	vec3(LIGHTNING_COL_R, LIGHTNING_COL_G, LIGHTNING_COL_B) * 10,//lightning bolt
+	vec3(BLAZE_COL_R, BLAZE_COL_G, BLAZE_COL_B),//blaze
+	vec3(GLOW_SQUID_COL_R, GLOW_SQUID_COL_G, GLOW_SQUID_COL_B),//glow squid
 	vec3(0),
 	vec3(0),
 	vec3(0),

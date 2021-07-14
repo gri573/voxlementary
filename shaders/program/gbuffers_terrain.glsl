@@ -693,6 +693,7 @@ void main() {
 		if (blockID > 14023.5 && blockID < 14026.5) blockID = 11023;
 		blockID -= int(floor(max(0.5, blockID - 9999.5)/3000.0) * 3000 + 0.5);
 	}
+	if(blockID > 990.5 && blockID < 994.5) blockID = 99;
 
 	#if defined FOG1 && defined FOG1_CHECK
 		float lWorldPos = length(position.xz) * 1;
