@@ -109,10 +109,10 @@ void main() {
 		if (matF < 0.1) discard;
 		light = texture2D(shadowcolor1, screentexcoord);
 		vec3 lightmult = vec3(1.0);
-		if (abs(matF - 120) < 0.1 || abs(matF - 320) < 0.1 || abs(matF - 3) < 0.1) {
-			lightmult = texture2D(tex, texCoordF).rgb * glcolorF.rgb;
-		} else {
-			lightmult = vec3(0.5 * texCoordF, heightF);
+		if (abs(matF - 120) < 0.1 || abs(matF - 320) < 0.1) lightmult = texture2D(tex, texCoordF).rgb * glcolorF.rgb;
+		else {
+			if (abs(matF - 3) < 0.1) lightmult = WATER_LIGHT_TINT * glcolorF.rgb + (1.0 - WATER_LIGHT_TINT);
+			else lightmult = vec3(0.5 * texCoordF, heightF);
 		}
 		float mat1 = matF + 26 - 200 * float(matF > 300);
 		color = vec4(lightmult, mat1 / 255.0);
