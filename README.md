@@ -2,15 +2,17 @@
 Complementary shaders by EminGT, based on BSL shaders by Capt Tatsu, with coloured voxel flood fill lighting added by gri573
 
 
-Shadow quality needs to be set to 1x for this shaderpack to work, Optifine G8 previews or later are required.
+Shadow quality needs to be set to 1x for this shaderpack to work, Optifine G7 or later is required, Mac devices are unsupported.
+
+To install this shaderpack, either clone the repository directly into your shaderpacks folder or (in a web browser) click on `Code`, then `download ZIP`, then put the downloaded zip file directly in your shaderpack folder.
 
 This project is not finished: light leaking may occur.
 
 
 Credits:
 
- - Capt Tatsu        - Complementary is based on his brilliant work from BSL. And he is the one that gave me the idea of publishing my BSL edit. Complementary wouldn't exist without him
- - EminGT            - The developer of Complementary
+ - Capt Tatsu        - Complementary is based on his brilliant work from BSL. And he is the one that gave EminGT the idea of publishing their BSL edit. Complementary and Voxlementary wouldn't exist without him
+ - EminGT            - The developer of Complementary, who is amazingly patient when answering my questions about different parts of Complementary's internals
  - Chocapic13        - Previous frame reprojection, Jitter offset (+ probably more)
  - Robobo1221        - Volumetric light
  - Horizon Zero Dawn - GGX area light approximation
@@ -18,7 +20,7 @@ Credits:
  - fayer3            - End portal/gateway shader
  - Jessie            - Dithering
  - Builderb0y        - Vanilla Star Dedection
- - gri573            - The developer of Voxlementary
+ - gri573            - Me, the developer of Voxlementary
 
 Dimensions:
 
