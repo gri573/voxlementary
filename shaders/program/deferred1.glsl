@@ -57,7 +57,7 @@ uniform int moonPhase;
 uniform sampler2D colortex3;
 #endif
 
-#if (defined ADV_MAT && defined REFLECTION_SPECULAR) || defined SEVEN || (defined END && defined ENDER_NEBULA) || (defined NETHER && defined NETHER_SMOKE)
+#if (defined ADV_MAT && defined REFLECTION_SPECULAR) || defined SEVEN || (defined END && defined ENDER_NEBULA) || (defined NETHER && defined NETHER_SMOKE) || defined INTERACTIVE_WATER
 
 uniform sampler2D colortex6;
 uniform sampler2D colortex1;
@@ -570,9 +570,10 @@ void main() {
 		vec2 playerWaterCoord1 = (texCoord - vec2(0.5)) * vec2(viewWidth, viewHeight) / (1.0 * INTERACTIVE_WATER_RES) + 4 * vec2(1.6 * frameTimeCounter, -0.273 * frameTimeCounter) + floor(cameraPosition.xz);
 		vec2 playerWaterCoord2 = (texCoord - vec2(0.5)) * vec2(viewWidth, viewHeight) / (1.0 * INTERACTIVE_WATER_RES) + 4 * vec2(0.8 * frameTimeCounter, -0.473 * frameTimeCounter) + floor(cameraPosition.xz);
 
-		float stimulantWave = 3 * WATER_BUMP * (0.5 * sin(mod(dot(playerWaterCoord0, vec2(0.173, 0.02257)), 6.2832)) + sin(mod(2 * dot(playerWaterCoord1, vec2(0.216, -0.173)), 5.2832)));
-		wdata.r += stimulantWave * pow(min(inRange0, 1.0), 10);
-		wdata.r = mix(wdata.r, stimulantWave, pow(min(inRange0, 1.0), 30));
+		//float stimulantWave = 3 * WATER_BUMP * (0.5 * sin(mod(dot(playerWaterCoord0, vec2(0.173, 0.02257)), 6.2832)) + sin(mod(2 * dot(playerWaterCoord1, vec2(0.216, -0.173)), 5.2832)));
+		//wdata.r += stimulantWave * pow(min(inRange0, 1.0), 10);
+		wdata.g += 0.002 * (rainStrengthS + 1.0) * (0.75 * texture2D(noisetex, fract(waterCoord * vec2(viewWidth, viewHeight) / viewWidth + vec2(0.1) * frameTimeCounter)).r + 1.25 * texture2D(noisetex, fract(waterCoord * vec2(0.3 * viewWidth, 0.7 * viewHeight) / viewWidth + vec2(0.1) * frameTimeCounter)).r - 1.0);
+		//wdata.r = mix(wdata.r, stimulantWave, pow(min(inRange0, 1.0), 30));
 		wdata.rg *= float((abs(waterCoord.x - 0.5) < 0.5 || abs(waterCoord.y - 0.5) < 0.5) && walpha0 > 0.1);
 		//wdata.rgb = vec3(wdata.a - 0.5) * 2;
 	#endif
