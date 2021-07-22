@@ -190,25 +190,25 @@ const int maxVerticesOut = 3;
 #endif
 
 //Varyings//
-varying in vec4 shadowPos[3];
-varying in vec2 lmCoord[3];
-varying in vec2 texCoord[3];
-varying in vec4 glcolor[3];
-varying in vec3 glnormal[3];
-varying in float mat[3];
-varying in float height[3];
-varying in vec4 position[3];
-varying in vec3 pos0[3];
+in vec4 shadowPos[3];
+in vec2 lmCoord[3];
+in vec2 texCoord[3];
+in vec4 glcolor[3];
+in vec3 glnormal[3];
+in float mat[3];
+in float height[3];
+in vec4 position[3];
+in vec3 pos0[3];
 
 
-varying out vec2 screentexcoord;
-varying out vec2 lmCoordF;
-varying out vec2 texCoordF;
-varying out vec4 glcolorF;
-varying out vec3 glnormalF;
-varying out float matF;
-varying out float heightF;
-varying out vec4 positionF;
+out vec2 screentexcoord;
+out vec2 lmCoordF;
+out vec2 texCoordF;
+out vec4 glcolorF;
+out vec3 glnormalF;
+out float matF;
+out float heightF;
+out vec4 positionF;
 
 //Uniforms//
 uniform vec3 cameraPosition;
@@ -401,7 +401,7 @@ void main() {
 	lmCoord  = (gl_TextureMatrix[1] * gl_MultiTexCoord1).xy;
 	glcolor = gl_Color;
 	glnormal = gl_Normal;
-	position = shadowModelViewInverse * shadowProjectionInverse * ftransform();
+	position = shadowModelViewInverse * gl_ModelViewMatrix * gl_Vertex;
 	pos0 = position.xyz;
 	
 	gl_Position = position.xzyw * 1.0 / shadowMapResolution;
