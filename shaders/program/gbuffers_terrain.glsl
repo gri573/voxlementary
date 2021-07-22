@@ -12,7 +12,7 @@ varying float quarterNdotUfactor;
 varying float specR, specG, specB;
 
 varying vec2 lmCoord;
-varying vec2 lmCoord2; //WHY THE FUCK IS THIS NEEDED????!!!!!
+varying vec2 lmCoord2; //not sure why this is required, but it is
 varying vec2 texCoord;
 
 varying vec3 normal;
@@ -572,10 +572,11 @@ void main() {
 		#endif
 		
 		#ifdef SHOW_LIGHT_LEVELS
-			if (lmCoord.x < 0.533334 && quarterNdotU > 0.99 && foliage + leaves < 0.1) {
-				float showLightLevelFactor = fract(frameTimeCounter);
-				if (showLightLevelFactor > 0.5) showLightLevelFactor = 1 - showLightLevelFactor;
-				albedo.rgb += vec3(0.5, 0.0, 0.0) * showLightLevelFactor;
+			if (lmCoord2.x < 0.533334 && quarterNdotU > 0.99 && foliage + leaves < 0.1) {
+				vec3 realWorldPos = worldPos + cameraPosition;
+				float showLightLevelFactor = 0.5 * float(abs(abs(fract(realWorldPos.x) - 0.5) - abs(fract(realWorldPos.z) - 0.5)) < 0.02);
+				vec3 showLightLevelColor = mix(vec3(0.5, 0.0, 0.0), vec3(0.5, 0.5, 0.0), float(lmCoord2.y > 0.533334));
+				albedo.rgb = mix(albedo.rgb, showLightLevelColor, showLightLevelFactor);
 			}
 		#endif
 	} else discard;
