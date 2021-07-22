@@ -4,11 +4,11 @@
 Complementary shaders by EminGT, based on BSL shaders by Capt Tatsu, with coloured voxel flood fill lighting added by gri573
 
 
-Shadow quality **must** be set to **1x** for this shaderpack to work, Optifine **G7** or later is required, Mac devices are unsupported.
+Shadow quality *must* be set to *1x* for this shaderpack to work, Optifine *G7* or later is required, Mac devices are unsupported.
 
 To install this shaderpack, either clone the repository directly into your shaderpacks folder or (in a web browser) click on `Code`, then `download ZIP`, then put the downloaded zip file directly in your shaderpack folder.
 
-This project is **not finished**: occasional light leaking will occur, **do not** expect it to work. That being said, please **do** submit a bug report if it doesn't.
+This project is *not finished*: occasional light leaking will occur, *do not* expect it to work. That being said, please *do* submit a bug report if it doesn't.
 
 
 Credits:
