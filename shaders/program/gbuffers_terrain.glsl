@@ -11,7 +11,9 @@ varying float mipmapDisabling;
 varying float quarterNdotUfactor;
 varying float specR, specG, specB;
 
-varying vec2 texCoord, lmCoord;
+varying vec2 lmCoord;
+varying vec2 lmCoord2; //WHY THE FUCK IS THIS NEEDED????!!!!!
+varying vec2 texCoord;
 
 varying vec3 normal;
 varying vec3 sunVec, upVec;
@@ -241,7 +243,7 @@ void main() {
 		float leaves  = float(material == 2.0);
 
 		//Emission
-		vec2 lightmap = clamp(lmCoord, vec2(0.0), vec2(1.0));
+		vec2 lightmap = clamp(lmCoord2, vec2(0.0), vec2(1.0));
 		float emissive = specB * 4.0;
 		
 		//Subsurface Scattering
@@ -716,6 +718,7 @@ void main() {
 
 	lmCoord = (gl_TextureMatrix[1] * gl_MultiTexCoord1).xy;
 	lmCoord = clamp((lmCoord - 0.03125) * 1.06667, 0.0, 1.0);
+	lmCoord2 = lmCoord;
 
 	normal = normalize(gl_NormalMatrix * gl_Normal);
 
