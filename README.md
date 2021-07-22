@@ -8,8 +8,8 @@ To install this shaderpack, either clone the repository directly into your shade
 
 ## Important notices
 
-- Shadow quality needs to be set to **x1** for this shaderpack to work;
-- Optifine G7 or later is required;
+- Shadow quality ***must*** be set to **x1** for this shaderpack to work;
+- Optifine ***G7*** or later is required;
 - Mac devices are unsupported;
 - This project is **not** finished - occasional light leaking will occur. (Do not report this issue)
 
