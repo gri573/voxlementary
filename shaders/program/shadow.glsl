@@ -114,6 +114,7 @@ void main() {
 			if (abs(matF - 3) < 0.1) lightmult = WATER_LIGHT_TINT * glcolorF.rgb + (1.0 - WATER_LIGHT_TINT);
 			else lightmult = vec3(0.5 * texCoordF, heightF);
 		}
+		if(abs(matF - 100) < 0.1) lightmult = vec3(lmCoordF.x);
 		float mat1 = matF + 26 - 200 * float(matF > 300);
 		color = vec4(lightmult, mat1 / 255.0);
 
@@ -373,11 +374,12 @@ void main() {
 		97 * float(abs(mc_Entity.x - 992) < 0.1) + //two candles
 		98 * float(abs(mc_Entity.x - 993) < 0.1) + //three candles
 		99 * float(abs(mc_Entity.x - 994) < 0.1) + //four candles
+		100 * float(abs(mc_Entity.x - 12345) < 0.1) + //general lights
 		#ifdef ENTITYLIGHTS
-			100 * float(entityId == 10208) + //creeper
-			101 * float(entityId == 10101) + //lightning bolt
-			102 * float(entityId == 10204) + //blaze
-			103 * float(entityId == 10213) + //glow squid
+			110 * float(entityId == 10208) + //creeper
+			111 * float(entityId == 10101) + //lightning bolt
+			112 * float(entityId == 10204) + //blaze
+			113 * float(entityId == 10213) + //glow squid
 		#endif
 		120 * float(abs(mc_Entity.x - 79) < 0.1 || abs(mc_Entity.x - 12002) < 0.1) + //stained glass, honey, slime
 		320 * float(abs(mc_Entity.x - 7979) < 0.1) + //ice

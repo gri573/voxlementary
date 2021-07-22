@@ -22,7 +22,7 @@ const int shadowcolor1Format = RGBA16F;
 #include "/lib/vx/voxelPos.glsl"
 
 void main(){
-const vec3[60] lightcols = vec3[60](
+const vec3[70] lightcols = vec3[70](
 	vec3(TORCH_COL_R, TORCH_COL_G, TORCH_COL_B),//torch
 	vec3(REDSTONE_TORCH_COL_R, REDSTONE_TORCH_COL_G, REDSTONE_TORCH_COL_B),//redstone_torch
 	vec3(SOUL_TORCH_COL_R, SOUL_TORCH_COL_G, SOUL_TORCH_COL_B),//soul_torch
@@ -94,7 +94,16 @@ const vec3[60] lightcols = vec3[60](
 	vec3(CANDLE_COL_R, CANDLE_COL_G, CANDLE_COL_B) * 0.5,//candle:candles=2
 	vec3(CANDLE_COL_R, CANDLE_COL_G, CANDLE_COL_B) * 0.75,//candle:candles=3
 	vec3(CANDLE_COL_R, CANDLE_COL_G, CANDLE_COL_B),//candle:candles=4
-	
+	vec3(BLOCKLIGHT_R, BLOCKLIGHT_G, BLOCKLIGHT_B),//light
+	vec3(0),
+	vec3(0),
+	vec3(0),
+	vec3(0),
+	vec3(0),
+	vec3(0),
+	vec3(0),
+	vec3(0),
+	vec3(0),
 	vec3(CREEPER_COL_R, CREEPER_COL_G, CREEPER_COL_B),//creeper
 	vec3(LIGHTNING_COL_R, LIGHTNING_COL_G, LIGHTNING_COL_B) * 10,//lightning bolt
 	vec3(BLAZE_COL_R, BLAZE_COL_G, BLAZE_COL_B),//blaze
@@ -140,6 +149,7 @@ const vec3[60] lightcols = vec3[60](
 		vec4 col4 = texture2D(shadowcolor1, pos4) * float(abs(pos4.x - 0.5) < 0.5 && abs(pos4.y - 0.5) < 0.5);
 		vec4 col5 = texture2D(shadowcolor1, pos5) * float(abs(pos5.x - 0.5) < 0.5 && abs(pos5.y - 0.5) < 0.5);
 		vec4 col6 = vec4(float(isLight) * lightcols[int(ID - 49.5)] / 255.0, 1.0);
+		if(abs(ID - 100) < 0.5) col6 = vec4(blockData.r);
 
 		col0.rgb *= float(abs(col0.a - 0.75) > 0.1 && ((ID == 5 && abs(col0.a - 0.25) > 0.1) || (ID == 6 && abs(col0.a - 0.5) > 0.1) || abs(ID - 5.5) > 1.0));
 		col1.rgb *= float(abs(col1.a - 0.75) > 0.1 && abs(ID - 5) > 0.5 && abs(col1.a - 0.25) > 0.1);
