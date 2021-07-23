@@ -4,7 +4,8 @@ Complementary shaders by EminGT, based on BSL shaders by Capt Tatsu, with colour
 
 ## Installation
 
-To install this shaderpack, either clone the repository directly into your shaderpacks folder or (in a web browser) click on `Code`, then `download ZIP`, then put the downloaded zip file directly in your shaderpack folder.
+In a web browser, click on a green button with `Code`, then `Download ZIP`, and then put the downloaded .zip file directly in your shaderpack folder.
+or clone the repository directly into your shaderpacks folder.
 
 ## Important notices
 
@@ -12,6 +13,11 @@ To install this shaderpack, either clone the repository directly into your shade
 - Optifine ***G7*** or later is required;
 - Mac devices are unsupported;
 - This project is **not** finished - occasional light leaking will occur. (Do not report this issue)
+
+## Information
+For questions, suggestions, early access of Complementary, and more; feel free to join the Complementary Discord Server: https://discord.gg/A6faFYt
+
+If you encounter issues with mods, you can check out this mod issue fixes list: https://justpaste.it/60cgu
 
 ## Credits:
 
