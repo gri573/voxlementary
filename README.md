@@ -14,6 +14,11 @@ or clone the repository directly into your shaderpacks folder.
 - Mac devices are unsupported;
 - This project is **not** finished - occasional light leaking will occur. (Do not report this issue)
 
+## Information
+For questions, suggestions, early access of Complementary, and more; feel free to join the Complementary Discord Server: https://discord.gg/A6faFYt
+
+If you encounter issues with mods, you can check out this mod issue fixes list: https://justpaste.it/60cgu
+
 ## Credits:
 
  - Capt Tatsu        - Complementary is based on his brilliant work from BSL. And he is the one that gave EminGT the idea of publishing their BSL edit. Complementary and Voxlementary wouldn't exist without him
