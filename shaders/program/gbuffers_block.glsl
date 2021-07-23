@@ -376,9 +376,14 @@ void main() {
 		#endif
 		
 		#ifdef SHOW_LIGHT_LEVELS
-			float showLightLevelFactor = fract(frameTimeCounter);
-			if (showLightLevelFactor > 0.5) showLightLevelFactor = 1 - showLightLevelFactor;
-			if (lmCoord.x < 0.5 && quarterNdotU > 0.99) albedo.rgb += vec3(0.5, 0.0, 0.0) * showLightLevelFactor;
+			if (lmCoord.x < 0.5 && quarterNdotU > 0.99) {
+				vec3 realWorldPos = worldPos + cameraPosition;
+				if(abs(fract(realWorldPos.y) - 0.5) > 0.49) {
+					float showLightLevelFactor = 0.5 * float(abs(abs(fract(realWorldPos.x) - 0.5) - abs(fract(realWorldPos.z) - 0.5)) < 0.02);
+					vec3 showLightLevelColor = mix(vec3(0.5, 0.0, 0.0), vec3(0.5, 0.5, 0.0), float(lmCoord.y > 0.5));
+					albedo.rgb = mix(albedo.rgb, showLightLevelColor, showLightLevelFactor);
+				}
+			}
 		#endif
 	} else discard;
 
