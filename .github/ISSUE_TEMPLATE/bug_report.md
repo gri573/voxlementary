@@ -29,3 +29,5 @@ If applicable, add screenshots or videos to help explain your problem.
 
 **Additional context**
 Add any other context about the problem here.
+
+[*] I have tried if the issue happens with the latest version of Voxlementary.
