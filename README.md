@@ -4,7 +4,8 @@ Complementary shaders by EminGT, based on BSL shaders by Capt Tatsu, with colour
 
 ## Installation
 
-To install this shaderpack, either clone the repository directly into your shaderpacks folder or (in a web browser) click on `Code`, then `download ZIP`, then put the downloaded zip file directly in your shaderpack folder.
+In a web browser, click on a green button with `Code`, then `Download ZIP`, and then put the downloaded .zip file directly in your shaderpack folder.
+or clone the repository directly into your shaderpacks folder.
 
 ## Important notices
 
