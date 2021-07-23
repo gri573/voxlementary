@@ -574,9 +574,11 @@ void main() {
 		#ifdef SHOW_LIGHT_LEVELS
 			if (lmCoord2.x < 0.533334 && quarterNdotU > 0.99 && foliage + leaves < 0.1) {
 				vec3 realWorldPos = worldPos + cameraPosition;
-				float showLightLevelFactor = 0.5 * float(abs(abs(fract(realWorldPos.x) - 0.5) - abs(fract(realWorldPos.z) - 0.5)) < 0.02);
-				vec3 showLightLevelColor = mix(vec3(0.5, 0.0, 0.0), vec3(0.5, 0.5, 0.0), float(lmCoord2.y > 0.533334));
-				albedo.rgb = mix(albedo.rgb, showLightLevelColor, showLightLevelFactor);
+				if(abs(fract(realWorldPos.y) - 0.5) > 0.49) {
+					float showLightLevelFactor = 0.5 * float(abs(abs(fract(realWorldPos.x) - 0.5) - abs(fract(realWorldPos.z) - 0.5)) < 0.02);
+					vec3 showLightLevelColor = mix(vec3(0.5, 0.0, 0.0), vec3(0.5, 0.5, 0.0), float(lmCoord2.y > 0.533334));
+					albedo.rgb = mix(albedo.rgb, showLightLevelColor, showLightLevelFactor);
+				}
 			}
 		#endif
 	} else discard;
