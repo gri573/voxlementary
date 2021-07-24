@@ -13,7 +13,7 @@ varying vec2 texCoord;
 
 //Uniforms//
 uniform sampler2D colortex1;
-//uniform sampler2D colortex8;
+//uniform sampler2D colortex9;
 
 uniform float viewWidth, viewHeight;
 
@@ -35,6 +35,7 @@ const int gaux1Format = RG8; 				//half-res ao & water mask
 const int gaux2Format = RGB8;			    //reflection
 const int gaux3Format = RG16; 				//normals
 const int gaux4Format = RGB8; 				//taa mask & galaxy image
+const int colortex9Format = RGBA16;			//projection map
 
 */
 
@@ -121,7 +122,7 @@ void main() {
 	#endif
 
 	gl_FragColor = vec4(color, 1.0);
-	//gl_FragColor = vec4(texture2D(colortex8, texCoord).rgb * 0.7 + color * 0.3, 1.0);
+	//gl_FragColor = vec4(texture2D(colortex9, texCoord).rgb, 1.0);
 }
 
 #endif

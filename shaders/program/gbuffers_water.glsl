@@ -73,6 +73,10 @@ uniform sampler2D normals;
 uniform sampler2D colortex8;
 #endif
 
+#ifdef REFLECTION_CAPTURE
+uniform sampler2D colortex9;
+#endif
+
 uniform float isDry, isRainy, isSnowy;
 #endif
 
