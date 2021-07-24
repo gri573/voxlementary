@@ -1,0 +1,52 @@
+Information:
+ For questions, suggestions, early access, and more; feel free to join the Complementary Discord Server: https://discord.gg/A6faFYt
+ If you encounter issues with mods, you can check out this mod issue fixes list: https://justpaste.it/60cgu
+
+Agreement:
+1. You are ***not*** allowed to redistribute Complementary nor Voxlementary. Always direct people to the official download pages: 
+
+https://www.curseforge.com/minecraft/customization/complementary-shaders
+https://github.com/gri573/voxlementary
+
+2. You are allowed to use Complementary and Voxlementary for streaming, videos and screenshots. Crediting and keeping the pack updated is preferable but not mandatory.
+
+3. You are allowed to publish any Complementary/Voxlementary edits under these terms:
+
+   1. Your edit must be clearly distinguishable from Complementary and Voxlementary in terms of general in-game looks.
+   2. You must not use the word "Complementary"/"Voxlementary" or words that are very similar to that (like Complimentary, Supplementary, Compomentary, Conpelantary, Voxlimentary, Voxlomentary, Voxelementary) in your edit's name.
+   3. You must visibly credit both Complementary Shaders (EminGT) and Voxlementary Shaders (gri573) in your edit's description.
+   4. You must allow other people to publish edits of your edit without putting terms stricter than Complementary's.
+   5. Term II. (2.) can be ignored if the actual Complementary or Voxlementary Shaders haven't been updated at all for more than a year at the time you're releasing your edit.
+
+4. You are allowed to include Complementary and Voxlementary in your mod pack under these terms:
+    1. No setting changes are allowed other than enabling Compatibility Mode and/or changing the profile and/or RP Support mode.
+    2. No code editing is allowed.
+    3. You must visibly credit Complementary Shaders and/or Voxlementary in your mod pack's download page.
+    4. You must use the latest version of Complementary Shaders and/or Voxlementary at the time you are releasing your mod pack. Keeping it updated is preferable.
+    5. You must not rename the shaderpack file. It must be called ComplementaryShaders_"version".
+
+5. Some terms can be lifted by a specific permission of my (gri573) and EminGT's.
+
+ - Capt Tatsu        - Complementary is based on his brilliant work from BSL. And he is the one that gave EminGT the idea of publishing their BSL edit. Complementary and Voxlementary wouldn't exist without him
+ - EminGT            - The developer of Complementary, who is amazingly patient when answering my questions about different parts of Complementary's internals
+ - Chocapic13        - Previous frame reprojection, Jitter offset (+ probably more)
+ - Robobo1221        - Volumetric light
+ - Horizon Zero Dawn - GGX area light approximation
+ - Simon Rodriguez   - FXAA
+ - fayer3            - End portal/gateway shader
+ - Jessie            - Dithering
+ - Builderb0y        - Vanilla Star Dedection
+ - Aldebaran S       - Galaxy image
+ - gri573            - Me, the developer of Voxlementary
+ 
+Dimensions:
+ -1       NETHER         - Nether
+ 0        OVERWORLD      - Overworld
+ 1        END            - End
+ 2 / -23  TWO            - The Midnight
+ 5 / 7    SEVEN          - Twilight Forest
+ 17       ONESEVEN       - Atum
+ 20       SEVEN + TWENTY - The Betweenlands
+ 50...53  TWO + ABYSS    - AbyssalCraft
+ 10       <empty>   - Placeholder (The Beneath)
+ -27..-31 <empty>   - Placeholder (Galacticraft)
