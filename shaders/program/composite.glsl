@@ -57,6 +57,7 @@ uniform sampler2D depthtex1;
 	uniform sampler2DShadow shadowtex0;
 	uniform sampler2DShadow shadowtex1;
 	uniform sampler2D shadowcolor0;
+	uniform sampler2D shadowcolor1;
 #endif
 
 #if ((defined BLACK_OUTLINE || defined PROMO_OUTLINE) && defined OUTLINE_ON_EVERYTHING && defined END && defined ENDER_NEBULA) || defined WATER_REFRACT || defined LIGHT_SHAFTS
@@ -114,6 +115,7 @@ float GetLinearDepth(float depth) {
 	#ifdef SMOKEY_WATER_LIGHTSHAFTS
 		#include "/lib/lighting/caustics.glsl"
 	#endif
+	#include "/lib/vx/voxelPos.glsl"
 	#include "/lib/atmospherics/volumetricLight.glsl"
 #endif
 
@@ -224,8 +226,10 @@ void main() {
 	if (isEyeInWater == 2) color.rgb *= vec3(1.0, 0.25, 0.01);
 	
 	#ifdef LIGHT_SHAFTS
-		vec3 vl = getVolumetricRays(z0, z1, translucent, dither, viewPos);
+		vec3 vlBlock = vec3(0.0);
+		vec3 vl = getVolumetricRays(z0, z1, translucent, dither, viewPos, vlBlock);
 	#else
+		vec3 vlBlock = vec3(0.0);
 		vec3 vl = vec3(0.0);
 	#endif
 
@@ -258,9 +262,10 @@ void main() {
 		#endif
 	#endif
 	
-    /*DRAWBUFFERS:01*/
+    /*DRAWBUFFERS:013*/
 	gl_FragData[0] = color;
 	gl_FragData[1] = vec4(vl, 1.0);
+	gl_FragData[2] = vec4(vlBlock, 1.0);
 }
 
 #endif
