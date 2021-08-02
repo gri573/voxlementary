@@ -167,7 +167,7 @@ void main() {
 	#endif
 
 	color.rgb += vl * lightShaftTime;
-	color.rgb += vlBlock * vlBlock;
+	color.rgb += vlBlock * vlBlock * vlBlock / (length(vlBlock) + 0.0001);
 	
 	/*DRAWBUFFERS:0*/
 	gl_FragData[0] = color;

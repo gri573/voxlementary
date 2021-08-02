@@ -284,13 +284,72 @@ float GetFakeShadow(float skyLight) {
 	#if (defined OVERWORLD || defined NETHER || defined END) && !defined GBUFFERS_BEACONBEAM
 	float border = (max(max(abs(worldPos.x), abs(worldPos.z)) - 0.0625 / VXHEIGHT * shadowMapResolution, abs(worldPos.y) - 24 * pow2(VXHEIGHT)) + 5) * 0.2;
 	if (border < 1) {
-		voxelSpacePos += worldNormal;
-		float floorVxSpacePosY = floor(voxelSpacePos.y + 0.51);
-		vec3[2] voxelPos0 = getVoxelPos(vec3(voxelSpacePos.x, floorVxSpacePosY - 0.01, voxelSpacePos.z));
-		vec3 blockLightCol0 = texture2D(shadowcolor1, voxelPos0[0].xz / shadowMapResolution + vec2(0.5)).rgb;// * float(abs(voxelPos0[0].x / shadowMapResolution) < 0.5 && abs(voxelPos0[0].z / shadowMapResolution) < 0.5);
-		vec3[2] voxelPos1 = getVoxelPos(vec3(voxelSpacePos.x, floorVxSpacePosY + 0.99, voxelSpacePos.z));
-		vec3 blockLightCol1 = texture2D(shadowcolor1, voxelPos1[0].xz / shadowMapResolution + vec2(0.5)).rgb;// * float(abs(voxelPos1[0].x / shadowMapResolution) < 0.5 && abs(voxelPos1[0].z / shadowMapResolution) < 0.5);
-		blockLighting = mix(blockLightCol0, blockLightCol1, voxelSpacePos.y + 0.51 - floorVxSpacePosY);
+		voxelSpacePos += worldNormal * 0.51;
+		vec3 vxOffset = vec3(-0.5);
+		vec3 voxelSpaceFloorPos = floor(voxelSpacePos + vxOffset);
+		vec3 vxInnerPos = fract(voxelSpacePos + vxOffset);
+		vec3[2] voxelPos000 = getVoxelPos(voxelSpaceFloorPos + vec3(0, 0, 0));
+		vec3[2] voxelPos001 = getVoxelPos(voxelSpaceFloorPos + vec3(0, 0, 1));
+		vec3[2] voxelPos010 = getVoxelPos(voxelSpaceFloorPos + vec3(0, 1, 0));
+		vec3[2] voxelPos011 = getVoxelPos(voxelSpaceFloorPos + vec3(0, 1, 1));
+		vec3[2] voxelPos100 = getVoxelPos(voxelSpaceFloorPos + vec3(1, 0, 0));
+		vec3[2] voxelPos101 = getVoxelPos(voxelSpaceFloorPos + vec3(1, 0, 1));
+		vec3[2] voxelPos110 = getVoxelPos(voxelSpaceFloorPos + vec3(1, 1, 0));
+		vec3[2] voxelPos111 = getVoxelPos(voxelSpaceFloorPos + vec3(1, 1, 1));
+
+		vec4 blockLightCol000 = texture2D(shadowcolor1, (voxelPos000[0].xz + vec2(0.5)) / shadowMapResolution + vec2(0.5));
+		vec4 blockLightCol001 = texture2D(shadowcolor1, (voxelPos001[0].xz + vec2(0.5)) / shadowMapResolution + vec2(0.5));
+		vec4 blockLightCol010 = texture2D(shadowcolor1, (voxelPos010[0].xz + vec2(0.5)) / shadowMapResolution + vec2(0.5));
+		vec4 blockLightCol011 = texture2D(shadowcolor1, (voxelPos011[0].xz + vec2(0.5)) / shadowMapResolution + vec2(0.5));
+		vec4 blockLightCol100 = texture2D(shadowcolor1, (voxelPos100[0].xz + vec2(0.5)) / shadowMapResolution + vec2(0.5));
+		vec4 blockLightCol101 = texture2D(shadowcolor1, (voxelPos101[0].xz + vec2(0.5)) / shadowMapResolution + vec2(0.5));
+		vec4 blockLightCol110 = texture2D(shadowcolor1, (voxelPos110[0].xz + vec2(0.5)) / shadowMapResolution + vec2(0.5));
+		vec4 blockLightCol111 = texture2D(shadowcolor1, (voxelPos111[0].xz + vec2(0.5)) / shadowMapResolution + vec2(0.5));
+
+		blockLightCol000.a = float(abs(blockLightCol000.a - 0.75) > 0.1);
+		blockLightCol001.a = float(abs(blockLightCol001.a - 0.75) > 0.1);
+		blockLightCol010.a = float(abs(blockLightCol010.a - 0.75) > 0.1);
+		blockLightCol011.a = float(abs(blockLightCol011.a - 0.75) > 0.1);
+		blockLightCol100.a = float(abs(blockLightCol100.a - 0.75) > 0.1);
+		blockLightCol101.a = float(abs(blockLightCol101.a - 0.75) > 0.1);
+		blockLightCol110.a = float(abs(blockLightCol110.a - 0.75) > 0.1);
+		blockLightCol111.a = float(abs(blockLightCol111.a - 0.75) > 0.1);
+		//blockLightCol000.rgb = vec3(1, 0, 0);
+		//blockLightCol111.rgb = vec3(0, 1, 0);
+
+		float blockLightFactor = blockLightCol001.a / (blockLightCol000.a + blockLightCol001.a + 0.0001);
+		blockLightFactor = mix(vxInnerPos.z, blockLightFactor, abs(2 * blockLightFactor - 1));
+		blockLightCol000.rgb = mix(blockLightCol000.rgb, blockLightCol001.rgb, blockLightFactor);
+		blockLightCol000.a += blockLightCol001.a;
+
+		blockLightFactor = blockLightCol011.a / (blockLightCol010.a + blockLightCol011.a + 0.0001);
+		blockLightFactor = mix(vxInnerPos.z, blockLightFactor, abs(2 * blockLightFactor - 1));
+		blockLightCol010.rgb = mix(blockLightCol010.rgb, blockLightCol011.rgb, blockLightFactor);
+		blockLightCol010.a += blockLightCol011.a;
+
+		blockLightFactor = blockLightCol101.a / (blockLightCol100.a + blockLightCol101.a + 0.0001);
+		blockLightFactor = mix(vxInnerPos.z, blockLightFactor, abs(2 * blockLightFactor - 1));
+		blockLightCol100.rgb = mix(blockLightCol100.rgb, blockLightCol101.rgb, blockLightFactor);
+		blockLightCol100.a += blockLightCol101.a;
+
+		blockLightFactor = blockLightCol111.a / (blockLightCol110.a + blockLightCol111.a + 0.0001);
+		blockLightFactor = mix(vxInnerPos.z, blockLightFactor, abs(2 * blockLightFactor - 1));
+		blockLightCol110.rgb = mix(blockLightCol110.rgb, blockLightCol111.rgb, blockLightFactor);
+		blockLightCol110.a += blockLightCol111.a;
+
+		blockLightFactor = blockLightCol010.a / (blockLightCol000.a + blockLightCol010.a + 0.0001);
+		blockLightFactor = mix(vxInnerPos.y, blockLightFactor, abs(2 * blockLightFactor - 1));
+		blockLightCol000.rgb = mix(blockLightCol000.rgb, blockLightCol010.rgb, blockLightFactor);
+		blockLightCol000.a += blockLightCol010.a;
+
+		blockLightFactor = blockLightCol110.a / (blockLightCol100.a + blockLightCol110.a + 0.0001);
+		blockLightFactor = mix(vxInnerPos.y, blockLightFactor, abs(2 * blockLightFactor - 1));
+		blockLightCol100.rgb = mix(blockLightCol100.rgb, blockLightCol110.rgb, blockLightFactor);
+		blockLightCol100.a += blockLightCol110.a;
+
+		blockLightFactor = blockLightCol100.a / (blockLightCol000.a + blockLightCol100.a + 0.0001);
+		blockLightFactor = mix(vxInnerPos.x, blockLightFactor, abs(2 * blockLightFactor - 1));
+		blockLighting = mix(blockLightCol000.rgb, blockLightCol100.rgb, blockLightFactor);//mix(blockLightCol0, blockLightCol1, voxelSpacePos.y + 0.51 - voxelSpaceFloorPos.y);
 		blockLighting = pow(blockLighting, vec3(1.5));
 		vec3 blockLighting0 = BLOCKLIGHT_I * vec3(BLOCKLIGHT_R, BLOCKLIGHT_G, BLOCKLIGHT_B) * newLightmap * newLightmap * 0.5 / 255.0;
 		blockLighting = mix(blockLighting, blockLighting0, clamp(border, 0, 1));

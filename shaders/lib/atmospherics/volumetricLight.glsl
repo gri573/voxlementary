@@ -205,7 +205,7 @@ vec3 getVolumetricRays(float pixeldepth0, float pixeldepth1, vec3 color, float d
 				vec3 blockLight0 = texture2D(shadowcolor1, vxPos / shadowMapResolution + vec2(0.5)).rgb;
 				vxPos = getVoxelPos(voxelSpacePos + vec3(0, 1, 0))[0].xz;
 				vec3 blockLight1 = texture2D(shadowcolor1, vxPos / shadowMapResolution + vec2(0.5)).rgb;
-				vlBlock += 0.2 * mix(blockLight0, blockLight1, fract(voxelSpacePos.y));
+				vlBlock += V_BLOCK_L_STRENGTH * 0.2 * mix(blockLight0, blockLight1, fract(voxelSpacePos.y));
 
 			}
 
