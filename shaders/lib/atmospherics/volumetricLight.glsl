@@ -40,7 +40,7 @@ vec4 getShadowSpace(float shadowdepth, vec2 texCoord) {
 }
 
 //Volumetric light from Robobo1221 (highly modified)
-vec3 getVolumetricRays(float pixeldepth0, float pixeldepth1, vec3 color, float dither, vec4 viewPos) {
+vec3 getVolumetricRays(float pixeldepth0, float pixeldepth1, vec3 color, float dither, vec4 viewPos, inout vec3 vlBlock) {
 	vec3 vl = vec3(0.0);
 
 	#if AA > 1
@@ -195,6 +195,20 @@ vec3 getVolumetricRays(float pixeldepth0, float pixeldepth1, vec3 color, float d
 			} else {
 				vl += 1.0;
 			}
+			
+			float vxDist = 0.0675 * shadowMapResolution / VXHEIGHT - 10;
+			vec4 newViewPos = gbufferProjectionInverse * (vec4(texCoord, distx(minDist), 1.0) * 2.0 - 1.0);
+			newViewPos /= newViewPos.w;
+			vec3 voxelSpacePos = ToWorld(newViewPos.xyz) + fract(cameraPosition);
+			if(max(abs(voxelSpacePos.x), abs(voxelSpacePos.z)) < vxDist && abs(voxelSpacePos.y) < 24 * VXHEIGHT * VXHEIGHT - 10) {
+				vec2 vxPos = getVoxelPos(voxelSpacePos)[0].xz;
+				vec3 blockLight0 = texture2D(shadowcolor1, vxPos / shadowMapResolution + vec2(0.5)).rgb;
+				vxPos = getVoxelPos(voxelSpacePos + vec3(0, 1, 0))[0].xz;
+				vec3 blockLight1 = texture2D(shadowcolor1, vxPos / shadowMapResolution + vec2(0.5)).rgb;
+				vlBlock += 0.2 * mix(blockLight0, blockLight1, fract(voxelSpacePos.y));
+
+			}
+
 		}
 		vl = sqrt(vl * visibility);
 

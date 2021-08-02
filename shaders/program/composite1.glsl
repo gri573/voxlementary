@@ -28,6 +28,8 @@ uniform ivec2 eyeBrightnessSmooth;
 uniform sampler2D colortex0;
 uniform sampler2D colortex1;
 
+uniform sampler2D colortex3;
+
 #if LIGHT_SHAFT_MODE > 1
 uniform float viewWidth, viewHeight;
 
@@ -54,6 +56,7 @@ float lightShaftTime = pow(abs(sunVisibility - 0.5) * 2.0, 10.0);
 //Program//
 void main() {
     vec4 color = texture2D(colortex0,texCoord.xy);
+	vec3 vlBlock = texture2D(colortex3, texCoord.xy).rgb;
 
 	#if LIGHT_SHAFT_MODE == 1 || defined END
 		vec3 vl = texture2DLod(colortex1, texCoord.xy, 1.5).rgb;
@@ -164,6 +167,7 @@ void main() {
 	#endif
 
 	color.rgb += vl * lightShaftTime;
+	color.rgb += vlBlock * vlBlock;
 	
 	/*DRAWBUFFERS:0*/
 	gl_FragData[0] = color;
