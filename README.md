@@ -10,7 +10,7 @@ or clone the repository directly into your shaderpacks folder.
 ## Important notices
 
 - Shadow quality ***must*** be set to **x1** for this shaderpack to work;
-- Optifine ***G7*** or later is required;
+- Optifine ***G7*** or later is required, Iris is currently unsupported;
 - Mac devices are unsupported;
 - This project is **not** finished - occasional light leaking will occur. (Do not report this issue)
 
