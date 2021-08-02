@@ -96,7 +96,7 @@ void main() {
 		vec3 aroundPos = vec3(sin(6.283 * texCoord.x), 3 * texCoord.y - 1.5 , cos(6.283 * texCoord.x));
 		//aroundPos.y = aroundPos.y * aroundPos.y * aroundPos.y + aroundPos.y * 0.6;
 		aroundPos = normalize(aroundPos);
-		vec4 clipPosNew = gbufferProjection * gbufferModelView * vec4(aroundPos, 1.0);
+		vec4 clipPosNew = gbufferProjection * gbufferModelView * vec4(aroundPos * 100.0, 1.0);
 		clipPosNew.xyz /= clipPosNew.w;
 		vec4 aroundProjection = texture2D(colortex9, texCoord);
 /*		vec3 aroundWorldPos = cameraPosition + GetLinearDepth(aroundProjection.a) * aroundPos;
