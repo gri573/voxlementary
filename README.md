@@ -19,6 +19,8 @@ For questions, suggestions, early access of Complementary, and more; feel free t
 
 If you encounter issues with mods, you can check out this mod issue fixes list: https://justpaste.it/60cgu
 
+The git repository of Voxlementary is currently unreasonably large (about 2 GiB). This will be fixed with the next rewrite.
+
 ## Credits:
 
  - Capt Tatsu        - Complementary is based on his brilliant work from BSL. And he is the one that gave EminGT the idea of publishing their BSL edit. Complementary and Voxlementary wouldn't exist without him
