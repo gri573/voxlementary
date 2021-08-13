@@ -95,15 +95,15 @@ const vec3[70] lightcols = vec3[70](
 	vec3(CANDLE_COL_R, CANDLE_COL_G, CANDLE_COL_B) * 0.75,//candle:candles=3
 	vec3(CANDLE_COL_R, CANDLE_COL_G, CANDLE_COL_B),//candle:candles=4
 	vec3(BLOCKLIGHT_R, BLOCKLIGHT_G, BLOCKLIGHT_B),//light
-	vec3(0),
-	vec3(0),
-	vec3(0),
-	vec3(0),
-	vec3(0),
-	vec3(0),
-	vec3(0),
-	vec3(0),
-	vec3(0),
+	vec3(255.0,   0.0,   0.0), // 12346 red_mod_light
+	vec3(255.0, 167.0,   0.0), // 12347 orange_mod_light
+	vec3(255.0, 255.0,   0.0), // 12348 yellow_mod_light
+	vec3(167.0, 255.0,   0.0), // 12349 lime_mod_light
+	vec3(  0.0, 255.0,   0.0), // 12350 green_mod_light
+	vec3(  0.0, 255.0, 144.0), // 12351 cyan_mod_light
+	vec3(  0.0, 222.0, 255.0), // 12352 blue_mod_light
+	vec3(167.0,   0.0, 255.0), // 12353 magenta_mod_light
+	vec3(255.0,   0.0, 255.0), // 12354 pink_mod_light
 	vec3(CREEPER_COL_R, CREEPER_COL_G, CREEPER_COL_B),//creeper
 	vec3(LIGHTNING_COL_R, LIGHTNING_COL_G, LIGHTNING_COL_B) * 10,//lightning bolt
 	vec3(BLAZE_COL_R, BLAZE_COL_G, BLAZE_COL_B),//blaze

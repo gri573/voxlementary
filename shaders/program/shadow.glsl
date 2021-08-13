@@ -375,6 +375,15 @@ void main() {
 		98 * float(abs(mc_Entity.x - 993) < 0.1) + //three candles
 		99 * float(abs(mc_Entity.x - 994) < 0.1) + //four candles
 		100 * float(abs(mc_Entity.x - 12345) < 0.1) + //general lights
+		101 * float(abs(mc_Entity.x - 12346) < 0.1) + //red_mod_light
+		102 * float(abs(mc_Entity.x - 12347) < 0.1) + //orange_mod_light
+		103 * float(abs(mc_Entity.x - 12348) < 0.1) + //yellow_mod_light
+		104 * float(abs(mc_Entity.x - 12349) < 0.1) + //lime_mod_light
+		105 * float(abs(mc_Entity.x - 12350) < 0.1) + //green_mod_light
+		106 * float(abs(mc_Entity.x - 12351) < 0.1) + //cyan_mod_light
+		107 * float(abs(mc_Entity.x - 12352) < 0.1) + //blue_mod_light
+		108 * float(abs(mc_Entity.x - 12353) < 0.1) + //magenta_mod_light
+		109 * float(abs(mc_Entity.x - 12354) < 0.1) + //pink_mod_light
 		#ifdef ENTITYLIGHTS
 			110 * float(entityId == 10208) + //creeper
 			111 * float(entityId == 10101) + //lightning bolt

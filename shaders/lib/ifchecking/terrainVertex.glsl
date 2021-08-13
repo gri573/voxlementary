@@ -30,7 +30,7 @@ if (blockID == 210) // Soul Fire
     #endif
     specB = 0.25, lmCoord.x = 0.0, color.a = 1.0, color.rgb = vec3(FIRE_INTENSITY * 0.53);
 
-if (blockID == 12345) // Custom Emissive
+if (blockID > 12344 && blockID < 12355) // Custom Emissive
 	specB = 2.05 * clamp(lmCoord.x * 2 - 1, 0.0, 1.0);
     lmCoord = vec2(0.0);
 
