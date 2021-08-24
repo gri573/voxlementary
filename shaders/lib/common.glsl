@@ -673,6 +673,12 @@ Complementary Shaders by EminGT, based on BSL Shaders by Capt Tatsu
   #endif
   #ifdef VANILLA_SKYBOX
   #endif
+  #ifdef REFLECTION_CAPTURE
+  #endif
+  #ifdef DINNERBONE
+  #endif
+  #ifdef VANILLAEY_CLOUDS
+  #endif
 
 //Very Common Functions//
 float pow2(float number) {

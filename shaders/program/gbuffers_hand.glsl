@@ -412,6 +412,9 @@ void main() {
 	#ifdef OVERDRAW
 		gl_Position.xy *= 2.0 / 3.0;
 	#endif
+	#ifdef DINNERBONE
+		gl_Position.xy *= -1;
+	#endif
 }
 
 #endif
