@@ -82,6 +82,9 @@ void main() {
 	#else
 		vec2 texCoord2 = (texCoord - vec2(0.5)) * (2.0 / 3.0) + vec2(0.5);
 	#endif
+	#ifdef DINNERBONE
+		texCoord2 = vec2(1) - texCoord2;
+	#endif
 	
 	/*
 	vec2 wh = vec2(viewWidth, viewHeight);
