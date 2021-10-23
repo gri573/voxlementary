@@ -189,6 +189,8 @@ const int maxVerticesOut = 6;
 #else
 const int maxVerticesOut = 3;
 #endif
+layout(triangles) in;
+layout(triangle_strip, max_vertices = 6) out;
 
 //Varyings//
 in vec4 shadowPos[3];
