@@ -68,7 +68,6 @@ uniform sampler2D noisetex;
 uniform sampler2D normals;
 #endif
 
-#ifdef AURORA
 #ifdef INTERACTIVE_WATER
 uniform sampler2D colortex8;
 #endif
@@ -77,6 +76,7 @@ uniform sampler2D colortex8;
 uniform sampler2D colortex9;
 #endif
 
+#ifdef AURORA
 uniform float isDry, isRainy, isSnowy;
 #endif
 
