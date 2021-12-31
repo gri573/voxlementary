@@ -4,7 +4,6 @@ Complementary Shaders by EminGT, based on BSL Shaders by Capt Tatsu
 
 //Common//
 #include "/lib/common.glsl"
-
 //Varyings//
 varying vec2 texCoord;
 
@@ -13,7 +12,15 @@ varying vec2 texCoord;
 
 //Uniforms//
 uniform sampler2D colortex1;
-//uniform sampler2D colortex9;
+#ifdef ANAGLYPH
+uniform float far;
+uniform float near;
+float GetLinearDepth(float depth) {
+   return (2.0 * near) / (far + near - depth * (far - near));
+}
+uniform sampler2D depthtex0;
+#endif
+//uniform sampler2D shadowcolor0;
 
 uniform float viewWidth, viewHeight;
 
@@ -125,7 +132,7 @@ void main() {
 	#endif
 
 	gl_FragColor = vec4(color, 1.0);
-	//gl_FragColor = vec4(texture2D(colortex9, texCoord).rgb, 1.0);
+	//gl_FragColor.rgb = mix(texture2D(shadowcolor0, texCoord).rgb, color, texture2D(shadowcolor0, texCoord).a);
 }
 
 #endif

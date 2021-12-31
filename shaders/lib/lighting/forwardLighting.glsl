@@ -350,7 +350,7 @@ float GetFakeShadow(float skyLight) {
 		blockLightFactor = blockLightCol100.a / (blockLightCol000.a + blockLightCol100.a + 0.0001);
 		blockLightFactor = mix(vxInnerPos.x, blockLightFactor, abs(2 * blockLightFactor - 1));
 		blockLighting = mix(blockLightCol000.rgb, blockLightCol100.rgb, blockLightFactor);//mix(blockLightCol0, blockLightCol1, voxelSpacePos.y + 0.51 - voxelSpaceFloorPos.y);
-		blockLighting = pow(blockLighting, vec3(1.5));
+		blockLighting = pow(blockLighting, vec3(BLOCKLIGHT_STEEPNESS));
 		vec3 blockLighting0 = BLOCKLIGHT_I * vec3(BLOCKLIGHT_R, BLOCKLIGHT_G, BLOCKLIGHT_B) * newLightmap * newLightmap * 0.5 / 255.0;
 		blockLighting = mix(blockLighting, blockLighting0, clamp(border, 0, 1));
 		float blockLightBrightness = max(max(blockLighting.r, blockLighting.g), blockLighting.b);

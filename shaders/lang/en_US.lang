@@ -702,6 +702,8 @@ option.BLOCKLIGHT_R=Red
 option.BLOCKLIGHT_G=Green
 option.BLOCKLIGHT_B=Blue
 option.BLOCKLIGHT_I=Intensity
+option.BLOCKLIGHT_STEEPNESS=Blocklight Steepness
+option.BLOCKLIGHT_STEEPNESS.comment= Determines how quickly blocklight falls off. Increased values also reduce overall blocklight intensity.
 
 option.WATER_R=Red
 option.WATER_G=Green
