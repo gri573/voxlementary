@@ -148,8 +148,7 @@ const vec3[70] lightcols = vec3[70](
 		vec4 col3 = texture2D(shadowcolor1, pos3) * float(abs(pos3.x - 0.5) < 0.5 && abs(pos3.y - 0.5) < 0.5);
 		vec4 col4 = texture2D(shadowcolor1, pos4) * float(abs(pos4.x - 0.5) < 0.5 && abs(pos4.y - 0.5) < 0.5);
 		vec4 col5 = texture2D(shadowcolor1, pos5) * float(abs(pos5.x - 0.5) < 0.5 && abs(pos5.y - 0.5) < 0.5);
-		vec4 col6 = vec4(float(isLight) * lightcols[int(ID - 49.5)] / 255.0, 1.0);
-		if(abs(ID - 100) < 0.5) col6 = vec4(blockData.r);
+		vec4 col6 = vec4(isLight * lightcols[int(ID - 49.5)] / 255.0, 1.0);
 
 		col0.rgb *= float(abs(col0.a - 0.75) > 0.1 && ((ID == 5 && abs(col0.a - 0.25) > 0.1) || (ID == 6 && abs(col0.a - 0.5) > 0.1) || abs(ID - 5.5) > 1.0));
 		col1.rgb *= float(abs(col1.a - 0.75) > 0.1 && abs(ID - 5) > 0.5 && abs(col1.a - 0.25) > 0.1);
@@ -173,7 +172,7 @@ const vec3[70] lightcols = vec3[70](
 		col3.rgb /= col3.a;
 		col4.rgb /= col4.a;
 		col5.rgb /= col5.a;
-		col6.rgb /= col6.a;
+		//col6.rgb /= col6.a;
 
 		col0.a = max(col0.a * BLOCKLIGHT_SPREAD_MULT - BLOCKLIGHT_SPREAD_SUB, 0.0);
 		col1.a = max(col1.a * BLOCKLIGHT_SPREAD_MULT - BLOCKLIGHT_SPREAD_SUB, 0.0);
@@ -188,8 +187,9 @@ const vec3[70] lightcols = vec3[70](
 						col2.rgb * max(1 - 5 * (maxAlpha - col2.a), 0.0) + 
 						col3.rgb * max(1 - 5 * (maxAlpha - col3.a), 0.0) + 
 						col4.rgb * max(1 - 5 * (maxAlpha - col4.a), 0.0) + 
-						col5.rgb * max(1 - 5 * (maxAlpha - col5.a), 0.0) + 
-						col6.rgb * 4 * col6.a, 1.0);
+						col5.rgb * max(1 - 5 * (maxAlpha - col5.a), 0.0), 1.0);// + 
+						//col6.rgb * 4 * col6.a, 1.0);
+		if (isLight > 0) col = col6;
 		col.rgb /= max(max(0.0001, col.r), max(col.g, col.b));
 		col.rgb *= maxAlpha;
 		if (abs(ID - 120) < 0.5 || abs(ID - 3) < 0.5) col.rgb *= (TRANSLUCENT_BLOCKLIGHT_TINT * colMult + vec3(1 - TRANSLUCENT_BLOCKLIGHT_TINT));
