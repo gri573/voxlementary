@@ -227,8 +227,7 @@ void main() {
 	vec3[2] posNorm = getVoxelPos(vxPos0);
 	vxPos0 = posNorm[0];
 	for (int i = 0; i < 3; i++) {
-		vec3 vxPos = vxPos0;
-		vxPos.xz += vec2(0.5 * (i - 1), 0.5 + (i - 2) * i);
+		vec3 vxPos = vxPos0 + vec3(0.5 * (i - 1), 0, 0.5 + (i - 2) * i);
 		gl_Position = vec4((2 * vxPos.xz / shadowMapResolution), - (vxPos.y + 0.001 * (worldNormal.y + pos0[0].y)) / 128, 1.0);
 		//if(abs(mat[i] - 3.0) < 0.5) gl_Position.xy = (2 * vxPos.xz / shadowMapResolution) + 0.1 * vec2(0.4 * (i - 1), (i - 2) * i);
 
