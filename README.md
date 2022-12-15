@@ -12,14 +12,14 @@ or clone the repository directly into your shaderpacks folder.
 - Shadow quality ***must*** be set to **x1** for this shaderpack to work;
 - Optifine ***G7*** or later is required, Iris is currently unsupported;
 - Mac devices are unsupported;
-- This project is **not** finished - occasional light leaking will occur. (Do not report this issue)
+- This project has been replaced by [Rethinking Voxels](https://github.com/gri573/rethinking-voxels)
 
 ## Information
-For questions, suggestions, early access of Complementary, and more; feel free to join the Complementary Discord Server: https://discord.gg/A6faFYt
+For questions, suggestions, early access of Complementary a discussion thread about Voxlementary and Rethinking Voxels, and more; feel free to join the Complementary Discord Server: https://discord.gg/A6faFYt
 
 If you encounter issues with mods, you can check out this mod issue fixes list: https://justpaste.it/60cgu
 
-The git repository of Voxlementary is currently unreasonably large (about 2 GiB). This will be fixed with the next rewrite.
+The git repository of Voxlementary is currently unreasonably large (about 2 GiB).
 
 ## Credits:
 
