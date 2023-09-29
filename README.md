@@ -2,6 +2,10 @@
 
 Complementary shaders by EminGT, based on BSL shaders by Capt Tatsu, with coloured voxel flood fill lighting added by gri573
 
+## Abandonment Notice
+
+This project is abandoned and superseded by [rethinking voxels](https://github.com/gri573/rethinking-voxels).
+
 ## Installation
 
 In a web browser, click on a green button with `Code`, then `Download ZIP`, and then put the downloaded .zip file directly in your shaderpack folder.
